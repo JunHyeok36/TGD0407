@@ -4,11 +4,11 @@ using System;
 using UnityEditor;
 #endif
 
-namespace TDG0407.Domain.Grid
+namespace TDG0407.Core.Grid
 {
 
     /// <summary>
-    /// 어떤 지점에 대한 좌표 값을 나타냅니다.
+    /// 지점에 대한 좌표 값을 나타냅니다.
     /// </summary>
     [Serializable]
     public struct Point : IComparable<Point>, IEquatable<Point>
@@ -57,10 +57,10 @@ namespace TDG0407.Domain.Grid
         /// <returns>두 좌표를 비교하여 this가 더 크면 -1을, other가 더 크면 1을, 같으면 0을 int 형식으로 반환합니다.</returns>
         public readonly int CompareTo(Point other)
         {
-            if(_x != other._x)
-                return _x.CompareTo(other._x);
-            else
+            if(_y != other._y)
                 return _y.CompareTo(other._y);
+            else
+                return _x.CompareTo(other._x);
         }
 
         /// <summary>
@@ -72,7 +72,6 @@ namespace TDG0407.Domain.Grid
         {
             return _x == other._x && _y == other._y;
         }
-        
         public override readonly bool Equals(object obj)
         {
             return obj is Point point && Equals(point);

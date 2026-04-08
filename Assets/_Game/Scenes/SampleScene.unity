@@ -523,6 +523,7 @@ GameObject:
   - component: {fileID: 901829268}
   - component: {fileID: 901829267}
   - component: {fileID: 901829266}
+  - component: {fileID: 901829270}
   m_Layer: 0
   m_Name: w
   m_TagString: Untagged
@@ -623,6 +624,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &901829270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901829265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e9b5c87073f22940b406a632df11e21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TEST_SCRIPT
+  p:
+    _x: 0
+    _y: 0
+  fv:
+    _min: 0
+    _max: 1
+    _cur: 0.26
+  iv:
+    _min: 0
+    _max: 45
+    _cur: 36
+  pv:
+    _min:
+      _x: 0
+      _y: 0
+    _max:
+      _x: 2
+      _y: 2
+    _cur:
+      _x: 21
+      _y: 21
 --- !u!1 &926889057
 GameObject:
   m_ObjectHideFlags: 0

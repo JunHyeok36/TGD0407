@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TDG0407.Domain.Grid
+namespace TDG0407.Core.Grid
 {
 
     /// <summary>

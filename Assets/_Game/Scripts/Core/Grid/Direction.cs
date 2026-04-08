@@ -1,4 +1,4 @@
-namespace TDG0407.Domain.Grid
+namespace TDG0407.Core.Grid
 {
 
     /// <summary>
