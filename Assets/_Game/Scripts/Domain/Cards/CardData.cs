@@ -31,7 +31,7 @@ namespace TDG0407.Domain.Cards
 
         public void ValidateData()
         {
-            if(id == null) throw new DataValidityViolationException("Invalid value assigned to Card ID.");
+            if(string.IsNullOrEmpty(id)) throw new DataValidityViolationException("Invalid value assigned to Card ID.");
             if(type == CardType.None) throw new DataValidityViolationException("Invalid value assigned to Card Type.");
             switch(rangeType)
             {
@@ -39,7 +39,7 @@ namespace TDG0407.Domain.Cards
                     if(rangeValue.Count == 0) throw new DataValidityViolationException("At least one Point needs to be assigned in Default Range Type."); 
                     break;
                 case RangeType.Polygon:
-                    if(rangeValue.Count > 2) throw new DataValidityViolationException("At least three Point needs to be assigned in Polygon Range Type."); 
+                    if(rangeValue.Count < 3) throw new DataValidityViolationException("At least three Point needs to be assigned in Polygon Range Type."); 
                     break;
             }
         }

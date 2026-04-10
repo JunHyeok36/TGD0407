@@ -25,7 +25,7 @@ namespace TDG0407.Domain.Cards
         public CardData PlacedCard { get => _placedCard; }
         public BoundedValue<int> RemainingTicks { get => _remainingTicks; }
 
-        public bool IsAvailable => _remainingTicks.IsMinimum; 
+        public bool IsAvailable => _remainingTicks == null || _remainingTicks.IsMinimum; 
 
         #endregion
         #region Methods
@@ -53,7 +53,11 @@ namespace TDG0407.Domain.Cards
         #endregion
         #region EventHandlers
 
-        public void OnTick() => _remainingTicks.Current--;
+        public void OnTick()
+        {
+            if(_remainingTicks != null && _remainingTicks.IsMinimum == false)
+                _remainingTicks.Current--;
+        }
 
         #endregion
     }

@@ -13,14 +13,15 @@ namespace TDG0407.Core.Grid
     {
 #region Fields
 
-        /// <summary>
-        /// 좌표들의 집합을 나타냅니다.
-        /// </summary>
         private readonly HashSet<Point> _points = new();
 
 #endregion
 #region Properties
 
+        /// <summary>
+        /// 좌표들의 집합을 나타냅니다.
+        /// </summary>
+        public HashSet<Point> Points { get => _points; }
         /// <summary>
         /// 좌표 집합의 개수를 나타냅니다.
         /// </summary>
@@ -62,15 +63,11 @@ namespace TDG0407.Core.Grid
         public static bool operator != (PointArea a, PointArea b) => !(a == b);
         public static PointArea operator + (PointArea area, Point point)
         {
-            PointArea res = new(area);
-            res._points.Select(p => new Point(p) + point);
-            return res;
+            return new PointArea(area._points.Select(p => p + point));
         }
         public static PointArea operator - (PointArea area, Point point)
         {
-            PointArea res = new(area);
-            res._points.Select(p => new Point(p) - point);
-            return res;
+            return new PointArea(area._points.Select(p => p - point));
         }
 
         public static implicit operator HashSet<Point>(PointArea area) => area._points;

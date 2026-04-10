@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace TDG0407.Domain.Cards
 {
-    using System.Linq;
     using Domain.Exceptions;
     using Domain.Interfaces;
-    using UnityEngine.Localization.SmartFormat.Utilities;
 
     /// <summary>
     /// 카드 리스트를 관리합니다.
@@ -26,10 +24,10 @@ namespace TDG0407.Domain.Cards
         #endregion
         #region Properties
 
-        public List<CardData> AllCards { get => _allCards; }
-        public List<CardData> RemainedCards { get => _remainedCards; }
+        public IReadOnlyList<CardData> AllCards { get => _allCards; }
+        public IReadOnlyList<CardData> RemainedCards { get => _remainedCards; }
         public CardSlot[] HandCardSlots { get => _handCardSlots; }
-        public List<CardData> DiscardedCards { get => _discardedCards; }
+        public IReadOnlyList<CardData> DiscardedCards { get => _discardedCards; }
 
         #endregion
         #region Constructors
@@ -37,7 +35,7 @@ namespace TDG0407.Domain.Cards
         #endregion
         #region Methods
 
-        public void Initialize(byte cardSlotCount) // TODO : compelete this function with corrective parameters.
+        public void Initialize(byte cardSlotCount)
         {
             _handCardSlots = new CardSlot[cardSlotCount];
             for(byte i = 0; i < cardSlotCount; i++)
@@ -50,14 +48,14 @@ namespace TDG0407.Domain.Cards
             if(_handCardSlots == null || _handCardSlots.Length == 0) throw new DataValidityViolationException("At least one card slot needs.");
         }
 
-        public void UseCardInHands(int index)
+        public CardData PopCardInHand(int index)
         {
-            if(index < 0 || _handCardSlots.Length <= index) return;
+            if(index < 0 || _handCardSlots.Length <= index) return null;
 
             CardData targetCard = _handCardSlots[index].PopCard();
-            if(targetCard == null) return;
+            if(targetCard == null) return null;
 
-            // TODO : continue
+            return targetCard;
         }
 
         #endregion
