@@ -1,15 +1,11 @@
-namespace TGD0407.Domain.Map
+namespace TDG0407.Domain.Map
 {
 
     /// <summary>
     /// Room의 유형을 나타내는 열거형입니다.
     /// </summary>
-    public enum RoomType : sbyte
+    public enum RoomType : short
     {
-        SecretRandom = -5,
-        EventRandom = -4,
-        NormalRandom = -3,
-        AllRandom = -2,
         NULL = -1,
 
         // 0x000 ~ 0x0FF : game system

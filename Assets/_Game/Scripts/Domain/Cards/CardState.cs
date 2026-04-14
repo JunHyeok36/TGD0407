@@ -6,33 +6,33 @@ namespace TDG0407.Domain.Cards
     using Core.Grid;
     using Core.Value;
     using Domain.Exceptions;
-    using Domain.Interfaces;
 
     /// <summary>
-    /// 카드에 대한 데이터를 나타냅니다.
+    /// 카드의 상태 및 판정 데이터를 나타냅니다.
     /// </summary>
     [Serializable]
-    public class CardData : IDataValidatable
+    public class CardState
     {
         #region Fields
         
-        public string id = null;
+        public string cardId = null;
+        public int cardInstanceId = -1;
         public CostType costType = CostType.None;
         public float costValue = .0f;
-        public CardType type = CardType.None;
-        public Coefficients coefficients = new();
+        public CardType cardType = CardType.NULL;
+        public readonly Coefficients coefficients = new();
         public byte coolTicks = 0;
-        public RangeType rangeType = RangeType.None;
+        public RangeType rangeType = RangeType.NULL;
         public PointArea rangeValue = new();
-        public BoundedValue<byte> reinfocedCount = new(0, 0, 0);
+        public readonly BoundedValue<byte> reinfocedCount = new(0, 0, 0);
 
         #endregion
         #region Methods
 
         public void ValidateData()
         {
-            if(string.IsNullOrEmpty(id)) throw new DataValidityViolationException("Invalid value assigned to Card ID.");
-            if(type == CardType.None) throw new DataValidityViolationException("Invalid value assigned to Card Type.");
+            if(string.IsNullOrEmpty(cardId)) throw new DataValidityViolationException("Invalid value assigned to Card ID.");
+            if(cardType == CardType.NULL) throw new DataValidityViolationException("Invalid value assigned to Card Type.");
             switch(rangeType)
             {
                 case RangeType.Default:

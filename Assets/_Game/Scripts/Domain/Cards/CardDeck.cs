@@ -14,33 +14,33 @@ namespace TDG0407.Domain.Cards
     {
         #region Fields
 
-        private readonly List<CardData> _allCards = new();
+        private readonly List<CardState> _allCards = new();
 
-        private readonly List<CardData> _remainedCards = new();
+        private readonly List<CardState> _remainedCards = new();
         private CardSlot[] _handCardSlots = null;
-        private readonly List<CardData> _discardedCards = new();
-
+        private readonly List<CardState> _discardedCards = new();
 
         #endregion
         #region Properties
 
-        public IReadOnlyList<CardData> AllCards { get => _allCards; }
-        public IReadOnlyList<CardData> RemainedCards { get => _remainedCards; }
+        public IReadOnlyList<CardState> AllCards { get => _allCards; }
+        public IReadOnlyList<CardState> RemainedCards { get => _remainedCards; }
         public CardSlot[] HandCardSlots { get => _handCardSlots; }
-        public IReadOnlyList<CardData> DiscardedCards { get => _discardedCards; }
+        public IReadOnlyList<CardState> DiscardedCards { get => _discardedCards; }
 
         #endregion
         #region Constructors
 
-        #endregion
-        #region Methods
-
-        public void Initialize(byte cardSlotCount)
+        public CardDeck(byte cardSlotCount, IEnumerable<CardState> allCards)
         {
+            _allCards.AddRange(allCards);
             _handCardSlots = new CardSlot[cardSlotCount];
             for(byte i = 0; i < cardSlotCount; i++)
                 _handCardSlots[i].Initialize(i);
         }
+
+        #endregion
+        #region Methods
 
         public void ValidateData()
         {
@@ -48,11 +48,11 @@ namespace TDG0407.Domain.Cards
             if(_handCardSlots == null || _handCardSlots.Length == 0) throw new DataValidityViolationException("At least one card slot needs.");
         }
 
-        public CardData PopCardInHand(int index)
+        public CardState PopCardInHand(int index)
         {
             if(index < 0 || _handCardSlots.Length <= index) return null;
 
-            CardData targetCard = _handCardSlots[index].PopCard();
+            CardState targetCard = _handCardSlots[index].PopCard();
             if(targetCard == null) return null;
 
             return targetCard;

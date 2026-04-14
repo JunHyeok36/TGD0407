@@ -28,6 +28,11 @@ namespace TDG0407.Domain
         }
 
         #endregion
+        #region Operators
+
+        public float this[int index] => values[index];
+
+        #endregion
     }
 
 }

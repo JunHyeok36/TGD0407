@@ -15,37 +15,32 @@ namespace TDG0407.Domain.Entities
     {
         #region Fields
 
-        public readonly BoundedValue<int> durability = new(0, 0);
-        public readonly BoundedValue<int> lastingTicks = new(0, 0);
-        public EntityData performer = null;
+        public int durability = 0;
+        public readonly TickDuration? duration = new();
+        public int? performedEntityInstanceId = null;
 
         #endregion
         #region Properties
 
-        public bool IsAvailable => durability.IsMinimum == false && (lastingTicks != null && lastingTicks.IsMinimum == false);
+        public bool IsExpired => durability == 0 || (duration != null && duration.Value.IsExpired == true);
 
         #endregion
         #region Constructors
 
-        public Shield(int durability, int lastingTicks = 0, EntityData performer = null)
+        public Shield(int durability, TickDurationType durationType, int durationTicks = -1, int? performedEntityInstanceId = null)
         {
-            Initialize(durability, lastingTicks, performer);
+            this.durability = durability;
+            this.duration = new TickDuration(durationType, durationTicks);
+            this.performedEntityInstanceId = performedEntityInstanceId;
         }
 
         #endregion
         #region Methods
 
-        public void Initialize(int durability, int lastingTicks = 0, EntityData performer = null)
-        {
-            this.durability.Current = this.durability.Max = durability;
-            this.lastingTicks.Current = this.lastingTicks.Max = lastingTicks;
-            this.performer = performer;
-        }
 
         public void ValidateData()
         {
-            if(durability.Max < 0) throw new DataValidityViolationException("Invalid value assigned to Shield Max Durability.");
-            if(durability.Min != 0) throw new DataValidityViolationException("Invalid value assigned to Shield Min Durability.");
+            
         }
 
         #endregion
@@ -53,8 +48,8 @@ namespace TDG0407.Domain.Entities
 
         public void OnTick()
         {
-            if(lastingTicks != null && lastingTicks.IsMinimum == false)
-                lastingTicks.Current--;
+            if(IsExpired == false)
+                duration.Value.OnTick();
         }
 
         #endregion

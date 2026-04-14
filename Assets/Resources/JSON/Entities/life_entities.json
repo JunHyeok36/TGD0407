@@ -1,0 +1,48 @@
+{
+    "entities": [
+        {
+            "entityId": "hero_knight",
+            "entityType": "Life",
+            "health": { "max": 100, "current": 100 },
+            "stamina": { "max": 10, "current": 10 },
+            "shields": [
+                { "durability": 20, "duration": { "type": "Forever", "value": { "max": 10, "current": 10 } }, "performedEntityInstanceId": -1 },
+                { "durability": 20, "duration": { "type": "Forever", "value": { "max": 10, "current": 10 } }, "performedEntityInstanceId": -1 }
+            ],
+            "stat": {
+                "redPower": 10,
+                "bluePower": 5,
+                "yellowPower": 3,
+                "whitePower": 2,
+                "redResist": 0,
+                "blueResist": 0,
+                "yellowResist": 0,
+
+                "cardSlotCount": 5,
+                "drawQuickness": 1.0,
+                "speed": 1,
+                "bleedingResist": 1,
+                "burningResist": 1,
+                "poisoningResist": 1,
+                "stunResist": 1,
+                "freezeResist": 1,
+                "silenceResist": 1,
+                "fearResist": 1,
+                "knockbackResist": 1,
+                "curseResist": 1,
+                "knockdownResist": 1,
+
+                "healthRecoveryAmount": 1.0,
+                "staminaRecoveryAmount": 1.0,
+                "dodgeProb": 0.01,
+                "deathResist": 10,
+                "criticalProb": 0.05,
+                "ciriticalWeight": 2.0
+            },
+            "deck": { 
+                "allCards": [ "card_slash_basic", "card_slash_strong" ]
+            },
+            "statusEffects": [ "burning" ]
+        }
+    ]
+}

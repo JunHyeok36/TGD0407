@@ -15,14 +15,14 @@ namespace TDG0407.Domain.Cards
         #region Fields
 
         private byte _index = 0;
-        private CardData _placedCard = null;
-        private BoundedValue<int> _remainingTicks = null;
+        private CardState _placedCard = null;
+        private readonly BoundedValue<int> _remainingTicks = new(0, 0);
 
         #endregion
         #region Properties
 
         public byte Index { get => _index; }
-        public CardData PlacedCard { get => _placedCard; }
+        public CardState PlacedCard { get => _placedCard; }
         public BoundedValue<int> RemainingTicks { get => _remainingTicks; }
 
         public bool IsAvailable => _remainingTicks == null || _remainingTicks.IsMinimum; 
@@ -34,18 +34,17 @@ namespace TDG0407.Domain.Cards
         {
             _index = index;
             _placedCard = null;
-            _remainingTicks = null;
         }
-        public void RegisterCard(CardData cardData)
+        public void RegisterCard(CardState CardState)
         {
-            _placedCard = cardData;
-            _remainingTicks = new(0, cardData.coolTicks);
+            _placedCard = CardState;
+            _remainingTicks.Initalize(0, CardState.coolTicks);
         }
-        public CardData PopCard()
+        public CardState PopCard()
         {
             if(IsAvailable == false) return null;
 
-            CardData placedCard = _placedCard;
+            CardState placedCard = _placedCard;
             Initialize(_index);
             return placedCard;
         }

@@ -1,0 +1,11 @@
+{
+    "entities": [
+        {
+            "entityId": "rock_small",
+            "entityType": "Obstacle",
+            "health": { "max": 50, "current": 50 },
+            "stamina": { "max": 0, "current": 0 },
+            "shields": []
+        }
+    ]
+}

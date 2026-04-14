@@ -1,0 +1,26 @@
+{
+    "cards": [
+        {
+            "cardId": "card_slash_basic",
+            "costType": 1,
+            "costValue": 1.0,
+            "cardType": 1,
+            "coefficients": [ 1.0, 0.25 ],
+            "coolTicks": 1,
+            "rangeType": 1,
+            "rangePoints": [ { "x": 0, "y": 1 }],
+            "reinfocedCount": { "max": 3, "current": 0 }
+        },
+        {
+            "cardId": "card_slash_strong",
+            "costType": 1,
+            "costValue": 2.0,
+            "cardType": 1,
+            "coefficients": [ 1.5, 0.5 ],
+            "coolTicks": 2,
+            "rangeType": 1,
+            "rangePoints": [ { "x": 0, "y": 1 }],
+            "reinfocedCount": { "max": 3, "current": 0 }
+        }
+    ]
+}

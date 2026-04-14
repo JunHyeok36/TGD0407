@@ -6,7 +6,7 @@ namespace TDG0407.Core.Grid
     /// </summary>
     public enum Direction : sbyte
     {
-        None = -1,
+        NULL = -1,
         Up = 0,
         UpRight = 1,
         Right = 2,

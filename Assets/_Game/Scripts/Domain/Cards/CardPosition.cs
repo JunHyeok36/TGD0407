@@ -6,7 +6,7 @@ namespace TDG0407.Domain.Cards
     /// </summary>
     public enum CardPosition : sbyte
     {
-        None = -1,
+        NULL = -1,
         Remained,
         Hand,
         Discarded

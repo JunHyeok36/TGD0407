@@ -6,11 +6,10 @@ namespace TDG0407.Domain.Cards
     /// </summary>
     public enum CardType : sbyte
     {
-        None = -1,
+        NULL = -1,
         Normal = 0,
         Attack = 1,
         Skill = 2,
-
 
         Curse = 9,
         Interaction = 10,

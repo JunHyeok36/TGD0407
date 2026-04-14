@@ -6,7 +6,7 @@ namespace TDG0407.Domain
     /// </summary>
     public enum RangeType : sbyte
     {
-        None = -1,
+        NULL = -1,
         /// <summary>
         /// 범위의 point를 하나씩 지정하는 형식
         /// </summary>
