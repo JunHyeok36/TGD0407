@@ -1,7 +1,7 @@
-namespace TDG0407.Core
+namespace TDG0407.Systems.Managers
 {
 
-    using Utils;
+    using Core.Utils;
     using Systems.Data;
 
     /// <summary>
@@ -13,6 +13,7 @@ namespace TDG0407.Core
         {
             base.Awake();
             UserDataManager.Initialize();
+            TickManager.Initialize();
         }
     }
 

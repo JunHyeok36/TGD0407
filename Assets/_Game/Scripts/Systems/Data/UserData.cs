@@ -4,6 +4,7 @@ using UnityEngine;
 namespace TDG0407.Systems.Data
 {
 
+    using Domain;
     using Domain.Interfaces;
     using Domain.Map;
 
@@ -13,10 +14,15 @@ namespace TDG0407.Systems.Data
     [Serializable]
     public class UserData : IDataValidatable
     {
+        #region Static Fields
+
+        public const int MAX_SAVE_SLOTS = 3;
+
+        #endregion
         #region Fields
 
         public string version = null;
-        public MapState[] mapState = new MapState[3] { null, null, null };
+        public WorldState[] worldStates;
         public int nextInstanceId = 0;
 
         #endregion
@@ -33,12 +39,12 @@ namespace TDG0407.Systems.Data
 
         public void Initialize()
         {
-            
+            worldStates = new WorldState[MAX_SAVE_SLOTS] { null, null, null };
         }
 
         public void ValidateData()
         {
-            if(mapState == null) throw new Exception("Invalid value assigned to Map State.");
+            if(worldStates == null) throw new Exception("Invalid value assigned to World States.");
         }
 
         #endregion

@@ -1,7 +1,7 @@
 {
     "entities": [
         {
-            "entityId": "hero_knight",
+            "entityId": "test_entity",
             "entityType": "Life",
             "health": { "max": 100, "current": 100 },
             "stamina": { "max": 10, "current": 10 },

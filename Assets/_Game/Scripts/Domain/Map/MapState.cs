@@ -12,8 +12,15 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
         
-        public int randomSeed = -1;
         public readonly List<LevelState> levelStates = new();
+
+        #endregion
+        #region Constructors
+
+        public MapState(IEnumerable<LevelState> levelStates) 
+        {
+            this.levelStates.AddRange(levelStates);
+        }
 
         #endregion
         #region Methods
