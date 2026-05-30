@@ -1,4 +1,4 @@
-namespace TDG0407.Systems.Setting
+namespace TDG0407.Systems.Managers
 {
 
     /// <summary>

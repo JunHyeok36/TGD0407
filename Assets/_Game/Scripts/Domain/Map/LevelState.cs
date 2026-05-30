@@ -14,14 +14,19 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
     
-        public string levelId = null;
         public int levelInstanceId = -1;
+        public string levelId = null;
         public readonly Dictionary<Point, RoomState> roomStates = new();
 
         #endregion
         #region Constructors
 
-        public LevelState() { }
+        public LevelState(int levelInstanceId, string levelId, Dictionary<Point, RoomState> roomStates)
+        {
+            this.levelInstanceId = levelInstanceId;
+            this.levelId = levelId;
+            this.roomStates = roomStates;
+        }
 
         #endregion
         #region Methods

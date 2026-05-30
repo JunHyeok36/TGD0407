@@ -42,7 +42,7 @@ namespace TDG0407.Domain
         #endregion
         #region EventHandlers
 
-        public void OnTick()
+        public readonly void OnTick()
         {
             if(IsExpired == false)
                 _value.Current--;

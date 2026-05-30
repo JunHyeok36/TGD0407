@@ -12,7 +12,7 @@ namespace TDG0407.Systems.Data
     /// 저장/로드 대상이 되는 유저 저장 데이터 루트 클래스입니다.
     /// </summary>
     [Serializable]
-    public class UserData : IDataValidatable
+    public class GameData : IUserData
     {
         #region Static Fields
 
@@ -28,7 +28,7 @@ namespace TDG0407.Systems.Data
         #endregion
         #region Constructors
 
-        public UserData()
+        public GameData()
         {
             version = Application.version;
             Initialize();

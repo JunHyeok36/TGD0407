@@ -12,8 +12,8 @@ namespace TDG0407.Systems.Managers
         protected override void Awake()
         {
             base.Awake();
-            UserDataManager.Initialize();
-            TickManager.Initialize();
+
+            // TODO: 모든 Manager 초기화 및 무결성 검증
         }
     }
 

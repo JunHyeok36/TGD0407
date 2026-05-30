@@ -15,8 +15,8 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
 
-        public string roomId = null;
         public int roomInstanceId = -1;
+        public string roomId = null;
         public Point size = new(5, 5); // This room has (-size.x / 2, -size.y / 2) ~ (size.x / 2, size.y / 2) area.
         public RoomType type = RoomType.NULL;
         public readonly Dictionary<Point, EntityState> placed_entities = new();
@@ -24,9 +24,13 @@ namespace TDG0407.Domain.Map
         #endregion
         #region Constructors
 
-        public RoomState(string roomId)
+        public RoomState(int roomInstanceId, string roomId, Point size, RoomType type, Dictionary<Point, EntityState> placed_entities)
         {
+            this.roomInstanceId = roomInstanceId;
             this.roomId = roomId;
+            this.size = size;
+            this.type = type;
+            this.placed_entities = placed_entities;
         }
 
         #endregion
