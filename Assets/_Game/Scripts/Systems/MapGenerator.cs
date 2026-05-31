@@ -5,9 +5,9 @@ namespace TDG0407.Systems
 {
 
     using Core.Grid;
+    using Core.Utils;
     using Domain.Entities;
     using Domain.Map;
-    using Systems.Managers;
 
     /// <summary>
     /// 맵을 생성하는 시스템입니다.
@@ -16,16 +16,17 @@ namespace TDG0407.Systems
     {
         #region Methods
 
-        public static WorldState GenerateWorld(string worldSeed = null, string proceduralSeed = null)
+        public static WorldState GenerateWorld(int? worldSeed = null, int? proceduralSeed = null)
         {
-            worldSeed ??= Guid.NewGuid().ToString();
-            proceduralSeed ??= Guid.NewGuid().ToString();
+            worldSeed ??= SeedParser.NewIntSeed();
+            proceduralSeed ??= SeedParser.NewIntSeed();
 
-            MapState mapState = GenerateMap(worldSeed);
-            return new WorldState(worldSeed, proceduralSeed, mapState, null, null);
+            Random worldRandom = new(worldSeed.Value);
+            MapState mapState = GenerateMap(worldRandom);
+            return new WorldState(worldSeed.Value, proceduralSeed.Value, mapState, null, null);
         }
     
-        private static MapState GenerateMap(string worldSeed)
+        private static MapState GenerateMap(Random worldRandom)
         {
             // TODO: 맵 생성 알고리즘 구현 (현재는 테스트 상태)
             int nextLevelInstanceId = 0;
@@ -33,39 +34,55 @@ namespace TDG0407.Systems
 
             List<LevelState> levelStates = new()
             {
-                GenerateLevel("TEST_LEVEL_01", nextLevelInstanceId++, ref worldSeed, ref nextRoomInstanceId),
-                GenerateLevel("TEST_LEVEL_02", nextLevelInstanceId++, ref worldSeed, ref nextRoomInstanceId),
-                GenerateLevel("TEST_LEVEL_03", nextLevelInstanceId++, ref worldSeed, ref nextRoomInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
             };
 
             return new MapState(levelStates);
+
+            static string SelectTestLevelId(Random random)
+            {
+                string[] testLevelIds = new[] { "TEST_LEVEL", "TSET_LEVEL" };
+                return testLevelIds[random.Next(testLevelIds.Length)];
+            }
         }
 
-        private static LevelState GenerateLevel(string levelId, int levelInstanceId, ref string worldSeed, ref int nextRoomInstanceId)
+        private static LevelState GenerateLevel(string levelId, int levelInstanceId, Random worldRandom, ref int nextRoomInstanceId)
         {
-            Dictionary<Point, RoomState> roomStates = null;
-            if (levelId.Contains("TEST_LEVEL"))
+            Dictionary<Point, RoomState> roomStates = levelId switch
             {
-                roomStates = GenerateRoomStates("TEST_ROOM", ref worldSeed, ref nextRoomInstanceId);
-            }
-            else
-            {
-                throw new NotImplementedException($"Level generation for levelId '{levelId}' is not implemented.");
-            }
+                "TEST_LEVEL" => GenerateRoomStates("TEST_ROOM", worldRandom, ref nextRoomInstanceId),
+                "TSET_LEVEL" => GenerateRoomStates("TSET_ROOM", worldRandom, ref nextRoomInstanceId),
+                _ => throw new NotImplementedException($"Level generation for levelId '{levelId}' is not implemented."),
+            };
             return new LevelState(levelInstanceId, levelId, roomStates);
         }
 
-        private static Dictionary<Point, RoomState> GenerateRoomStates(string roomId, ref string worldSeed, ref int nextRoomInstanceId)
+        private static Dictionary<Point, RoomState> GenerateRoomStates(string roomId, Random worldRandom, ref int nextRoomInstanceId)
         {
             Dictionary<Point, RoomState> roomStates = new();
-            Point roomPosition = Point.zero;
-
-            roomStates[roomPosition] = new RoomState(
-                nextRoomInstanceId++,
-                roomId,
-                new Point(5, 5),
-                RoomType.Empty,
-                new Dictionary<Point, EntityState>());
+            
+            int y_min = worldRandom.Next(-2, 0);
+            int y_max = worldRandom.Next(0, 2);
+            int x_min = worldRandom.Next(-2, 0);
+            int x_max = worldRandom.Next(0, 2);
+            for(int y = y_min; y <= y_max; y++)
+            {
+                for(int x = x_min; x <= x_max; x++)
+                {
+                    Point roomPosition = new(x, y);
+                    int w = worldRandom.Next(5, 10);
+                    int h = worldRandom.Next(5, 10);
+                    roomStates[roomPosition] = new RoomState(
+                        nextRoomInstanceId++, 
+                        roomId, 
+                        new Point(w, h), 
+                        RoomType.Battle, 
+                        new Dictionary<Point, EntityState>()
+                    );
+                }
+            }
 
             return roomStates;
         }

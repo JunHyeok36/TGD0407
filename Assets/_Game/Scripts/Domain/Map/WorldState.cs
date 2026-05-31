@@ -14,8 +14,8 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
 
-        public string worldSeed = null;
-        public string proceduralSeed = null;
+        public int worldSeed;
+        public int proceduralSeed;
         public readonly MapState mapState;
 
         public readonly LifeState lifeState;
@@ -25,7 +25,7 @@ namespace TDG0407.Domain.Map
         #endregion
         #region Constructors
 
-        public WorldState(string worldSeed, string proceduralSeed, MapState mapState, LifeState lifeState, RoomPoint playerPosition) 
+        public WorldState(int worldSeed, int proceduralSeed, MapState mapState, LifeState lifeState, RoomPoint playerPosition) 
         {
             this.worldSeed = worldSeed;
             this.proceduralSeed = proceduralSeed;
