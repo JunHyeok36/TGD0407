@@ -26,6 +26,29 @@ namespace TDG0407.Systems.Managers
             _worldState = worldState;
         }
 
+        public static LevelState GetLevelState(int levelInstanceId)
+        {
+            foreach (var levelState in CurrentMapState.levelStates)
+            {
+                if (levelState.levelInstanceId == levelInstanceId)
+                    return levelState;
+            }
+            return null;
+        }
+
+        public static RoomState GetRoomState(int roomInstanceId)
+        {
+            foreach (var levelState in CurrentMapState.levelStates)
+            {
+                foreach (var roomState in levelState.roomStates.Values)
+                {
+                    if (roomState.roomInstanceId == roomInstanceId)
+                        return roomState;
+                }
+            }
+            return null;
+        }
+
         #endregion
     }
 }

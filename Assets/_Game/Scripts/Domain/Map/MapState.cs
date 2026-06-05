@@ -13,13 +13,19 @@ namespace TDG0407.Domain.Map
         #region Fields
         
         public readonly List<LevelState> levelStates = new();
+        public int? nextLevelInstanceId = null;
+        public int? nextRoomInstanceId = null;
+        public int? nextEntityInstanceId = null;
 
         #endregion
         #region Constructors
 
-        public MapState(IEnumerable<LevelState> levelStates) 
+        public MapState(IEnumerable<LevelState> levelStates, int nextLevelInstanceId, int nextRoomInstanceId, int nextEntityInstanceId) 
         {
             this.levelStates.AddRange(levelStates);
+            this.nextLevelInstanceId = nextLevelInstanceId;
+            this.nextRoomInstanceId = nextRoomInstanceId;
+            this.nextEntityInstanceId = nextEntityInstanceId;
         }
 
         #endregion
@@ -28,6 +34,8 @@ namespace TDG0407.Domain.Map
         public void Initialize()
         {
             levelStates.Clear();
+            nextLevelInstanceId = 0;
+            nextRoomInstanceId = 0;
         }
 
         #endregion

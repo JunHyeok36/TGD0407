@@ -23,7 +23,7 @@ namespace TDG0407.Domain.Cards
         public readonly Coefficients coefficients = new();
         public byte coolTicks = 0;
         public RangeType rangeType = RangeType.NULL;
-        public PointArea rangeValue = new();
+        public PointArea rangeValue = null;
         public readonly BoundedValue<byte> reinfocedCount = new(0, 0, 0);
 
         #endregion

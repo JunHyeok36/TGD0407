@@ -16,11 +16,16 @@ namespace TDG0407.Domain.Map
 
         public int worldSeed;
         public int proceduralSeed;
-        public readonly MapState mapState;
+        public MapState mapState;
 
-        public readonly LifeState lifeState;
-        public readonly RoomPoint playerPosition;
+        public LifeState lifeState;
+        public RoomPoint playerPosition;
 
+
+        #endregion
+        #region Properties
+
+        public RoomState FirstRoomState => mapState?.levelStates[0].roomStates[new Point(0, 0)];
 
         #endregion
         #region Constructors
@@ -35,6 +40,7 @@ namespace TDG0407.Domain.Map
         }
 
         #endregion
+
     }
 
 }

@@ -11,16 +11,16 @@ namespace TDG0407.Core.Grid
     {
         #region Fields
 
-        public string roomId = null;
+        public int? roomInstanceId = null;
         public Point position = Point.zero;
 
         #endregion
         #region Constructors
 
         public RoomPoint() { }
-        public RoomPoint(string roomId, Point position)
+        public RoomPoint(int? roomInstanceId, Point position)
         {
-            this.roomId = roomId;
+            this.roomInstanceId = roomInstanceId;
             this.position = position;
         }
 

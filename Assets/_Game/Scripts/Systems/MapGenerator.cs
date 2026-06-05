@@ -31,35 +31,36 @@ namespace TDG0407.Systems
             // TODO: 맵 생성 알고리즘 구현 (현재는 테스트 상태)
             int nextLevelInstanceId = 0;
             int nextRoomInstanceId = 0;
+            int nextEntityInstanceId = 0;
 
             List<LevelState> levelStates = new()
             {
-                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
-                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
-                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId, ref nextEntityInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId, ref nextEntityInstanceId),
+                GenerateLevel(SelectTestLevelId(worldRandom), nextLevelInstanceId++, worldRandom, ref nextRoomInstanceId, ref nextEntityInstanceId),
             };
 
-            return new MapState(levelStates);
+            return new MapState(levelStates, nextLevelInstanceId, nextRoomInstanceId, nextEntityInstanceId);
 
             static string SelectTestLevelId(Random random)
             {
-                string[] testLevelIds = new[] { "TEST_LEVEL", "TSET_LEVEL" };
+                string[] testLevelIds = new[] { "TEST_LEVEL", "EXPERIMENTAL_LEVEL" };
                 return testLevelIds[random.Next(testLevelIds.Length)];
             }
         }
 
-        private static LevelState GenerateLevel(string levelId, int levelInstanceId, Random worldRandom, ref int nextRoomInstanceId)
+        private static LevelState GenerateLevel(string levelId, int levelInstanceId, Random worldRandom, ref int nextRoomInstanceId, ref int nextEntityInstanceId)
         {
             Dictionary<Point, RoomState> roomStates = levelId switch
             {
-                "TEST_LEVEL" => GenerateRoomStates("TEST_ROOM", worldRandom, ref nextRoomInstanceId),
-                "TSET_LEVEL" => GenerateRoomStates("TSET_ROOM", worldRandom, ref nextRoomInstanceId),
+                "TEST_LEVEL" => GenerateRoomStates("TEST_ROOM", worldRandom, ref nextRoomInstanceId, ref nextEntityInstanceId),
+                "EXPERIMENTAL_LEVEL" => GenerateRoomStates("EXPERIMENTAL_ROOM", worldRandom, ref nextRoomInstanceId, ref nextEntityInstanceId),
                 _ => throw new NotImplementedException($"Level generation for levelId '{levelId}' is not implemented."),
             };
             return new LevelState(levelInstanceId, levelId, roomStates);
         }
 
-        private static Dictionary<Point, RoomState> GenerateRoomStates(string roomId, Random worldRandom, ref int nextRoomInstanceId)
+        private static Dictionary<Point, RoomState> GenerateRoomStates(string roomId, Random worldRandom, ref int nextRoomInstanceId, ref int nextEntityInstanceId)
         {
             Dictionary<Point, RoomState> roomStates = new();
             

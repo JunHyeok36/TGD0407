@@ -14,7 +14,7 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
     
-        public int levelInstanceId = -1;
+        public int? levelInstanceId = null;
         public string levelId = null;
         public readonly Dictionary<Point, RoomState> roomStates = new();
 
@@ -33,6 +33,7 @@ namespace TDG0407.Domain.Map
 
         public void Initialize()
         {
+            levelInstanceId = null;
         }
 
         #endregion

@@ -28,6 +28,9 @@ namespace TDG0407.TEST
         public void Test()
         {
             _worldState = MapGenerator.GenerateWorld(_worldSeed);
+            RoomState firstRoom = _worldState.FirstRoomState;
+            _worldState.lifeState = new();
+            _worldState.playerPosition = new(firstRoom.roomInstanceId, new(0, 0));
 
             if (_worldState == null)
             {
@@ -39,8 +42,11 @@ namespace TDG0407.TEST
             sb.AppendLine("[WorldState Dump]");
             sb.AppendLine($"worldSeed: {_worldState.worldSeed.ToString("X8")}");
             sb.AppendLine($"proceduralSeed: {_worldState.proceduralSeed.ToString("X8")}");
-            sb.AppendLine($"hasLifeState: {_worldState.lifeState != null}");
-            sb.AppendLine($"hasPlayerPosition: {_worldState.playerPosition != null}");
+
+            if (_worldState.playerPosition != null)
+            {
+                sb.AppendLine($"playerPosition: roomInstanceId={_worldState.playerPosition.roomInstanceId}, position=({_worldState.playerPosition.position.X},{_worldState.playerPosition.position.Y})");
+            }
 
             if (_worldState.mapState == null)
             {

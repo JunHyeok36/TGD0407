@@ -11,15 +11,15 @@ namespace TDG0407.Core.Grid
     {
         #region Fields
 
-        public string levelId = null;
+        public int? levelInstanceId = null;
 
         #endregion
         #region Constructors
 
         public LevelPoint() : base() { }
-        public LevelPoint(string levelId, string roomId, Point position) : base(roomId, position)
+        public LevelPoint(int? levelInstanceId, int? roomInstanceId, Point position) : base(roomInstanceId, position)
         {
-            this.levelId = levelId;
+            this.levelInstanceId = levelInstanceId;
         }
 
         #endregion

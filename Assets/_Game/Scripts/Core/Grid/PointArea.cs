@@ -36,14 +36,13 @@ namespace TDG0407.Core.Grid
         }
         public PointArea(Point point): this(new Point[] { point }) { }
         public PointArea(PointArea other) : this(other._points) { }
-        public PointArea(params Point[] points) : this((IEnumerable<Point>)points) { }
 
 #endregion
 #region Methods
 
-        public bool Equals(PointArea other) => _points.SetEquals(other._points);
+        public bool Equals(PointArea other) => other != null && _points.SetEquals(other._points);
         public override bool Equals(object obj) => obj is PointArea other && Equals(other);
-        public override int GetHashCode() => _points != null ? _points.GetHashCode() : 0;
+        public override int GetHashCode() => _points.Aggregate(0, (hash, point) => hash ^ point.GetHashCode());
         public object Clone()
         {
             return new PointArea(this);
