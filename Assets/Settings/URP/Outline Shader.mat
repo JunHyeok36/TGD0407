@@ -26,8 +26,9 @@ Material:
     m_Ints: []
     m_Floats:
     - _Depth_Threshold: 0.003
+    - _Edge_Threshold: 0.015
     - _Normal_Threshold: 0.14
-    - _Pixel_Size: -3.09
+    - _Pixel_Size: 8.35
     - _Threshold: 0.36
     m_Colors:
     - _Highlight_Color: {r: 1, g: 1, b: 1, a: 1}

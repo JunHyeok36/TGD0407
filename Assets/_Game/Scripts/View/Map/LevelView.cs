@@ -29,7 +29,7 @@ namespace TDG0407.View.Map
             _levelState = levelState;
             foreach (var roomState in levelState.roomStates.Values)
             {
-                var roomView = Instantiate(MapPrefabLoader.LoadRoomView(roomState.roomId), transform).GetComponent<RoomView>();
+                var roomView = Instantiate(MapPrefabLoader.LoadRoomViewAsync(roomState.roomId).Result, transform).GetComponent<RoomView>();
                 roomView.Initialize(roomState);
                 _roomViews.Add(roomView);
             }

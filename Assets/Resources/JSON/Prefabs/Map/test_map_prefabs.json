@@ -1,0 +1,12 @@
+{
+    "prefabs": [
+        {
+            "id": "room_1",
+            "path": "Assets/_Game/Prefabs/Map/Room/room_01.prefab"
+        },
+        {
+            "id": "room_2",
+            "path": "Assets/_Game/Prefabs/Map/Room/room_02.prefab"
+        }
+    ]
+}
