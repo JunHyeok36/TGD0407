@@ -13,22 +13,58 @@ namespace TDG0407.View.Map
     {
         #region Fields
 
-        private RoomState _roomState = null;
-        private readonly List<PointView> _pointViews = new();
+        [SerializeField] private RoomState _state = null;
+        [SerializeField] private List<PointView> _pointViews = new();
 
         #endregion
         #region Properties
 
-        public int? RoomInstanceId { get => _roomState?.roomInstanceId; }
+        public int? RoomInstanceId { get => _state?.roomInstanceId; }
 
         #endregion
         #region Methods
 
         public void Initialize(RoomState roomState)
         {
-            _roomState = roomState;
+            _state = roomState;
+
+            _pointViews.Clear();
+            PointView[] pointViews = transform.GetComponentsInChildren<PointView>();
+            for (int i = 0; i < pointViews.Length; i++)
+            {
+                PointView pointView = pointViews[i];
+                pointView.name = $"P({pointView.Point.X},{pointView.Point.Y})";
+
+                PointState pointState = pointView.State;
+                pointState.pointInstanceId = i;
+                pointState.position = new((int)pointView.transform.localPosition.x, (int)pointView.transform.localPosition.z);
+                pointView.Initialize(pointState);
+
+                _pointViews.Add(pointView);
+            }
         }
 
         #endregion
+        #if UNITY_EDITOR
+        #region DEV Methods
+
+        [ContextMenu("InitializePointViews")]
+        public void DEV_InitializePointViews()
+        {
+            Initialize(_state);
+            
+            var sortedPointViews = new List<PointView>(_pointViews);
+            sortedPointViews.Sort((x, y) => x.Point.X != y.Point.X ? x.Point.X.CompareTo(y.Point.X) : x.Point.Y.CompareTo(y.Point.Y));
+
+            for (int i = 0; i < sortedPointViews.Count; i++)
+            {
+                PointView pointView = sortedPointViews[i];
+                pointView.transform.SetSiblingIndex(i);
+                _pointViews.Add(pointView);
+            }
+        }
+
+        #endregion
+        #endif
     }
 }

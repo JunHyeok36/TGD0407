@@ -8,7 +8,7 @@ namespace TDG0407.Domain.Map
     using Domain.Entities;
 
     /// <summary>
-    /// 레벨 내 하나의 방 상태를 나타냅니다.
+    /// 레벨의 각 방 상태를 나타냅니다.
     /// </summary>
     [Serializable]
     public class RoomState
@@ -17,28 +17,37 @@ namespace TDG0407.Domain.Map
 
         public int? roomInstanceId = null;
         public string roomId = null;
+        public Point[] position = { Point.zero };
+        public RoomScale scale = RoomScale.Single;
         public Point size = new(5, 5); // This room has (-size.x / 2, -size.y / 2) ~ (size.x / 2, size.y / 2) area.
         public RoomType type = RoomType.NULL;
-        public readonly Dictionary<Point, EntityState> placed_entities = new();
+        public readonly Dictionary<Point, PointState> pointStates = new();
+        public readonly Dictionary<Point, WarpPointState> warpPointStates = new();
         public readonly Point[] unavailable_points = null;
+        
+        public int? nextPointInstanceId = null;
 
         #endregion
         #region Properties
 
-        public EntityState this[Point position]
+        public List<EntityState> this[Point position]
         {
             get
             {
-                if (placed_entities.TryGetValue(position, out var entity))
-                    return entity;
+                if (pointStates.TryGetValue(position, out var pointState))
+                    return pointState.placedEntities;
                 return null;
-            } 
-            set
+            }
+        }
+        
+        public int PlacedEntityCount
+        {
+            get
             {
-                if (value == null)
-                    placed_entities.Remove(position);
-                else
-                    placed_entities[position] = value;
+                int count = 0;
+                foreach (var pointState in pointStates.Values)
+                    count += pointState.placedEntities?.Count ?? 0;
+                return count;
             }
         }
 
@@ -46,19 +55,25 @@ namespace TDG0407.Domain.Map
         #region Constructors
 
         public RoomState(
-            int roomInstanceId, 
-            string roomId, 
-            Point size, 
-            RoomType type, 
-            Dictionary<Point, EntityState> placed_entities, 
-            Point[] unavailable_points = null)
+            int roomInstanceId,
+            string roomId,
+            Point[] position,
+            Point size,
+            RoomType type,
+            Dictionary<Point, PointState> pointStates,
+            Dictionary<Point, WarpPointState> warpPointStates,
+            Point[] unavailable_points = null,
+            int nextPointInstanceId = 0)
         {
             this.roomInstanceId = roomInstanceId;
             this.roomId = roomId;
+            this.position = position ?? throw new ArgumentNullException(nameof(position));
             this.size = size;
             this.type = type;
-            this.placed_entities = placed_entities;
+            this.pointStates = pointStates ?? new();
+            this.warpPointStates = warpPointStates ?? new();
             this.unavailable_points = unavailable_points;
+            this.nextPointInstanceId = nextPointInstanceId;
         }
 
         #endregion
@@ -67,6 +82,32 @@ namespace TDG0407.Domain.Map
         public void Initialize()
         {
             roomInstanceId = null;
+            nextPointInstanceId = 0;
+        }
+
+        /// <summary>
+        /// 두 방이 워프 포인트를 통해 연결되어 있는지 확인합니다.
+        /// </summary>
+        public bool IsLinkedWith(RoomState other)
+        {
+            foreach (var warpPointState in warpPointStates.Values)
+            {
+                if (warpPointState.target.roomInstanceId == other.roomInstanceId)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 워프 포인트를 추가합니다.
+        /// </summary>
+        /// <param name="position">워프 포인트의 위치</param>
+        /// <param name="warpPointState">워프 포인트 상태</param>
+        public void AddWarpPoint(Point position, WarpPointState warpPointState)
+        {
+            if (warpPointStates.ContainsKey(position))
+                throw new InvalidOperationException($"Warp point already exists at position {position}.");
+            warpPointStates[position] = warpPointState;
         }
         
         #endregion

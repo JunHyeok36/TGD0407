@@ -10,7 +10,7 @@ namespace TDG0407.Core.Grid
     public class RoomPoint
     {
         #region Fields
-
+    
         public int? roomInstanceId = null;
         public Point position = Point.zero;
 

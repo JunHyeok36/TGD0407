@@ -25,7 +25,6 @@ namespace TDG0407.Domain.Map
         #endregion
         #region Properties
 
-        public RoomState FirstRoomState => mapState?.levelStates[0].roomStates[new Point(0, 0)];
 
         #endregion
         #region Constructors

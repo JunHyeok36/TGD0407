@@ -25,10 +25,11 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Depth_Threshold: 0.003
-    - _Edge_Threshold: 0.015
-    - _Normal_Threshold: 0.14
-    - _Pixel_Size: 8.35
+    - _Depth_Threshold: 0.00006
+    - _Edge_Thickness: 1
+    - _Edge_Threshold: -0.3
+    - _Normal_Threshold: 0.1
+    - _Pixel_Size: 200
     - _Threshold: 0.36
     m_Colors:
     - _Highlight_Color: {r: 1, g: 1, b: 1, a: 1}

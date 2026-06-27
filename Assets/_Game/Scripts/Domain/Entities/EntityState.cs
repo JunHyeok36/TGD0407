@@ -25,7 +25,26 @@ namespace TDG0407.Domain.Entities
         #endregion
         #region Constructors
 
-        protected EntityState() { }
+        protected EntityState(
+            string entityId,
+            int entityInstanceId,
+            Point pos,
+            int health,
+            int stamina,
+            IEnumerable<Shield> shields = null)
+        {
+            this.entityId = entityId;
+            this.entityInstanceId = entityInstanceId;
+            this.pos = pos;
+            this.health = new BoundedValue<int>(0, health);
+            this.stamina = new BoundedValue<int>(0, stamina);
+
+            if (shields != null)
+            {
+                foreach (Shield shield in shields)
+                    this.shields.Enqueue(shield);
+            }   
+        }
 
         #endregion
         #region Methods

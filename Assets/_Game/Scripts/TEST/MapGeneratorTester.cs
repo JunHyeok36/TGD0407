@@ -4,9 +4,11 @@ using System.Text;
 namespace TDG0407.TEST
 {
 
+    using Core.Grid;
     using Core.Utils;
+    using Domain.Cards;
     using Domain.Map;
-    using Systems;
+    using Systems.Generators;
 
     public class MapGeneratorTester : MonoBehaviour
     {
@@ -28,67 +30,41 @@ namespace TDG0407.TEST
         public void Test()
         {
             _worldState = MapGenerator.GenerateWorld(_worldSeed);
-            RoomState firstRoom = _worldState.FirstRoomState;
-            _worldState.lifeState = new();
-            _worldState.playerPosition = new(firstRoom.roomInstanceId, new(0, 0));
-
-            if (_worldState == null)
-            {
-                Debug.LogWarning("World generation failed: WorldState is null.");
-                return;
-            }
-
-            StringBuilder sb = new();
-            sb.AppendLine("[WorldState Dump]");
-            sb.AppendLine($"worldSeed: {_worldState.worldSeed.ToString("X8")}");
-            sb.AppendLine($"proceduralSeed: {_worldState.proceduralSeed.ToString("X8")}");
-
-            if (_worldState.playerPosition != null)
-            {
-                sb.AppendLine($"playerPosition: roomInstanceId={_worldState.playerPosition.roomInstanceId}, position=({_worldState.playerPosition.position.X},{_worldState.playerPosition.position.Y})");
-            }
-
-            if (_worldState.mapState == null)
-            {
-                sb.AppendLine("mapState: null");
-                Debug.Log(sb.ToString());
-                return;
-            }
-
-            sb.AppendLine($"levelCount: {_worldState.mapState.levelStates.Count}");
-
+            
             for (int i = 0; i < _worldState.mapState.levelStates.Count; i++)
             {
                 LevelState level = _worldState.mapState.levelStates[i];
-                if (level == null)
+                Debug.Log($"Level[{i}] id={level.levelId}, instanceId={level.levelInstanceId}, scale={level.scale}, size=({level.size.X},{level.size.Y}), roomCount={level.roomStates.Count}");
+                // Graphical representation of the rooms in the level
+                int halfWidth = level.size.X / 2, 
+                    halfHeight = level.size.Y / 2;
+                StringBuilder strBuilder = new();
+                strBuilder.AppendLine();
+                for (int y = -halfHeight; y <= halfHeight; y++)
                 {
-                    sb.AppendLine($"  Level[{i}]: null");
-                    continue;
+                    for (int x = -halfWidth; x <= halfWidth; x++)
+                    {
+                        Point pos = new(x, y);
+                        if (level.roomStates.TryGetValue(pos, out _))
+                        {
+                            if (pos == level.startPoint) strBuilder.Append("◯");
+                            else if (pos == level.endPoint) strBuilder.Append("✕");
+                            else strBuilder.Append("■");
+                        }
+                        else strBuilder.Append("□");
+                    }
+                    strBuilder.AppendLine();
                 }
-
-                int roomCount = level.roomStates?.Count ?? 0;
-                sb.AppendLine($"  Level[{i}] id={level.levelId}, instanceId={level.levelInstanceId}, roomCount={roomCount}");
-
-                if (level.roomStates == null) continue;
-
+                Debug.Log(strBuilder.ToString());
+    
+                // Log each room's details
                 foreach (var roomPair in level.roomStates)
                 {
                     var roomPos = roomPair.Key;
                     RoomState room = roomPair.Value;
-
-                    if (room == null)
-                    {
-                        sb.AppendLine($"    Room@({roomPos.X},{roomPos.Y}): null");
-                        continue;
-                    }
-
-                    int placedEntityCount = room.placed_entities?.Count ?? 0;
-                    sb.AppendLine(
-                        $"    Room@({roomPos.X},{roomPos.Y}) id={room.roomId}, instanceId={room.roomInstanceId}, type={room.type}, size=({room.size.X},{room.size.Y}), entities={placedEntityCount}");
+                    Debug.Log($"Room@({roomPos.X},{roomPos.Y}) id={room.roomId}, instanceId={room.roomInstanceId}, type={room.type}, scale={room.scale}, size=({room.size.X},{room.size.Y}), entities={room.PlacedEntityCount}");
                 }
             }
-
-            Debug.Log(sb.ToString());
         }
     }
     

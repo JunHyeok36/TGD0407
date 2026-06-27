@@ -13,18 +13,21 @@ namespace TDG0407.Domain.Map
         #region Fields
         
         public readonly List<LevelState> levelStates = new();
-        public int? nextLevelInstanceId = null;
-        public int? nextRoomInstanceId = null;
-        public int? nextEntityInstanceId = null;
+        public int nextLevelInstanceId;
+        public int nextEntityInstanceId;
+
+        #endregion
+        #region Properties
+
+        public RoomState TheFirstRoom => levelStates[0]?.roomStates[levelStates[0].startPoint];
 
         #endregion
         #region Constructors
 
-        public MapState(IEnumerable<LevelState> levelStates, int nextLevelInstanceId, int nextRoomInstanceId, int nextEntityInstanceId) 
+        public MapState(IEnumerable<LevelState> levelStates, int nextLevelInstanceId, int nextEntityInstanceId)
         {
             this.levelStates.AddRange(levelStates);
             this.nextLevelInstanceId = nextLevelInstanceId;
-            this.nextRoomInstanceId = nextRoomInstanceId;
             this.nextEntityInstanceId = nextEntityInstanceId;
         }
 
@@ -35,7 +38,20 @@ namespace TDG0407.Domain.Map
         {
             levelStates.Clear();
             nextLevelInstanceId = 0;
-            nextRoomInstanceId = 0;
+        }
+
+        public int PublishLevelInstanceId()
+        {
+            int currentId = nextLevelInstanceId;
+            nextLevelInstanceId++;
+            return currentId;
+        }
+
+        public int PublishEntityInstanceId()
+        {
+            int currentId = nextEntityInstanceId;
+            nextEntityInstanceId++;
+            return currentId;
         }
 
         #endregion

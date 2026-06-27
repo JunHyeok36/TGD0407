@@ -13,13 +13,13 @@ namespace TDG0407.Core.Grid
     [Serializable]
     public struct Point : IComparable<Point>, IEquatable<Point>
     {
-#region Fields
+        #region Fields
 
         [SerializeField] private int _x;
         [SerializeField] private int _y;
 
-#endregion
-#region Properties
+        #endregion
+        #region Properties
 
         /// <summary>
         /// X좌표를 나타냅니다.
@@ -30,8 +30,8 @@ namespace TDG0407.Core.Grid
         /// </summary>
         public int Y { readonly get => _y; set => _y = value; }
 
-#endregion
-#region Constructors
+        #endregion
+        #region Constructors
 
         public Point(int x = 0, int y = 0)
         {
@@ -42,8 +42,8 @@ namespace TDG0407.Core.Grid
         public Point(Vector2 vector) : this((int)vector.x, (int)vector.y) { }
         public Point(Vector3 vector) : this((int)vector.x, (int)vector.y) { }
 
-#endregion
-#region Methods
+        #endregion
+        #region Methods
 
         public override readonly int GetHashCode()
         {
@@ -86,8 +86,8 @@ namespace TDG0407.Core.Grid
             return $"({X}, {Y})";
         }
 
-#endregion
-#region Operators
+        #endregion
+        #region Operators
 
         public static implicit operator Vector2(Point point) => new(point._x, point._y);
         public static implicit operator Point(Vector2 vector) => new((int)vector.x, (int)vector.y);
@@ -100,8 +100,8 @@ namespace TDG0407.Core.Grid
         public static bool operator == (Point a, Point b) => a._x == b._x && a._y == b._y;
         public static bool operator != (Point a, Point b) => a._x != b._x || a._y != b._y;
 
-#endregion
-#region Static Fields
+        #endregion
+        #region Static Fields
 
         /// <summary>
         /// (0, 0) 저점을 나타냅니다.
@@ -112,10 +112,39 @@ namespace TDG0407.Core.Grid
         /// </summary>
         public static readonly Point one = new(1, 1);
 
-#endregion
+        #endregion
     }
 
-#if UNITY_EDITOR
+    public static class PointExtensions
+    {
+
+        public static Direction To4Direction(this Point point)
+        {
+            if (point.X == 0 && point.Y > 0) return Direction.Up;
+            if (point.X == 0 && point.Y < 0) return Direction.Down;
+            if (point.X < 0 && point.Y == 0) return Direction.Left;
+            if (point.X > 0 && point.Y == 0) return Direction.Right;
+
+            return Direction.NULL;
+        }
+
+        public static Direction To8Direction(this Point point)
+        {
+            if (point.X == 0 && point.Y > 0) return Direction.Up;
+            if (point.X > 0 && point.Y > 0) return Direction.UpRight;
+            if (point.X > 0 && point.Y == 0) return Direction.Right;
+            if (point.X > 0 && point.Y < 0) return Direction.DownRight;
+            if (point.X == 0 && point.Y < 0) return Direction.Down;
+            if (point.X < 0 && point.Y < 0) return Direction.DownLeft;
+            if (point.X < 0 && point.Y == 0) return Direction.Left;
+            if (point.X < 0 && point.Y > 0) return Direction.UpLeft;
+
+            return Direction.NULL;
+        }
+
+    }
+
+    #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(Point))]
     public class PointDrawer : PropertyDrawer
     {
@@ -139,5 +168,5 @@ namespace TDG0407.Core.Grid
             EditorGUI.EndProperty(); 
         }
     }
-#endif
+    #endif
 }

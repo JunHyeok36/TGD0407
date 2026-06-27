@@ -1,0 +1,12 @@
+{
+    "prefabs": [
+        {
+            "id": "test_point_0",
+            "path": "Assets/_Game/Prefabs/Test/Points/test_point_0.prefab"
+        },
+        {
+            "id": "test_point_1",
+            "path": "Assets/_Game/Prefabs/Test/Points/test_point_1.prefab"
+        }
+    ]
+}

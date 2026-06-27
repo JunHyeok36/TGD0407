@@ -14,17 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: fd42a59c64ad7ae4db6815622d2cabad
-  m_SerializeEntries:
-  - m_GUID: 84f0f175fcb7c284388757b822cd240e
-    m_Address: Assets/_Game/Prefabs/Map/Room/room_02.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b5086ca155f21e943a6a6bc52cd3dba8
-    m_Address: Assets/_Game/Prefabs/Map/Room/room_01.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: e7dbbfead5c5e9f44911201303670a0b, type: 2}
   m_SchemaSet:

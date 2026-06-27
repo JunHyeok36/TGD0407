@@ -17,4 +17,25 @@ namespace TDG0407.Core.Grid
         UpLeft = 7,
     }
 
+    public static class DirectionExtensions
+    {
+        
+        public static Point ToPoint(this Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => new Point(0, 1),
+                Direction.UpRight => new Point(1, 1),
+                Direction.Right => new Point(1, 0),
+                Direction.DownRight => new Point(1, -1),
+                Direction.Down => new Point(0, -1),
+                Direction.DownLeft => new Point(-1, -1),
+                Direction.Left => new Point(-1, 0),
+                Direction.UpLeft => new Point(-1, 1),
+                _ => new Point(0, 0),
+            };
+        }
+
+    }
+
 }
