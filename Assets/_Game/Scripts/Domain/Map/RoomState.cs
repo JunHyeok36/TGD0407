@@ -6,6 +6,7 @@ namespace TDG0407.Domain.Map
 
     using Core.Grid;
     using Domain.Entities;
+    using TDG0407.View.Map;
 
     /// <summary>
     /// 레벨의 각 방 상태를 나타냅니다.
@@ -111,7 +112,12 @@ namespace TDG0407.Domain.Map
                 throw new InvalidOperationException($"Warp point already exists at position {position}.");
             warpPointStates[position] = warpPointState;
         }
-        
+
+        public static implicit operator RoomState(RoomView v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
     

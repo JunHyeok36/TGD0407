@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b703594f76e5df440845ec6680617fe4, type: 3}
+  m_Name: Test_room_quad_15x15_battle_0
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.Domain.Archive.RoomDocument
+  prefab:
+    m_AssetGUID: 5180d826e5886b344b1cdbff3e1d0753
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  id: Test_room_quad_15x15_battle_0
+  scale: 2
+  size:
+    _x: 15
+    _y: 15
+  type: 2817
+  unavailablePoints: []
+  warpablePoints:
+  - _x: 0
+    _y: 0
+  - _x: 0
+    _y: 0
+  - _x: 0
+    _y: 0
+  - _x: 0
+    _y: 0
+  - _x: 0
+    _y: 0
+  - _x: 0
+    _y: 0
+  appearanceWeight: 10000

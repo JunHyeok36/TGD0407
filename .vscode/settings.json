@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "TGD0407.slnx",
+    "dotnet.defaultSolution": "TDG.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }

@@ -2,6 +2,7 @@ namespace TDG0407.Systems.Managers
 {
 
     using Core.Utils;
+    using Domain.Archive;
     using Systems.Data;
 
     /// <summary>
@@ -13,8 +14,14 @@ namespace TDG0407.Systems.Managers
         {
             base.Awake();
 
-            // TODO: 모든 Manager 초기화 및 무결성 검증
+            InitializeManagers();
+        }   
+
+        private async void InitializeManagers()
+        {
+            await ArchiveManager.Initialize();
         }
+
     }
 
 }

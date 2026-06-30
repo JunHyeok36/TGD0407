@@ -38,17 +38,15 @@ namespace TDG0407.Domain.Archive
 
             var filteredRooms = new List<RoomDocument>();
             Predicate<RoomDocument> filter = null;
-            if (scale == RoomScale.Random && type == RoomType.Random)
+            if (scale < 0 && type < 0)
                 filter = roomDocument => true;
-            else if (scale != RoomScale.NULL && type != RoomType.NULL)
-                filter = roomDocument => roomDocument.scale == scale && roomDocument.type == type;
-            else if (scale != RoomScale.NULL)
-                filter = roomDocument => roomDocument.scale == scale;
-            else if (type != RoomType.NULL)
+            else if (scale < 0)
                 filter = roomDocument => roomDocument.type == type;
+            else if (type < 0)
+                filter = roomDocument => roomDocument.scale == scale;
             else 
-                filter = roomDocument => true;
-            
+                filter = roomDocument => roomDocument.scale == scale && roomDocument.type == type;
+
             int totalWeight = 0;
             foreach (var roomDocument in roomDocuments)
             {

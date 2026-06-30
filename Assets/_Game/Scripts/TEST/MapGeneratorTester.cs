@@ -17,9 +17,9 @@ namespace TDG0407.TEST
         [ContextMenuItem("Generate Map", nameof(Test))]
         [SerializeField] private WorldState _worldState;
 
-        void Start()
+        async void Start()
         {
-            ArchiveManager.Initialize();
+            await ArchiveManager.Initialize();
             Test();
         }
 
@@ -28,9 +28,9 @@ namespace TDG0407.TEST
             _worldSeed = SeedParser.NewIntSeed();
         }
 
-        public void Test()
+        public async void Test()
         {
-            _worldState = MapGenerator.GenerateWorld(_worldSeed);
+            _worldState = await MapGenerator.GenerateWorld(_worldSeed);
             
             for (int i = 0; i < _worldState.mapState.levelStates.Count; i++)
             {

@@ -35,7 +35,7 @@ namespace TDG0407.Domain.Archive
         public async Task<RoomView> InstantiateRoomView(
             int roomInstanceId, 
             Point[] position, 
-            Dictionary<Point, WarpPointState> warpPointStates)
+            Dictionary<Point, WarpPointState> warpPointStates = null)
         {
             var handle = prefab.InstantiateAsync();
             var roomViewObject = await handle.Task;
@@ -49,11 +49,15 @@ namespace TDG0407.Domain.Archive
                 Debug.LogError($"RoomView prefab for room ID '{id}' is missing the RoomView component.");
                 return null;
             }
+            roomViewObject.SetActive(false);
 
-            foreach (var warpPointState in warpPointStates)
+            if (warpPointStates != null)
             {
-                if (!warpablePoints.Contains(warpPointState.Key))
-                    warpPointStates.Remove(warpPointState.Key);
+                foreach (var warpPointState in warpPointStates.ToList())
+                {
+                    if (!warpablePoints.Contains(warpPointState.Key))
+                        warpPointStates.Remove(warpPointState.Key);
+                }
             }
 
             roomView.Initialize(new RoomState(
@@ -70,6 +74,24 @@ namespace TDG0407.Domain.Archive
 
             return roomView;
             // Destory with 'Addressables.ReleaseInstance(roomView.gameObject)' when the room is no longer needed.
+        }
+
+        public void SetWarpPointStates(RoomView target, Dictionary<Point, WarpPointState> warpPointStates)
+        {
+            if (target == null || warpPointStates == null)
+                return;
+
+            foreach (var warpPointState in warpPointStates.ToList())
+            {
+                if (!warpablePoints.Contains(warpPointState.Key))
+                    warpPointStates.Remove(warpPointState.Key);
+            }
+
+            target.State.warpPointStates.Clear();
+            foreach (var warpPointState in warpPointStates)
+            {
+                target.State.warpPointStates.Add(warpPointState.Key, warpPointState.Value);
+            }
         }
         
         #endregion

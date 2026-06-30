@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407.Domain.Archive.RoomCollection
   id: Test
   roomDocuments:
+  - {fileID: 11400000, guid: 41102d135701c1f418d4a286e4a16058, type: 2}
+  - {fileID: 11400000, guid: 508270f388b98c744855b73278284efe, type: 2}
   - {fileID: 11400000, guid: 1e2aec6a3570ab2448cdd3efb14cb2c0, type: 2}
+  - {fileID: 11400000, guid: c6091a675e9f1db408244b4fa9d717e2, type: 2}
+  - {fileID: 11400000, guid: 3516671f60cb71a4e94bcc36a3da3e44, type: 2}

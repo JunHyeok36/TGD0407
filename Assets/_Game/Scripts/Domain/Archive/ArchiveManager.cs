@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace TDG0407.Domain.Archive
@@ -12,9 +14,9 @@ namespace TDG0407.Domain.Archive
         #endregion
         #region Methods
 
-        public static void Initialize()
+        public static async Task Initialize()
         {
-            levelCollection = Addressables.LoadAssetAsync<LevelCollection>("Assets/_Game/Data/Map/_LevelCollection.asset").WaitForCompletion();
+            levelCollection = await Addressables.LoadAssetAsync<LevelCollection>("Assets/_Game/Data/Map/_LevelCollection.asset").Task;
         }
 
         #endregion

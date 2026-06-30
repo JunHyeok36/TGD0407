@@ -22,44 +22,44 @@ namespace TDG0407.Systems.Generators
     {
         #region Methods
 
-        public static WorldState GenerateWorld(int? worldSeed = null, int? proceduralSeed = null)
+        public static async Task<WorldState> GenerateWorld(int? worldSeed = null, int? proceduralSeed = null)
         {
             worldSeed ??= SeedParser.NewIntSeed();
             proceduralSeed ??= SeedParser.NewIntSeed();
 
             System.Random worldRandom = new(worldSeed.Value);
-            MapState mapState = GenerateMap(worldRandom);
+            MapState mapState = await GenerateMap(worldRandom);
             return new WorldState(worldSeed.Value, proceduralSeed.Value, mapState, null, null);
         }
-    
-        private static MapState GenerateMap(System.Random worldRandom)
+
+        private static async Task<MapState> GenerateMap(System.Random worldRandom)
         {
             Ref<int> nextLevelInstanceId = new(0);
             Ref<int> nextEntityInstanceId = new(0);
 
             List<LevelState> levelStates = new()
             {
-                GenerateLevel(
+                await GenerateLevel(
                     new RandomLevelGenerateParameter(
-                        SelectTestLevelId(worldRandom), 
+                        "Test", 
                         nextLevelInstanceId.Value++, 
                         SelectTestLevelScale(worldRandom), 
                         worldRandom, 
                         nextEntityInstanceId
                     )
                 ),
-                GenerateLevel(
+                await GenerateLevel(
                     new RandomLevelGenerateParameter(
-                        SelectTestLevelId(worldRandom), 
+                        "Test", 
                         nextLevelInstanceId.Value++, 
                         SelectTestLevelScale(worldRandom), 
                         worldRandom, 
                         nextEntityInstanceId
                     )
                 ),
-                GenerateLevel(
+                await GenerateLevel(
                     new RandomLevelGenerateParameter(
-                        SelectTestLevelId(worldRandom), 
+                        "Test", 
                         nextLevelInstanceId.Value++, 
                         SelectTestLevelScale(worldRandom), 
                         worldRandom, 
@@ -69,13 +69,6 @@ namespace TDG0407.Systems.Generators
             };
 
             return new MapState(levelStates, nextLevelInstanceId.Value, nextEntityInstanceId.Value);
-
-            static string SelectTestLevelId(System.Random random)
-            {
-                // TODO: 테스트용 레벨 ID 선택 로직 구현 (현재는 임의로 선택)
-                string[] testLevelIds = new[] { "test" };
-                return testLevelIds[random.Next(testLevelIds.Length)];
-            }
 
             static LevelScale SelectTestLevelScale(System.Random random)
             {
@@ -99,7 +92,7 @@ namespace TDG0407.Systems.Generators
             }
         }
 
-        private static LevelState GenerateLevel(RandomLevelGenerateParameter parameter)
+        private static async Task<LevelState> GenerateLevel(RandomLevelGenerateParameter parameter)
         {
             Ref<int> nextRoomInstanceId = new(0);
 
@@ -163,44 +156,55 @@ namespace TDG0407.Systems.Generators
             pathPoints.AddRange(additionalPathPoints);
 
             Dictionary<Point, RoomState> roomStates = new();
-
-            Dictionary<Point, RoomDocument> roomDocuments = new();
-            HashSet<Point> remainingRoomPoints = new(pathPoints);
-            List<(RoomScale scale, Point[] points)> groupedRooms = new();
-            remainingRoomPoints.RemoveWhere(point => point.Equals(startPoint) || point.Equals(endPoint));
+            HashSet<Point> remainingPoints = new(pathPoints);
+            remainingPoints.RemoveWhere(point => point.Equals(startPoint) || point.Equals(endPoint));
             //roomStates[startPoint] = GenerateRoom(nextRoomInstanceId.Value++, new Point[] { startPoint }, RoomScale.Single, parameter);
-            while (remainingRoomPoints.Count > 0)
+            while (remainingPoints.Count > 0)
             {
-                Point anchorPoint = remainingRoomPoints.GetRandomPoint(parameter.worldRandom);
+                Point anchorPoint = remainingPoints.GetRandomPoint(parameter.worldRandom);
 
                 RoomScale roomScale = RoomScale.Single;
                 Point[] groupedPoints = new Point[] { anchorPoint };
 
-                if (TryCreateQuadGroup(anchorPoint, remainingRoomPoints, parameter.worldRandom, out Point[] quadPoints))
+                if (TryCreateQuadGroup(anchorPoint, remainingPoints, parameter.worldRandom, out Point[] quadPoints))
                 {
                     roomScale = RoomScale.Quad;
                     groupedPoints = quadPoints;
                 }
-                else if (TryCreateDoubleGroup(anchorPoint, remainingRoomPoints, parameter.worldRandom, out Point[] doublePoints))
+                else if (TryCreateDoubleGroup(anchorPoint, remainingPoints, parameter.worldRandom, out Point[] doublePoints))
                 {
                     roomScale = RoomScale.Double;
                     groupedPoints = doublePoints; 
                 }
 
                 RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(parameter.levelId)
-                    .roomCollection.ChoiceOne(roomScale, RoomType.Battle, parameter.worldRandom);
+                    .roomCollection.ChoiceOne(roomScale, RoomType.Random, parameter.worldRandom);
+                if (roomDocument== null)
+                    throw new InvalidOperationException($"No RoomDocument found for levelId '{parameter.levelId}', roomScale '{roomScale}', and roomType 'Random'.");
+                RoomView roomView = await roomDocument.InstantiateRoomView(
+                    nextRoomInstanceId.Value++,
+                    groupedPoints
+                );
+                RoomState roomState = roomView.State;
+                if(roomState.scale == RoomScale.Double)
+                {
+                    Point size = new(Mathf.Abs(groupedPoints[0].X - groupedPoints[1].X) + 1, Mathf.Abs(groupedPoints[0].Y - groupedPoints[1].Y) + 1);
+                    // if y of room size is longer than x, then rotate the room view 90 degrees counterclockwise
+                    if(size.Y > size.X)
+                        roomView.RotateRoomViews(90);
+                }
 
                 foreach (Point point in groupedPoints)
                 {
-                    //roomStates[point] = roomState;
-                    remainingRoomPoints.Remove(point);
+                    roomStates[point] = roomState;
+                    remainingPoints.Remove(point);
                 }
 
                 static bool TryCreateDoubleGroup(Point anchorPoint, HashSet<Point> availablePoints, System.Random random, out Point[] groupedPoints)
                 {
                     groupedPoints = null;
 
-                    if (random.NextDouble() > 0.05f)
+                    if (random.NextDouble() > 0.1f)
                         return false;
 
                     Point[] directions = new[] {
@@ -349,98 +353,6 @@ namespace TDG0407.Systems.Generators
 
             return new LevelState(parameter.levelInstanceId, parameter.levelId, parameter.levelScale, levelSize, roomStates, startPoint, endPoint, nextRoomInstanceId.Value);
         }
-
-        private static Task<RoomState> GenerateRoom(int roomInstanceId, Point[] roomPosition, RoomScale roomScale, RandomLevelGenerateParameter parameter)
-        {
-            RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(parameter.levelId).roomCollection.ChoiceOne(roomScale, RoomType.Battle, parameter.worldRandom);
-            if (roomDocument == null)
-                throw new InvalidOperationException($"No room document found for levelId '{parameter.levelId}' with roomScale '{roomScale}' and roomType '{RoomType.Battle}'.");
-
-            Task<RoomView> roomViewTask = roomDocument.InstantiateRoomView(
-                roomInstanceId, 
-                roomPosition,
-                new Dictionary<Point, WarpPointState>()
-            );
-            
-            while (!roomViewTask.IsCompleted) {};
-            RoomState roomState = roomViewTask.Result.State;
-
-
-
-            return null;
-            //TODO: 방 생성 알고리즘 구현 (현재는 테스트 상태)
-            string roomId = parameter.levelId switch
-            {
-                "TEST_LEVEL" => "TEST_ROOM",
-                "EXPERIMENTAL_LEVEL" => "EXPERIMENTAL_ROOM",
-                _ => throw new NotImplementedException($"Room generation for levelId '{parameter.levelId}' is not implemented."),
-            };
-
-            int std_bounds = parameter.worldRandom.Next(3, 5);
-            Point roomSize = Point.zero;
-            switch (roomScale)
-            {
-                case RoomScale.Single:
-                    roomSize = new(std_bounds * 2 + 1, std_bounds * 2 + 1);
-                    break;
-                case RoomScale.Double:
-                    Direction dir = (roomPosition[1] - roomPosition[0]).To4Direction();
-                    switch(dir)
-                    {
-                        case Direction.Left or Direction.Right:
-                            roomSize = new(std_bounds * 4 + 1, std_bounds * 2 + 1);
-                            break;
-                        case Direction.Up or Direction.Down:
-                            roomSize = new(std_bounds * 2 + 1, std_bounds * 4 + 1);
-                            break;
-                    }
-                    break;
-                case RoomScale.Quad:
-                    roomSize = new(std_bounds * 4 + 1, std_bounds * 4 + 1);
-                    break;
-                default:
-                    throw new NotImplementedException($"Room generation for roomScale '{roomScale}' is not implemented.");
-            }
-
-            int nextPointInstanceId = 0;
-            Dictionary<Point, PointState> pointStates = GeneratePointStates(roomSize, ref nextPointInstanceId);
-            return new RoomState(
-                roomInstanceId, 
-                roomId, 
-                roomPosition,
-                roomScale,
-                roomSize, 
-                RoomType.Battle, 
-                pointStates,
-                new Dictionary<Point, WarpPointState>(),
-                unavailablePoints: null,
-                nextPointInstanceId: nextPointInstanceId
-            );
-        }
-
-        private static Dictionary<Point, PointState> GeneratePointStates(Point roomSize, ref int nextPointInstanceId)
-        {
-            // TODO: 방 포인트 생성 알고리즘 구현 (현재는 테스트 상태)
-            Dictionary<Point, PointState> pointStates = new();
-            int halfWidth = roomSize.X / 2, 
-                halfHeight = roomSize.Y / 2;
-            for (int y = -halfHeight; y <= halfHeight; y++)
-            {
-                for (int x = -halfWidth; x <= halfWidth; x++)
-                {
-                    Point pointPos = new(x, y);
-                    PointState pointState = new(
-                        pointInstanceId: nextPointInstanceId++,
-                        position: pointPos,
-                        isAvailable: true
-                    );
-                    pointStates[pointPos] = pointState;
-                }
-            }
-            return pointStates;
-        }
-        
-
 
         #endregion
     }
