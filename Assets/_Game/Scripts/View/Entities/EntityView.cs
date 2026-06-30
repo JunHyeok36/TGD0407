@@ -17,6 +17,14 @@ namespace TDG0407.View.Entities
         public EntityState State { get => _state; set => _state = value; }
 
         #endregion
+        #region Methods
+
+        public void Initialize(EntityState state)
+        {
+            _state = state;
+        }
+
+        #endregion
     }
 
 }

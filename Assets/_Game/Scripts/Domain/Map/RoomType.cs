@@ -6,6 +6,7 @@ namespace TDG0407.Domain.Map
     /// </summary>
     public enum RoomType : short
     {
+        Random = -2,
         NULL = -1,
 
         // 0x000 ~ 0x0FF : game system

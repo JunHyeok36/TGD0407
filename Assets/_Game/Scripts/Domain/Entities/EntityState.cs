@@ -17,7 +17,7 @@ namespace TDG0407.Domain.Entities
 
         public string entityId = null;
         public int? entityInstanceId = null;
-        public Point pos = Point.zero;
+        public Point position = Point.zero;
         public readonly BoundedValue<int> health = new(0, 50);
         public readonly BoundedValue<int> stamina = new(0, 10);
         public readonly Queue<Shield> shields = new();
@@ -28,20 +28,20 @@ namespace TDG0407.Domain.Entities
         protected EntityState(
             string entityId,
             int entityInstanceId,
-            Point pos,
+            Point position,
             int health,
             int stamina,
             IEnumerable<Shield> shields = null)
         {
             this.entityId = entityId;
             this.entityInstanceId = entityInstanceId;
-            this.pos = pos;
+            this.position = position;
             this.health = new BoundedValue<int>(0, health);
             this.stamina = new BoundedValue<int>(0, stamina);
 
             if (shields != null)
             {
-                foreach (Shield shield in shields)
+                foreach (var shield in shields)
                     this.shields.Enqueue(shield);
             }   
         }

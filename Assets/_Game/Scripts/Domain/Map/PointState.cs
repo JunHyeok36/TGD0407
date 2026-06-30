@@ -23,6 +23,11 @@ namespace TDG0407.Domain.Map
         public bool isAvailable = true;
 
         #endregion
+        #region Properties
+
+        public List<EntityState> PlacedEntities { get => placedEntities; }
+
+        #endregion
         #region Constructors
 
         public PointState(

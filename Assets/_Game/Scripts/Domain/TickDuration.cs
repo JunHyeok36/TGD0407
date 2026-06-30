@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace TDG0407.Domain
 {
@@ -14,8 +15,8 @@ namespace TDG0407.Domain
     {
         #region Fields
 
-        private TickDurationType _tickDurationType;
-        private readonly BoundedValue<int> _value;
+        [SerializeField] private TickDurationType _tickDurationType;
+        [SerializeField] private BoundedValue<int> _value;
 
         #endregion
         #region Properties

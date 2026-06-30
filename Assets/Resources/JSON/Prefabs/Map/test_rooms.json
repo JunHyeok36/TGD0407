@@ -1,8 +1,0 @@
-{
-    "prefabs": [
-        {
-            "id": "test_room_single_5x5_empty_0",
-            "path": "Assets/_Game/Prefabs/Test/Rooms/test_room_single_5x5_empty_0.prefab"
-        }
-    ]
-}

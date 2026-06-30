@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace TDG0407.Domain.Cards
 {
@@ -14,7 +15,7 @@ namespace TDG0407.Domain.Cards
     {
         #region Fields
 
-        private readonly List<CardState> _allCards = new();
+        [SerializeField] private List<CardState> _allCards = new();
 
         private readonly List<CardState> _remainedCards = new();
         private CardSlot[] _handCardSlots = null;

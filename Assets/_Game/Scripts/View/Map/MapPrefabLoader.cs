@@ -23,7 +23,7 @@ namespace TDG0407.View.Map
 
         public static async Task<RoomView> LoadRoomViewAsync(string roomId)
         {
-            TextAsset jsonAsset = Resources.Load<TextAsset>("JSON/Prefabs/Map/test_map_prefabs");
+            TextAsset jsonAsset = Resources.Load<TextAsset>("Data/Prefabs/Map/test_map_prefabs");
             if (jsonAsset == null)
             {
                 Debug.LogError("Failed to load prefab data JSON.");

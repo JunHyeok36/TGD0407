@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73a489098bc41784d8da37ccd94fedb4, type: 3}
+  m_Name: LifeDocument
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.Domain.Archive.LifeDocument
+  prefab:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  id: 
+  health:
+    _min: 0
+    _max: 50
+    _cur: 50
+  stamina:
+    _min: 0
+    _max: 10
+    _cur: 10
+  shields: []
+  stat:
+    redPower: 1
+    bluePower: 0
+    yellowPower: 0
+    whitePower: 0
+    redResist: 0
+    blueResist: 0
+    yellowResist: 0
+    cardSlotCount: 4
+    drawQuickness: 1
+    speed: 1
+    bleedingResist: 1
+    burningResist: 1
+    poisoningResist: 1
+    stunResist: 1
+    freezeResist: 1
+    silenceResist: 1
+    fearResist: 1
+    knockbackResist: 1
+    curseResist: 1
+    knockdownResist: 1
+    healthRecoveryAmount: 1
+    staminaRecoveryAmount: 1
+    dodgeProb: 0.01
+    deathResist: 10
+    criticalProb: 0.05
+    criticalWeight: 2
+  deck:
+    _allCards: []

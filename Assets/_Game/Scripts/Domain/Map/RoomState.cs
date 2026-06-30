@@ -19,11 +19,11 @@ namespace TDG0407.Domain.Map
         public string roomId = null;
         public Point[] position = { Point.zero };
         public RoomScale scale = RoomScale.Single;
-        public Point size = new(5, 5); // This room has (-size.x / 2, -size.y / 2) ~ (size.x / 2, size.y / 2) area.
+        public Point size = new(7, 7); // This room has (-size.x / 2, -size.y / 2) ~ (size.x / 2, size.y / 2) area.
         public RoomType type = RoomType.NULL;
-        public readonly Dictionary<Point, PointState> pointStates = new();
-        public readonly Dictionary<Point, WarpPointState> warpPointStates = new();
-        public readonly Point[] unavailable_points = null;
+        public Dictionary<Point, PointState> pointStates = new();
+        public Dictionary<Point, WarpPointState> warpPointStates = new();
+        public Point[] unavailablePoints = null;
         
         public int? nextPointInstanceId = null;
 
@@ -58,21 +58,23 @@ namespace TDG0407.Domain.Map
             int roomInstanceId,
             string roomId,
             Point[] position,
+            RoomScale scale,
             Point size,
             RoomType type,
-            Dictionary<Point, PointState> pointStates,
-            Dictionary<Point, WarpPointState> warpPointStates,
-            Point[] unavailable_points = null,
+            Dictionary<Point, PointState> pointStates = null,
+            Dictionary<Point, WarpPointState> warpPointStates = null,
+            Point[] unavailablePoints = null,
             int nextPointInstanceId = 0)
         {
             this.roomInstanceId = roomInstanceId;
             this.roomId = roomId;
             this.position = position ?? throw new ArgumentNullException(nameof(position));
+            this.scale = scale;
             this.size = size;
             this.type = type;
             this.pointStates = pointStates ?? new();
             this.warpPointStates = warpPointStates ?? new();
-            this.unavailable_points = unavailable_points;
+            this.unavailablePoints = unavailablePoints;
             this.nextPointInstanceId = nextPointInstanceId;
         }
 

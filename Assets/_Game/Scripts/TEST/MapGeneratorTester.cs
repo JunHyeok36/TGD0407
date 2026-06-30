@@ -6,7 +6,7 @@ namespace TDG0407.TEST
 
     using Core.Grid;
     using Core.Utils;
-    using Domain.Cards;
+    using Domain.Archive;
     using Domain.Map;
     using Systems.Generators;
 
@@ -19,6 +19,7 @@ namespace TDG0407.TEST
 
         void Start()
         {
+            ArchiveManager.Initialize();
             Test();
         }
 

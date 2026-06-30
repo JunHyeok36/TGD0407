@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b703594f76e5df440845ec6680617fe4, type: 3}
+  m_Name: Test_room_single_7x7_empty_1
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.Domain.Archive.RoomDocument
+  prefab:
+    m_AssetGUID: 6b46eecffb509054f8f419427c456c45
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  id: test_room_single_7x7_empty_1
+  scale: 0
+  size:
+    _x: 7
+    _y: 7
+  type: 2816
+  unavailablePoints:
+  - _x: 1
+    _y: -3
+  - _x: 2
+    _y: -3
+  - _x: 2
+    _y: -2
+  - _x: 2
+    _y: -1
+  - _x: -3
+    _y: 3
+  - _x: -2
+    _y: 3
+  - _x: 3
+    _y: 3
+  warpablePoints:
+  - _x: -8
+    _y: 0
+  - _x: 8
+    _y: 0
+  - _x: 0
+    _y: -8
+  - _x: 0
+    _y: 8
+  appearanceWeight: 10000

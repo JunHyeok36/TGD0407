@@ -14,7 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: fd42a59c64ad7ae4db6815622d2cabad
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 6b46eecffb509054f8f419427c456c45
+    m_Address: Assets/_Game/Prefabs/Test/Rooms/test_room_single_7x7_empty_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c740e252d537b2a40852f52845abbc17
+    m_Address: Assets/_Game/Prefabs/Test/Points/test_point_0.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c931a5f4dbfd5c444b3217fea04e1c5f
+    m_Address: Assets/_Game/Prefabs/Test/Entities/1x1Obstacle1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce6240585709b7c48b8b5688425216f1
+    m_Address: Assets/_Game/Prefabs/Test/Rooms/test_room_single_7x7_empty_0.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dab55d59ca1baaf4f9d3dc13cf879b37
+    m_Address: Assets/_Game/Prefabs/Test/Points/test_point_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: e7dbbfead5c5e9f44911201303670a0b, type: 2}
   m_SchemaSet:

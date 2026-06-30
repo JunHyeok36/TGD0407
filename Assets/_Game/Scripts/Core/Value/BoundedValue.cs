@@ -133,7 +133,7 @@ namespace TDG0407.Core.Value
 
     }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
 
     [CustomPropertyDrawer(typeof(BoundedValue<>))]
     public class BoundedValueDrawer : PropertyDrawer
@@ -163,13 +163,13 @@ namespace TDG0407.Core.Value
                 
                 float sliderWidth = position.width - (fieldWidth * 2) - (symbolWidth * 2) - spacing;
 
-                Rect minRect = new Rect(position.x, position.y, fieldWidth, position.height);
-                Rect hyphenRect = new Rect(minRect.xMax, position.y, symbolWidth, position.height);
-                Rect maxRect = new Rect(hyphenRect.xMax, position.y, fieldWidth, position.height);
-                Rect barRect = new Rect(maxRect.xMax + spacing, position.y, symbolWidth, position.height);
-                Rect sliderRect = new Rect(barRect.xMax, position.y, sliderWidth, position.height);
+                Rect minRect = new(position.x, position.y, fieldWidth, position.height);
+                Rect hyphenRect = new(minRect.xMax, position.y, symbolWidth, position.height);
+                Rect maxRect = new(hyphenRect.xMax, position.y, fieldWidth, position.height);
+                Rect barRect = new(maxRect.xMax + spacing, position.y, symbolWidth, position.height);
+                Rect sliderRect = new(barRect.xMax, position.y, sliderWidth, position.height);
 
-                GUIStyle centerStyle = new GUIStyle(EditorStyles.label) { alignment = TextAnchor.MiddleCenter };
+                GUIStyle centerStyle = new(EditorStyles.label) { alignment = TextAnchor.MiddleCenter };
                 GUI.Label(hyphenRect, "-", centerStyle);
                 GUI.Label(barRect, "|", centerStyle);
 
@@ -203,11 +203,11 @@ namespace TDG0407.Core.Value
             else
             {
                 float labelWidth = EditorGUIUtility.labelWidth;
-                Rect foldoutRect = new Rect(position.x, position.y, labelWidth, EditorGUIUtility.singleLineHeight);
+                Rect foldoutRect = new(position.x, position.y, labelWidth, EditorGUIUtility.singleLineHeight);
                 
                 _isExpanded = EditorGUI.Foldout(foldoutRect, _isExpanded, label, true);
 
-                Rect curRect = new Rect(position.x + labelWidth + 2, position.y, position.width - labelWidth - 2, EditorGUIUtility.singleLineHeight);
+                Rect curRect = new(position.x + labelWidth + 2, position.y, position.width - labelWidth - 2, EditorGUIUtility.singleLineHeight);
                 EditorGUI.PropertyField(curRect, curProp, GUIContent.none);
 
                 if (_isExpanded)
@@ -215,10 +215,10 @@ namespace TDG0407.Core.Value
                     EditorGUI.indentLevel++;
                     float lineHeight = EditorGUIUtility.singleLineHeight + 2;
                     
-                    Rect minLineRect = new Rect(position.x, position.y + lineHeight, position.width, EditorGUIUtility.singleLineHeight);
+                    Rect minLineRect = new(position.x, position.y + lineHeight, position.width, EditorGUIUtility.singleLineHeight);
                     EditorGUI.PropertyField(minLineRect, minProp, new GUIContent("Min"));
                     
-                    Rect maxLineRect = new Rect(position.x, position.y + lineHeight * 2, position.width, EditorGUIUtility.singleLineHeight);
+                    Rect maxLineRect = new(position.x, position.y + lineHeight * 2, position.width, EditorGUIUtility.singleLineHeight);
                     EditorGUI.PropertyField(maxLineRect, maxProp, new GUIContent("Max"));
                     
                     EditorGUI.indentLevel--;
@@ -240,5 +240,5 @@ namespace TDG0407.Core.Value
             return (EditorGUIUtility.singleLineHeight + 2) * 3;
         }
     }
-#endif
+    #endif
 }

@@ -1,10 +1,12 @@
 using System;
+using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace TDG0407.Domain.Entities
 {
 
-    using Core.Value;
-    using Domain.Exceptions;
     using Domain.Interfaces;
 
     /// <summary>
@@ -16,13 +18,13 @@ namespace TDG0407.Domain.Entities
         #region Fields
 
         public int durability = 0;
-        public readonly TickDuration? duration = new();
+        public TickDuration duration = new();
         public int? performedEntityInstanceId = null;
 
         #endregion
         #region Properties
 
-        public bool IsExpired => durability == 0 || (duration != null && duration.Value.IsExpired == true);
+        public bool IsExpired => durability == 0 || duration.IsExpired == true;
 
         #endregion
         #region Constructors
@@ -49,7 +51,7 @@ namespace TDG0407.Domain.Entities
         public void OnTick()
         {
             if(IsExpired == false)
-                duration.Value.OnTick();
+                duration.OnTick();
         }
 
         #endregion
