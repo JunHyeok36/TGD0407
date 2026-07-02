@@ -19,9 +19,6 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   id: Test_obstacle_1x1Obstacle1
-  position:
-    _x: 0
-    _y: 0
   health:
     _min: 0
     _max: 10
@@ -30,4 +27,11 @@ MonoBehaviour:
     _min: 0
     _max: 0
     _cur: 0
-  shields: []
+  shields:
+  - durability: 0
+    duration:
+      _tickDurationType: 0
+      _value:
+        _min: 0
+        _max: 0
+        _cur: 0

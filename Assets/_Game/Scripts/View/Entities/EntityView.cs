@@ -4,12 +4,13 @@ namespace TDG0407.View.Entities
 {
 
     using Domain.Entities;
+    using Domain.Map;
     
     public class EntityView : MonoBehaviour
     {
         #region Fields
 
-        [SerializeField] private EntityState _state;
+        [SerializeReference] private EntityState _state;
 
         #endregion
         #region Properties
@@ -19,9 +20,11 @@ namespace TDG0407.View.Entities
         #endregion
         #region Methods
 
-        public void Initialize(EntityState state)
+        public void Initialize(EntityState state, PointState pointState)
         {
             _state = state;
+            _state.position = pointState.position;
+            transform.localPosition = Vector3.zero;
         }
 
         #endregion

@@ -28,6 +28,14 @@ namespace TDG0407.Domain
         }
 
         #endregion
+        #region Methods
+
+        public Coefficients Clone()
+        {
+            return new Coefficients(this);
+        }
+
+        #endregion
         #region Operators
 
         public float this[int index] => values[index];

@@ -28,6 +28,16 @@ namespace TDG0407.Domain.Cards
         public bool IsAvailable => _remainingTicks == null || _remainingTicks.IsMinimum; 
 
         #endregion
+        #region Constructors
+
+        public CardSlot(CardSlot other)
+        {
+            _index = other._index;
+            _placedCard = other._placedCard?.Clone();
+            _remainingTicks.Initialize(other._remainingTicks);
+        }
+
+        #endregion
         #region Methods
 
         public void Initialize(byte index) 
@@ -38,7 +48,7 @@ namespace TDG0407.Domain.Cards
         public void RegisterCard(CardState CardState)
         {
             _placedCard = CardState;
-            _remainingTicks.Initalize(0, CardState.coolTicks);
+            _remainingTicks.Initialize(0, CardState.coolTicks);
         }
         public CardState PopCard()
         {
@@ -47,6 +57,11 @@ namespace TDG0407.Domain.Cards
             CardState placedCard = _placedCard;
             Initialize(_index);
             return placedCard;
+        }
+
+        public CardSlot Clone()
+        {
+            return new CardSlot(this);
         }
 
         #endregion

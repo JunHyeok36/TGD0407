@@ -5,6 +5,7 @@ namespace TDG0407.Domain.Entities
 {
 
     using Core.Grid;
+    using Core.Value;
 
     /// <summary>
     /// 워프 포인트의 상태입니다.
@@ -19,17 +20,30 @@ namespace TDG0407.Domain.Entities
         #endregion
         #region Constructors
 
+        public WarpPointState() : base() {}
         public WarpPointState(
-            string entityId,
             int entityInstanceId,
-            Point pos,
+            string entityId,
+            Point position,
             LevelPoint target,
-            int health = 1,
-            int stamina = 1,
+            BoundedValue<int> health,
+            BoundedValue<int> stamina,
             IEnumerable<Shield> shields = null)
-            : base(entityId, entityInstanceId, pos, health, stamina, shields)
+            : base(entityInstanceId, entityId, position, health, stamina, shields)
         {
             this.target = target;
+        }
+
+        public WarpPointState(WarpPointState other)
+            : base(
+                other.entityInstanceId ?? throw new InvalidOperationException("EntityInstanceId is null."),
+                other.entityId,
+                other.position,
+                other.health,
+                other.stamina,
+                other.shields)
+        {
+            this.target = other.target.Clone();
         }
 
         #endregion
@@ -38,6 +52,11 @@ namespace TDG0407.Domain.Entities
         public override void Initialize()
         {
             base.Initialize();
+        }
+
+        public override EntityState Clone()
+        {
+            return new WarpPointState(this);
         }
 
         #endregion

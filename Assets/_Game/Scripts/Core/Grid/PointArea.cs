@@ -9,7 +9,7 @@ namespace TDG0407.Core.Grid
     /// 좌표들의 집합을 나타냅니다.
     /// </summary>
     [Serializable]
-    public class PointArea : IEquatable<PointArea>, ICloneable
+    public class PointArea : IEquatable<PointArea>
     {
 #region Fields
 
@@ -43,7 +43,7 @@ namespace TDG0407.Core.Grid
         public bool Equals(PointArea other) => other != null && _points.SetEquals(other._points);
         public override bool Equals(object obj) => obj is PointArea other && Equals(other);
         public override int GetHashCode() => _points.Aggregate(0, (hash, point) => hash ^ point.GetHashCode());
-        public object Clone()
+        public PointArea Clone()
         {
             return new PointArea(this);
         }

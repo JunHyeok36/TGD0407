@@ -21,6 +21,18 @@ namespace TDG0407.Core.Grid
         {
             this.levelInstanceId = levelInstanceId;
         }
+        public LevelPoint(LevelPoint other) : base(other.roomInstanceId, other.position)
+        {
+            this.levelInstanceId = other.levelInstanceId;
+        }
+
+        #endregion
+        #region Methods
+
+        public LevelPoint Clone()
+        {
+            return new LevelPoint(this);
+        }
 
         #endregion
     }

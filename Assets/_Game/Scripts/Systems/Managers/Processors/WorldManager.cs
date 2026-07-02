@@ -1,7 +1,12 @@
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+
 namespace TDG0407.Systems.Managers
 {
 
+    using Domain.Archive;
     using Domain.Map;
+    using View.Map;
 
     /// <summary>
     /// 월드 시스템을 관리하는 클래스입니다.
@@ -11,6 +16,7 @@ namespace TDG0407.Systems.Managers
         #region Fields
 
         private static WorldState _worldState = null;
+        private static (int depth, LevelView view) _currentLevel = (-1, null);
 
         #endregion
         #region Properties
@@ -21,9 +27,12 @@ namespace TDG0407.Systems.Managers
         #endregion
         #region Methods
 
-        public static void Initialize(WorldState worldState)
+        public static async UniTask Initialize(WorldState worldState)
         {
             _worldState = worldState;
+            _currentLevel = (-1, null);
+
+            await SetNextLevelView();
         }
 
         public static LevelState GetLevelState(int levelInstanceId)
@@ -47,6 +56,27 @@ namespace TDG0407.Systems.Managers
                 }
             }
             return null;
+        }
+
+        public static async UniTask<LevelView> SetNextLevelView()
+        {
+            if (_currentLevel.view != null)
+                GameObject.Destroy(_currentLevel.view.gameObject);
+            
+            if(++_currentLevel.depth < 0) 
+                _currentLevel.depth = 0;
+            else if(_currentLevel.depth >= CurrentMapState.levelStates.Count)
+            {
+                _currentLevel = (CurrentMapState.levelStates.Count - 1, null);
+                return null;
+            }
+            GameObject levelViewObject = new("LevelView_" + _currentLevel.depth);
+            levelViewObject.SetActive(false);
+            _currentLevel.view = levelViewObject.AddComponent<LevelView>();
+            await _currentLevel.view.Initialize(CurrentMapState.levelStates[_currentLevel.depth]);
+            levelViewObject.SetActive(true);
+
+            return _currentLevel.view;
         }
 
         #endregion

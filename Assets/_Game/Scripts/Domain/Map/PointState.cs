@@ -18,14 +18,9 @@ namespace TDG0407.Domain.Map
 
         public int? pointInstanceId = null;
         public Point position;
-        [SerializeReference] public List<EntityState> placedEntities = new(1);
+        public List<EntityState> placedEntities = new(1);
 
         public bool isAvailable = true;
-
-        #endregion
-        #region Properties
-
-        public List<EntityState> PlacedEntities { get => placedEntities; }
 
         #endregion
         #region Constructors
@@ -39,6 +34,23 @@ namespace TDG0407.Domain.Map
             this.position = position;
             this.placedEntities = new(1);
             this.isAvailable = isAvailable;
+        }
+
+        public PointState(PointState other)
+        {
+            this.pointInstanceId = other.pointInstanceId;
+            this.position = other.position;
+            foreach (var entity in other.placedEntities)
+                this.placedEntities.Add(entity.Clone());
+            this.isAvailable = other.isAvailable;
+        }
+
+        #endregion
+        #region Methods
+
+        public PointState Clone()
+        {
+            return new PointState(this);
         }
 
         #endregion

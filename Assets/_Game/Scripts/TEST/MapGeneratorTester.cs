@@ -1,5 +1,9 @@
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 using System.Text;
+using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace TDG0407.TEST
 {
@@ -9,13 +13,14 @@ namespace TDG0407.TEST
     using Domain.Archive;
     using Domain.Map;
     using Systems.Generators;
+    using Systems.Managers;
 
     public class MapGeneratorTester : MonoBehaviour
     {
         [ContextMenuItem("Generate New World Seed", nameof(GenerateNewWorldSeed))]
         [SerializeField] private int _worldSeed;
         [ContextMenuItem("Generate Map", nameof(Test))]
-        [SerializeField] private WorldState _worldState;
+        private WorldState _worldState = null;
 
         async void Start()
         {
@@ -30,7 +35,7 @@ namespace TDG0407.TEST
 
         public async void Test()
         {
-            _worldState = await MapGenerator.GenerateWorld(_worldSeed);
+            await GenerateNewWorldState();
             
             for (int i = 0; i < _worldState.mapState.levelStates.Count; i++)
             {
@@ -67,6 +72,23 @@ namespace TDG0407.TEST
                 }
             }
         }
+
+        [ContextMenu("Generate New WorldState")]
+        public async UniTask GenerateNewWorldState()
+        {
+            _worldState = await MapGenerator.GenerateWorld(_worldSeed);
+        }
+
+        [ContextMenu("Build LevelViews")]
+        public async UniTask BuildLevelViews()
+        {
+            await WorldManager.Initialize(_worldState);
+        }
+
+        [ContextMenu("Set Next LevelViews")]
+        public async UniTask SetNextLevelViews()
+        {
+            await WorldManager.SetNextLevelView();
+        }
     }
-    
 }

@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -19,7 +19,7 @@ namespace TDG0407.Domain.Archive
         #endregion
         #region Methods
 
-        public async Task<PointView> InstantiatePointView()
+        public async UniTask<PointView> InstantiatePointView()
         {
             var handle = prefab.InstantiateAsync();
             var pointViewObject = await handle.Task;

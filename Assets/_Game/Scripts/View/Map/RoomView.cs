@@ -1,11 +1,16 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TDG0407.View.Map
 {
-
     using Core.Grid;
+    using Domain.Archive;
+    using Domain.Entities;
     using Domain.Map;
+    using View.Entities;
 
     /// <summary>
     /// 방 상태를 기반으로 맵을 시각적으로 표현하는 뷰입니다.
@@ -16,6 +21,7 @@ namespace TDG0407.View.Map
 
         private RoomState _state = null;
         [SerializeField] private List<PointView> _pointViews = new();
+        [SerializeField] private List<EntityView> _entityViews = new();
 
         #endregion
         #region Properties
@@ -28,35 +34,90 @@ namespace TDG0407.View.Map
         #endregion
         #region Methods
 
-        public void Initialize(RoomState roomState)
+        public async UniTask Initialize(RoomState roomState)
         {
             _state = roomState;
 
-            _pointViews.Clear();
-            PointView[] pointViews = transform.GetComponentsInChildren<PointView>();
-            for (int i = 0; i < pointViews.Length; i++)
+            if (_state != null)
             {
-                PointView pointView = pointViews[i];
-
-                PointState pointState = pointView.State;
-                pointState.pointInstanceId = i;
-                pointState.position = new((int)pointView.transform.localPosition.x, (int)pointView.transform.localPosition.z);
-                pointView.Initialize(pointState);
-
-                _pointViews.Add(pointView);
-            }
-
-            if (_state != null && _state.pointStates == null)
-            {
-                Dictionary<Point, PointState> pointStates = new();
-                for (int i = 0; i < _pointViews.Count; i++)
+                _pointViews.Clear();
+                PointView[] pointViews = transform.GetComponentsInChildren<PointView>();
+                foreach (var pointView in pointViews)
                 {
-                    PointView pointView = _pointViews[i];
-                    pointStates[pointView.Point] = pointView.State 
-                        ?? throw new System.Exception($"PointView at index {i} has a null State.");
+                    pointView.State.placedEntities = new(1);
+                    _pointViews.Add(pointView);
                 }
-                _state.pointStates = pointStates;
+
+                _entityViews.Clear();
+                EntityView[] entityViews = transform.GetComponentsInChildren<EntityView>();
+                foreach (var entityView in entityViews)
+                    DestroyImmediate(entityView.gameObject);
+
+                if (_state.pointStates == null)
+                {
+                    Dictionary<Point, PointState> pointStates = new();
+                    foreach (var pointView in _pointViews)
+                    {
+                        pointStates[pointView.Point] = pointView.State 
+                            ?? throw new Exception($"PointView {pointView.Point} has a null State.");
+                    }
+                    _state.pointStates = pointStates;
+                }
+
+                Vector2 center = _state.position.Aggregate(new Vector2(0, 0), (acc, p) => acc + new Vector2(p.X, p.Y)) / _state.position.Length;
+                transform.localPosition = new Vector3(center.x * 14, 0, center.y * 14);
+                
+                foreach (var entityState in _state.PlacedEntities)
+                {
+                    PointState pointState = _state.pointStates[entityState.position];
+                    EntityDocument entityDocument = ArchiveManager.levelCollection.GetLevelDocument(_state.levelId)
+                        .entityCollection.GetEntityDocument(entityState.entityId);
+                    EntityView entityView = await entityDocument.InstantiateEntityView(_state.levelId, entityState.entityInstanceId.Value, GetPointView(pointState.position));
+                    _entityViews.Add(entityView);
+                }
             }
+            else
+            {
+                _pointViews.Clear();
+                PointView[] pointViews = transform.GetComponentsInChildren<PointView>();
+                for (int i = 0; i < pointViews.Length; i++)
+                {
+                    PointView pointView = pointViews[i];
+
+                    PointState pointState = pointView.State;
+                    pointState.pointInstanceId = i;
+                    pointState.position = new((int)pointView.transform.localPosition.x, (int)pointView.transform.localPosition.z);
+                    pointView.Initialize(pointState);
+
+                    _pointViews.Add(pointView);
+                }
+
+                _entityViews.Clear();
+                EntityView[] entityViews = transform.GetComponentsInChildren<EntityView>();
+                foreach (var entityView in entityViews)
+                {
+                    EntityState entityState = entityView.State;
+                    if (entityView.transform.parent.TryGetComponent(out PointView parentPointView))
+                    {
+                        entityView.Initialize(entityState, parentPointView.State);
+                    }
+                    else
+                    {
+                        throw new Exception($"EntityView '{entityView.name}' does not have a PointView as its parent.");
+                    }
+                    _entityViews.Add(entityView);
+                }
+            }
+        }
+
+        public PointView GetPointView(Point point)
+        {
+            foreach (var pointView in _pointViews)
+            {
+                if (pointView.Point.Equals(point))
+                    return pointView;
+            }
+            return null;
         }
 
         public void TransposeRoomViews()
@@ -72,8 +133,19 @@ namespace TDG0407.View.Map
                 PointState pointState = pointView.State;
                 pointState.position = new Point(pointState.position.Y, pointState.position.X);
             }
-        }
 
+            if (_state != null)
+            {
+                Dictionary<Point, PointState> pointStates = new();
+                for (int i = 0; i < _pointViews.Count; i++)
+                {
+                    PointView pointView = _pointViews[i];
+                    pointStates[pointView.Point] = pointView.State 
+                        ?? throw new System.Exception($"PointView at index {i} has a null State.");
+                }
+                _state.pointStates = pointStates;
+            }
+        }
         public void RotateRoomViews(byte degrees)
         {
             if (degrees % 90 != 0)
@@ -107,6 +179,7 @@ namespace TDG0407.View.Map
                 _state.pointStates = pointStates;
             }
         }
+
         #endregion
         #if UNITY_EDITOR
         #region DEV Methods
@@ -144,6 +217,26 @@ namespace TDG0407.View.Map
             }
 
             _pointViews = sortedPointViews;
+        }
+
+        [ContextMenu("InitializeEntityViews")]
+        public void DEV_InitializeEntityViews()
+        {
+            _entityViews.Clear();
+            EntityView[] entityViews = transform.GetComponentsInChildren<EntityView>();
+            foreach (var entityView in entityViews)
+            {
+                EntityState entityState = entityView.State;
+                if (entityView.transform.parent.TryGetComponent(out PointView parentPointView))
+                {
+                    entityView.Initialize(entityState, parentPointView.State);
+                }
+                else
+                {
+                    throw new System.Exception($"EntityView '{entityView.name}' does not have a PointView as its parent.");
+                }
+                _entityViews.Add(entityView);
+            }
         }
 
         [ContextMenu("TransposeRoomViews")]

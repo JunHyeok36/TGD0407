@@ -27,6 +27,23 @@ namespace TDG0407.Domain.Cards
         public readonly BoundedValue<byte> reinfocedCount = new(0, 0, 0);
 
         #endregion
+        #region Constructors
+
+        public CardState(CardState other)
+        {
+            this.cardId = other.cardId;
+            this.cardInstanceId = other.cardInstanceId;
+            this.costType = other.costType;
+            this.costValue = other.costValue;
+            this.cardType = other.cardType;
+            this.coefficients = other.coefficients.Clone();
+            this.coolTicks = other.coolTicks;
+            this.rangeType = other.rangeType;
+            this.rangeValue = other.rangeValue.Clone();
+            this.reinfocedCount = other.reinfocedCount.Clone();
+        }
+
+        #endregion
         #region Methods
 
         public void ValidateData()
@@ -42,6 +59,11 @@ namespace TDG0407.Domain.Cards
                     if(rangeValue.Count < 3) throw new DataValidityViolationException("At least three Point needs to be assigned in Polygon Range Type."); 
                     break;
             }
+        }
+
+        public CardState Clone()
+        {
+            return new CardState(this);
         }
 
         #endregion

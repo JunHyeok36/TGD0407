@@ -1,8 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace TDG0407.Systems.Generators
 {
@@ -22,7 +22,7 @@ namespace TDG0407.Systems.Generators
     {
         #region Methods
 
-        public static async Task<WorldState> GenerateWorld(int? worldSeed = null, int? proceduralSeed = null)
+        public static async UniTask<WorldState> GenerateWorld(int? worldSeed = null, int? proceduralSeed = null)
         {
             worldSeed ??= SeedParser.NewIntSeed();
             proceduralSeed ??= SeedParser.NewIntSeed();
@@ -32,7 +32,7 @@ namespace TDG0407.Systems.Generators
             return new WorldState(worldSeed.Value, proceduralSeed.Value, mapState, null, null);
         }
 
-        private static async Task<MapState> GenerateMap(System.Random worldRandom)
+        private static async UniTask<MapState> GenerateMap(System.Random worldRandom)
         {
             Ref<int> nextLevelInstanceId = new(0);
             Ref<int> nextEntityInstanceId = new(0);
@@ -56,16 +56,7 @@ namespace TDG0407.Systems.Generators
                         worldRandom, 
                         nextEntityInstanceId
                     )
-                ),
-                await GenerateLevel(
-                    new RandomLevelGenerateParameter(
-                        "Test", 
-                        nextLevelInstanceId.Value++, 
-                        SelectTestLevelScale(worldRandom), 
-                        worldRandom, 
-                        nextEntityInstanceId
-                    )
-                ),
+                )
             };
 
             return new MapState(levelStates, nextLevelInstanceId.Value, nextEntityInstanceId.Value);
@@ -78,8 +69,7 @@ namespace TDG0407.Systems.Generators
                     (LevelScale.Small, 0.05f),
                     (LevelScale.Medium, 0.45f),
                     (LevelScale.Large, 0.75f),
-                    (LevelScale.VeryLarge, 0.95f),
-                    (LevelScale.UltraLarge, 1f)
+                    (LevelScale.VeryLarge, 0.95f)
                 };
 
                 float randomValue = (float)random.NextDouble();
@@ -92,7 +82,7 @@ namespace TDG0407.Systems.Generators
             }
         }
 
-        private static async Task<LevelState> GenerateLevel(RandomLevelGenerateParameter parameter)
+        private static async UniTask<LevelState> GenerateLevel(RandomLevelGenerateParameter parameter)
         {
             Ref<int> nextRoomInstanceId = new(0);
 
@@ -126,6 +116,7 @@ namespace TDG0407.Systems.Generators
                 LevelScale.Medium => (2, 3),
                 LevelScale.Large => (3, 5),
                 LevelScale.VeryLarge => (4, 8),
+                LevelScale.UltraLarge => (4, 10),
                 _ => throw new NotImplementedException($"Branch weight for levelScale '{parameter.levelScale}' is not implemented."),
             };
             for (int i = 0; i < pathPoints.Count; i++)
@@ -155,10 +146,12 @@ namespace TDG0407.Systems.Generators
             }
             pathPoints.AddRange(additionalPathPoints);
 
+            GameObject levelObject = new($"Level_{parameter.levelInstanceId}");
+            levelObject.SetActive(false);
             Dictionary<Point, RoomState> roomStates = new();
             HashSet<Point> remainingPoints = new(pathPoints);
             remainingPoints.RemoveWhere(point => point.Equals(startPoint) || point.Equals(endPoint));
-            //roomStates[startPoint] = GenerateRoom(nextRoomInstanceId.Value++, new Point[] { startPoint }, RoomScale.Single, parameter);
+            roomStates[startPoint] = await GenerateRoom(nextRoomInstanceId.Value++, new Point[] { startPoint }, RoomScale.Single, parameter, levelObject.transform);
             while (remainingPoints.Count > 0)
             {
                 Point anchorPoint = remainingPoints.GetRandomPoint(parameter.worldRandom);
@@ -177,22 +170,7 @@ namespace TDG0407.Systems.Generators
                     groupedPoints = doublePoints; 
                 }
 
-                RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(parameter.levelId)
-                    .roomCollection.ChoiceOne(roomScale, RoomType.Random, parameter.worldRandom);
-                if (roomDocument== null)
-                    throw new InvalidOperationException($"No RoomDocument found for levelId '{parameter.levelId}', roomScale '{roomScale}', and roomType 'Random'.");
-                RoomView roomView = await roomDocument.InstantiateRoomView(
-                    nextRoomInstanceId.Value++,
-                    groupedPoints
-                );
-                RoomState roomState = roomView.State;
-                if(roomState.scale == RoomScale.Double)
-                {
-                    Point size = new(Mathf.Abs(groupedPoints[0].X - groupedPoints[1].X) + 1, Mathf.Abs(groupedPoints[0].Y - groupedPoints[1].Y) + 1);
-                    // if y of room size is longer than x, then rotate the room view 90 degrees counterclockwise
-                    if(size.Y > size.X)
-                        roomView.RotateRoomViews(90);
-                }
+                RoomState roomState = await GenerateRoom(nextRoomInstanceId.Value++, groupedPoints, roomScale, parameter, levelObject.transform);
 
                 foreach (Point point in groupedPoints)
                 {
@@ -264,7 +242,7 @@ namespace TDG0407.Systems.Generators
                     return true;
                 }
             }
-            //roomStates[endPoint] = GenerateRoom(nextRoomInstanceId.Value++, new Point[] { endPoint }, RoomScale.Single, parameter);
+            roomStates[endPoint] = await GenerateRoom(nextRoomInstanceId.Value++, new Point[] { endPoint }, RoomScale.Single, parameter, levelObject.transform);
 
             HashSet<string> linkedPairs = new();
             Point[] directions = new[]
@@ -299,16 +277,20 @@ namespace TDG0407.Systems.Generators
                         var warpPoint2 = CalcWarpPointPos(neighborRoom, neighborPosition, roomState, roomPosition);
 
                         WarpPointState warpPointState1 = new(
-                            entityId: $"wp_{roomState.roomInstanceId}_{neighborRoom.roomInstanceId}",
                             entityInstanceId: parameter.nextEntityInstanceId.Value++,
-                            pos: warpPoint1,
-                            target: new LevelPoint(parameter.levelInstanceId, neighborRoom.roomInstanceId, warpPoint2)
+                            entityId: $"wp_{roomState.roomInstanceId}_{neighborRoom.roomInstanceId}",
+                            position: warpPoint1,
+                            target: new LevelPoint(parameter.levelInstanceId, neighborRoom.roomInstanceId, warpPoint2),
+                            health: null,
+                            stamina: null
                         );
                         WarpPointState warpPointState2 = new(
-                            entityId: $"wp_{neighborRoom.roomInstanceId}_{roomState.roomInstanceId}",
                             entityInstanceId: parameter.nextEntityInstanceId.Value++,
-                            pos: warpPoint2,
-                            target: new LevelPoint(parameter.levelInstanceId, roomState.roomInstanceId, warpPoint1)
+                            entityId: $"wp_{neighborRoom.roomInstanceId}_{roomState.roomInstanceId}",
+                            position: warpPoint2,
+                            target: new LevelPoint(parameter.levelInstanceId, roomState.roomInstanceId, warpPoint1),
+                            health: null,
+                            stamina: null
                         );
 
                         static Point CalcWarpPointPos(RoomState fromRoom, Point fromPosition, RoomState toRoom, Point toPosition)
@@ -351,7 +333,32 @@ namespace TDG0407.Systems.Generators
                 }
             }
 
+            foreach (RoomView roomView in levelObject.GetComponentsInChildren<RoomView>())
+            {
+                Addressables.ReleaseInstance(roomView.gameObject);
+            }
+            GameObject.DestroyImmediate(levelObject);
+
             return new LevelState(parameter.levelInstanceId, parameter.levelId, parameter.levelScale, levelSize, roomStates, startPoint, endPoint, nextRoomInstanceId.Value);
+        }
+
+        public static async UniTask<RoomState> GenerateRoom(int roomInstanceId, Point[] groupedPoints, RoomScale roomScale, RandomLevelGenerateParameter parameter, Transform parentTransform = null)
+        {
+            RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(parameter.levelId)
+                .roomCollection.ChoiceOne(roomScale, RoomType.Random, parameter.worldRandom);
+            if (roomDocument == null)
+                throw new InvalidOperationException($"No RoomDocument found for levelId '{parameter.levelId}', roomScale '{roomScale}', and roomType 'Random'.");
+            RoomView roomView = await roomDocument.InstantiateRoomView(parameter.levelId, roomInstanceId, groupedPoints, null, parentTransform);
+            RoomState roomState = roomView.State.Clone();
+            if(roomState.scale == RoomScale.Double)
+            {
+                Point size = new(Mathf.Abs(groupedPoints[0].X - groupedPoints[1].X) + 1, Mathf.Abs(groupedPoints[0].Y - groupedPoints[1].Y) + 1);
+                // if y of room size is longer than x, then rotate the room view 90 degrees counterclockwise
+                if(size.Y > size.X)
+                    roomView.RotateRoomViews(90);
+            }
+
+            return roomState;
         }
 
         #endregion

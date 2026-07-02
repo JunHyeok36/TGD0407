@@ -36,13 +36,24 @@ namespace TDG0407.Domain.Entities
             this.performedEntityInstanceId = performedEntityInstanceId;
         }
 
+        public Shield(Shield other)
+        {
+            this.durability = other.durability;
+            this.duration = other.duration.Clone();
+            this.performedEntityInstanceId = other.performedEntityInstanceId;
+        }
+
         #endregion
         #region Methods
-
 
         public void ValidateData()
         {
             
+        }
+
+        public Shield Clone()
+        {
+            return new Shield(this);
         }
 
         #endregion

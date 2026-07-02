@@ -143,55 +143,10 @@ MonoBehaviour:
   - {fileID: 542379594124474782}
   - {fileID: 4347926309335718921}
   - {fileID: 4449115104055011035}
-  - {fileID: 1942548959841654614}
-  - {fileID: 7766518945827637316}
-  - {fileID: 5444463183630902874}
-  - {fileID: 2359672299454331922}
-  - {fileID: 4927890486862362823}
-  - {fileID: 5378244850664173254}
-  - {fileID: 815723631089546202}
-  - {fileID: 3604093085785860285}
-  - {fileID: 4893913274502998360}
-  - {fileID: 1777263916300055295}
-  - {fileID: 7600854980956480376}
-  - {fileID: 1691146273185512773}
-  - {fileID: 1494810546139616890}
-  - {fileID: 6834278925048968171}
-  - {fileID: 8435590005902783615}
-  - {fileID: 1806978483755828901}
-  - {fileID: 8975190897096273679}
-  - {fileID: 3355965198460938628}
-  - {fileID: 6799101270371347829}
-  - {fileID: 7087361858660099205}
-  - {fileID: 3071705218797777023}
-  - {fileID: 7227577266013928828}
-  - {fileID: 3788913368241440179}
-  - {fileID: 2882554888095885984}
-  - {fileID: 661571696928966924}
-  - {fileID: 8472662215521653132}
-  - {fileID: 7864800644338762036}
-  - {fileID: 261548467821070849}
-  - {fileID: 2941378634105950447}
-  - {fileID: 4543961381788819741}
-  - {fileID: 7504118835779006448}
-  - {fileID: 346844014331430153}
-  - {fileID: 129915801512416366}
-  - {fileID: 8987275130295093954}
-  - {fileID: 5124284639546189702}
-  - {fileID: 9104506727736941511}
-  - {fileID: 5113222786026479663}
-  - {fileID: 715957561909567090}
-  - {fileID: 8323508399333683774}
-  - {fileID: 3473481086255356307}
-  - {fileID: 1098440498879006008}
-  - {fileID: 2887729916989892801}
-  - {fileID: 5761827636537414639}
-  - {fileID: 5115282534067158034}
-  - {fileID: 6781143809736591048}
-  - {fileID: 5958015766869389572}
-  - {fileID: 542379594124474782}
-  - {fileID: 4347926309335718921}
-  - {fileID: 4449115104055011035}
+  _entityViews:
+  - {fileID: 1849167717698719867}
+  - {fileID: 364745227678533847}
+  - {fileID: 2551828495388590282}
 --- !u!1001 &68486193392490971
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -629,6 +584,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7171562295521638111}
     m_Modifications:
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -678,6 +641,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+--- !u!114 &364745227678533847 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+  m_PrefabInstance: {fileID: 540357017052014640}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500a665ac472ce440aedbcd3ed1a81ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.View.Entities.EntityView
 --- !u!4 &4773678757267256123 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
@@ -1232,6 +1206,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2249159538679841758}
     m_Modifications:
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._y
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1281,6 +1263,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+--- !u!114 &1849167717698719867 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+  m_PrefabInstance: {fileID: 2006914659189747868}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500a665ac472ce440aedbcd3ed1a81ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.View.Entities.EntityView
 --- !u!4 &6816697688503823255 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
@@ -1557,6 +1550,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 604644836125969399}
     m_Modifications:
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+      propertyPath: managedReferences[7832276570478215336].position._y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1606,6 +1607,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+--- !u!114 &2551828495388590282 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 175761341209518311, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}
+  m_PrefabInstance: {fileID: 2385083150734811181}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500a665ac472ce440aedbcd3ed1a81ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.View.Entities.EntityView
 --- !u!4 &7231017576378743590 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4990050310689413899, guid: c931a5f4dbfd5c444b3217fea04e1c5f, type: 3}

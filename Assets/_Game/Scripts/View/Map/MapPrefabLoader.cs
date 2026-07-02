@@ -1,5 +1,5 @@
+using Cysharp.Threading.Tasks;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -21,7 +21,7 @@ namespace TDG0407.View.Map
             public MapPrefabJSONElement[] prefabs;
         }
 
-        public static async Task<RoomView> LoadRoomViewAsync(string roomId)
+        public static async UniTask<RoomView> LoadRoomViewAsync(string roomId)
         {
             TextAsset jsonAsset = Resources.Load<TextAsset>("Data/Prefabs/Map/test_map_prefabs");
             if (jsonAsset == null)

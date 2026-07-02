@@ -32,8 +32,18 @@ namespace TDG0407.Domain.Effects
             this.performedEntityInstanceId = performedEntityInstanceId;
         }
 
+        public StatusEffect(StatusEffect other)
+        {
+            this.effectId = other.effectId;
+            this.coefficients = other.coefficients.Clone();
+            if(other.duration != null) this.duration = other.duration.Value.Clone();
+            this.performedEntityInstanceId = other.performedEntityInstanceId;
+        }
+
         #endregion
         #region Methods
+
+        public abstract StatusEffect Clone();
 
         #endregion
         

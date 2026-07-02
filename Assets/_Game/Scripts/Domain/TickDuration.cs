@@ -31,14 +31,24 @@ namespace TDG0407.Domain
         public TickDuration(TickDurationType tickDurationType, int ticks = -1)
         {
             _tickDurationType = tickDurationType;
-            if(tickDurationType == TickDurationType.Forever ) _value = null;
+            if(tickDurationType == TickDurationType.Forever) _value = null;
             else _value = new BoundedValue<int>(0, ticks);
+        }
+
+        public TickDuration(TickDuration other)
+        {
+            _tickDurationType = other._tickDurationType;
+            if(other._value == null) _value = null;
+            else _value = other._value.Clone();
         }
 
         #endregion
         #region Methods
 
-
+        public readonly TickDuration Clone()
+        {
+            return new TickDuration(this);
+        }
 
         #endregion
         #region EventHandlers

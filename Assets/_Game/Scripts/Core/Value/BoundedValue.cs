@@ -92,7 +92,7 @@ namespace TDG0407.Core.Value
 
         public BoundedValue(T min, T max, T cur)
         {
-            Initalize(min, max, cur);
+            Initialize(min, max, cur);
         }
         public BoundedValue(T min, T max) : this(min, max, max) { }
         public BoundedValue(BoundedValue<T> other) : this(other._min, other._max, other._cur) { }
@@ -100,13 +100,17 @@ namespace TDG0407.Core.Value
         #endregion
         #region Methods
 
-        public void Initalize(T min, T max, T cur)
+        public void Initialize(BoundedValue<T> other)
+        {
+            Initialize(other._min, other._max, other._cur);
+        }
+        public void Initialize(T min, T max, T cur)
         {
             _min = min;
             _max = max;
             Current = cur;
         }
-        public void Initalize(T min, T max) => Initalize(min, max, max);
+        public void Initialize(T min, T max) => Initialize(min, max, max);
 
         public bool Equals(BoundedValue<T> other)
         {
@@ -119,6 +123,11 @@ namespace TDG0407.Core.Value
         public override int GetHashCode()
         {
             return HashCode.Combine(_min, _max, _cur);
+        }
+
+        public BoundedValue<T> Clone()
+        {
+            return new BoundedValue<T>(this);
         }
 
         #endregion

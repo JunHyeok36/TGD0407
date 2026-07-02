@@ -18,6 +18,7 @@ namespace TDG0407.Domain.Map
 
         public int? roomInstanceId = null;
         public string roomId = null;
+        public string levelId = null;
         public Point[] position = { Point.zero };
         public RoomScale scale = RoomScale.Single;
         public Point size = new(7, 7); // This room has (-size.x / 2, -size.y / 2) ~ (size.x / 2, size.y / 2) area.
@@ -40,6 +41,17 @@ namespace TDG0407.Domain.Map
                 return null;
             }
         }
+
+        public List<EntityState> PlacedEntities
+        {
+            get
+            {
+                List<EntityState> entities = new();
+                foreach (var pointState in pointStates.Values)
+                    entities.AddRange(pointState.placedEntities);
+                return entities;
+            }
+        }
         
         public int PlacedEntityCount
         {
@@ -58,6 +70,7 @@ namespace TDG0407.Domain.Map
         public RoomState(
             int roomInstanceId,
             string roomId,
+            string levelId,
             Point[] position,
             RoomScale scale,
             Point size,
@@ -69,6 +82,7 @@ namespace TDG0407.Domain.Map
         {
             this.roomInstanceId = roomInstanceId;
             this.roomId = roomId;
+            this.levelId = levelId;
             this.position = position ?? throw new ArgumentNullException(nameof(position));
             this.scale = scale;
             this.size = size;
@@ -77,6 +91,24 @@ namespace TDG0407.Domain.Map
             this.warpPointStates = warpPointStates ?? new();
             this.unavailablePoints = unavailablePoints;
             this.nextPointInstanceId = nextPointInstanceId;
+        }
+
+        public RoomState(RoomState other)
+        {
+            this.roomInstanceId = other.roomInstanceId;
+            this.roomId = other.roomId;
+            this.levelId = other.levelId;
+            this.position = (Point[])other.position.Clone();
+            this.scale = other.scale;
+            this.size = other.size;
+            this.type = other.type;
+            foreach (var kvp in other.pointStates)
+                this.pointStates[kvp.Key] = kvp.Value.Clone();
+            foreach (var kvp in other.warpPointStates)
+                this.warpPointStates[kvp.Key] = (WarpPointState)kvp.Value.Clone();
+            if (other.unavailablePoints != null)
+                this.unavailablePoints = (Point[])other.unavailablePoints.Clone();
+            this.nextPointInstanceId = other.nextPointInstanceId;
         }
 
         #endregion
@@ -116,6 +148,28 @@ namespace TDG0407.Domain.Map
         public static implicit operator RoomState(RoomView v)
         {
             throw new NotImplementedException();
+        }
+
+        public RoomState Clone()
+        {
+            Dictionary<Point, PointState> clonedPointStates = new();
+            foreach (var kvp in pointStates)
+            {
+                clonedPointStates[kvp.Key] = kvp.Value.Clone();
+            }
+            return new RoomState(
+                roomInstanceId: this.roomInstanceId ?? throw new InvalidOperationException("RoomInstanceId is null."),
+                roomId: this.roomId,
+                levelId: this.levelId,
+                position: (Point[])this.position.Clone(),
+                scale: this.scale,
+                size: this.size,
+                type: this.type,
+                pointStates: new Dictionary<Point, PointState>(this.pointStates),
+                warpPointStates: new Dictionary<Point, WarpPointState>(this.warpPointStates),
+                unavailablePoints: this.unavailablePoints != null ? (Point[])this.unavailablePoints.Clone() : null,
+                nextPointInstanceId: this.nextPointInstanceId ?? 0
+            );
         }
 
         #endregion

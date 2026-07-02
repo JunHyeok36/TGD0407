@@ -7,6 +7,7 @@ namespace TDG0407.Domain
     /// </summary>
     public enum TickDurationType : sbyte
     {
+        Random = -2,
         NULL = -1,
         /// <summary>
         /// 틱 기반의 지속 시간입니다.

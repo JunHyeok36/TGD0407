@@ -30,11 +30,6 @@ namespace TDG0407.View.Map
         public void Initialize(PointState state)
         {
             _state = state;
-
-            _state.PlacedEntities.Clear();
-            EntityView[] entityViews = transform.GetComponentsInChildren<EntityView>();
-            foreach (var entityView in entityViews)
-                _state.PlacedEntities.Add(entityView.State);
         }
 
         #endregion

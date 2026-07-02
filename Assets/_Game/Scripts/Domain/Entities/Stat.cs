@@ -50,7 +50,47 @@ namespace TDG0407.Domain.Entities
         public float criticalWeight = 2.0f;
 
         #endregion
+        #region Methods
 
+        public Stat Clone()
+        {
+            return new Stat
+            {
+                redPower = this.redPower,
+                bluePower = this.bluePower,
+                yellowPower = this.yellowPower,
+                whitePower = this.whitePower,
+
+                redResist = this.redResist,
+                blueResist = this.blueResist,
+                yellowResist = this.yellowResist,
+
+                cardSlotCount = this.cardSlotCount,
+                drawQuickness = this.drawQuickness,
+
+                speed = this.speed,
+
+                bleedingResist = this.bleedingResist,
+                burningResist = this.burningResist,
+                poisoningResist = this.poisoningResist,
+                stunResist = this.stunResist,
+                freezeResist = this.freezeResist,
+                silenceResist = this.silenceResist,
+                fearResist = this.fearResist,
+                knockbackResist = this.knockbackResist,
+                curseResist = this.curseResist,
+                knockdownResist = this.knockdownResist,
+
+                healthRecoveryAmount = this.healthRecoveryAmount,
+                staminaRecoveryAmount = this.staminaRecoveryAmount,
+                dodgeProb = this.dodgeProb,
+                deathResist = this.deathResist,
+                criticalProb = this.criticalProb,
+                criticalWeight = this.criticalWeight
+            };
+        }
+
+        #endregion
     }
 
 }

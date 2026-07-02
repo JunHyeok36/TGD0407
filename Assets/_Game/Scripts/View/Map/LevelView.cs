@@ -1,9 +1,11 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace TDG0407.View.Map
 {
 
+    using Domain.Archive;
     using Domain.Map;
 
     /// <summary>
@@ -20,17 +22,20 @@ namespace TDG0407.View.Map
         #region Properties
 
         public int? LevelInstanceId { get => _levelState?.levelInstanceId; }
+        public LevelState LevelState { get => _levelState; }
+        public IReadOnlyList<RoomView> RoomViews { get => _roomViews; }
 
         #endregion
         #region Methods
 
-        public void Initialize(LevelState levelState)
+        public async UniTask Initialize(LevelState levelState)
         {
             _levelState = levelState;
+            _roomViews.Clear();
             foreach (var roomState in levelState.roomStates.Values)
             {
-                var roomView = Instantiate(MapPrefabLoader.LoadRoomViewAsync(roomState.roomId).Result, transform).GetComponent<RoomView>();
-                roomView.Initialize(roomState);
+                RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(levelState.levelId).roomCollection.GetRoomDocument(roomState.roomId);
+                RoomView roomView = await roomDocument.InstantiateRoomView(roomState, transform);
                 _roomViews.Add(roomView);
             }
         }

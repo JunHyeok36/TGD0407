@@ -40,6 +40,19 @@ namespace TDG0407.Domain.Cards
                 _handCardSlots[i].Initialize(i);
         }
 
+        public CardDeck(CardDeck other)
+        {
+            foreach(var card in other._allCards)
+                _allCards.Add(card.Clone());
+            foreach(var card in other._remainedCards)
+                _remainedCards.Add(card.Clone());
+            _handCardSlots = new CardSlot[other._handCardSlots.Length];
+            for(byte i = 0; i < other._handCardSlots.Length; i++)
+                _handCardSlots[i] = other._handCardSlots[i].Clone();
+            foreach(var card in other._discardedCards)
+                _discardedCards.Add(card.Clone());
+        }
+
         #endregion
         #region Methods
 
@@ -57,6 +70,11 @@ namespace TDG0407.Domain.Cards
             if(targetCard == null) return null;
 
             return targetCard;
+        }
+
+        public CardDeck Clone()
+        {
+            return new CardDeck(this);
         }
 
         #endregion

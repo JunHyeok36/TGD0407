@@ -15,7 +15,7 @@ namespace TDG0407.Domain.Archive
         public string id = string.Empty;
 
         public RoomCollection roomCollection = null;
-        //public EntityCollection entityCollection = null;
+        public EntityCollection entityCollection = null;
 
         #endregion
     }

@@ -1,6 +1,6 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -10,6 +10,7 @@ namespace TDG0407.Domain.Archive
     using Core.Grid;
     using Domain.Entities;
     using Domain.Map;
+    using View.Entities;
     using View.Map;
     
     [CreateAssetMenu(fileName = "RoomDocument", menuName = "Archive/Map/RoomDocument", order = 5)]
@@ -32,12 +33,14 @@ namespace TDG0407.Domain.Archive
         #endregion
         #region Methods
 
-        public async Task<RoomView> InstantiateRoomView(
+        public async UniTask<RoomView> InstantiateRoomView(
+            string levelId,
             int roomInstanceId, 
             Point[] position, 
-            Dictionary<Point, WarpPointState> warpPointStates = null)
+            Dictionary<Point, WarpPointState> warpPointStates,
+            Transform parentTransform = null)
         {
-            var handle = prefab.InstantiateAsync();
+            var handle = prefab.InstantiateAsync(parentTransform);
             var roomViewObject = await handle.Task;
             if(roomViewObject == null)
             {
@@ -49,20 +52,38 @@ namespace TDG0407.Domain.Archive
                 Debug.LogError($"RoomView prefab for room ID '{id}' is missing the RoomView component.");
                 return null;
             }
-            roomViewObject.SetActive(false);
+            //roomViewObject.SetActive(false);
 
-            if (warpPointStates != null)
+            foreach (var warpPointState in warpPointStates.ToList())
             {
-                foreach (var warpPointState in warpPointStates.ToList())
-                {
-                    if (!warpablePoints.Contains(warpPointState.Key))
-                        warpPointStates.Remove(warpPointState.Key);
-                }
+                if (!warpablePoints.Contains(warpPointState.Key))
+                    warpPointStates.Remove(warpPointState.Key);
             }
 
-            roomView.Initialize(new RoomState(
+            Dictionary<Point, PointState> pointStates = new();
+            PointView[] pointViews = roomView.GetComponentsInChildren<PointView>(true);
+            for (int i = 0; i < position.Length; i++)
+            {
+                PointView pointView = pointViews[i];
+
+                PointState pointState = pointView.State;
+                pointState.pointInstanceId = i;
+                pointState.position = new((int)pointView.transform.localPosition.x, (int)pointView.transform.localPosition.z);
+                EntityView[] entityViews = pointView.GetComponentsInChildren<EntityView>(true);
+                foreach (var entityView in entityViews)
+                {
+                    pointState.placedEntities.Add(entityView.State);
+                }
+                
+                pointView.Initialize(pointState);
+
+                pointStates[pointState.position] = pointState;
+            }
+
+            await roomView.Initialize(new RoomState(
                 roomInstanceId: roomInstanceId,
                 roomId: id,
+                levelId: levelId,
                 position: position,
                 scale: scale,
                 size: size,
@@ -76,22 +97,32 @@ namespace TDG0407.Domain.Archive
             // Destory with 'Addressables.ReleaseInstance(roomView.gameObject)' when the room is no longer needed.
         }
 
-        public void SetWarpPointStates(RoomView target, Dictionary<Point, WarpPointState> warpPointStates)
+        public async UniTask<RoomView> InstantiateRoomView(RoomState roomState, Transform parentTransform = null)
         {
-            if (target == null || warpPointStates == null)
-                return;
+            var handle = prefab.InstantiateAsync(parentTransform);
+            var roomViewObject = await handle.Task;
+            if(roomViewObject == null)
+            {
+                Debug.LogError($"Failed to instantiate RoomView prefab for room ID '{id}'.");
+                return null;
+            }
+            if (!roomViewObject.TryGetComponent<RoomView>(out var roomView))
+            {
+                Debug.LogError($"RoomView prefab for room ID '{id}' is missing the RoomView component.");
+                return null;
+            }
+            //roomViewObject.SetActive(false);
 
-            foreach (var warpPointState in warpPointStates.ToList())
+            foreach (var warpPointState in roomState.warpPointStates.ToList())
             {
                 if (!warpablePoints.Contains(warpPointState.Key))
-                    warpPointStates.Remove(warpPointState.Key);
+                    roomState.warpPointStates.Remove(warpPointState.Key);
             }
 
-            target.State.warpPointStates.Clear();
-            foreach (var warpPointState in warpPointStates)
-            {
-                target.State.warpPointStates.Add(warpPointState.Key, warpPointState.Value);
-            }
+            await roomView.Initialize(roomState);
+
+            return roomView;
+            // Destory with 'Addressables.ReleaseInstance(roomView.gameObject)' when the room is no longer needed.
         }
         
         #endregion
@@ -104,7 +135,9 @@ namespace TDG0407.Domain.Archive
             if (prefab == null)
                 Debug.LogWarning("RoomDocument prefab reference is not set.");
 
-            RoomView roomView = await InstantiateRoomView(0, new Point[] { new(0, 0) }, new Dictionary<Point, WarpPointState>());
+            GameObject dummy = new("dummy");
+            dummy.SetActive(false);
+            RoomView roomView = await InstantiateRoomView(string.Empty, 0, new Point[] { new(0, 0) }, new Dictionary<Point, WarpPointState>(), dummy.transform);
             List<PointView> pointViews = roomView.PointViews;
 
             // minX, minY, maxX, maxY를 구함
@@ -134,6 +167,7 @@ namespace TDG0407.Domain.Archive
             this.unavailablePoints = unavailablePoints.ToArray();
 
             Addressables.ReleaseInstance(roomView.gameObject);
+            DestroyImmediate(dummy);
         }
 
         #endregion
