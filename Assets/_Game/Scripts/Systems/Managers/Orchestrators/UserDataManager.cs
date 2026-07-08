@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace TDG0407.Systems.Managers
@@ -16,91 +17,200 @@ namespace TDG0407.Systems.Managers
     {
         #region Fields
 
-        private const string FILENAME_SETTINGDATA = "settings.json";
-        private const string FILENAME_GAMEDATA = "gamedata.bin";
+        private const int USER_DATA_SCHEMA_VERSION = 1;
+        private const string FILENAME_USERDATA = "userdata.json";
+        private const string FILENAME_SETTINGDATA_LEGACY = "settings.json";
+        private const string FILENAME_GAMEDATA_LEGACY = "gamedata.bin";
         private static GameData gameData = new GameData();
         private static SettingData settingData = new SettingData();
+
+        [Serializable]
+        private sealed class UserDataEnvelope
+        {
+            public int schemaVersion = USER_DATA_SCHEMA_VERSION;
+            public string appVersion = Application.version;
+            public GameData gameData = new GameData();
+            public SettingData settingData = new SettingData();
+        }
 
         #endregion
         #region Properties
 
         public static GameData GameData => gameData;
         public static SettingData SettingData => settingData;
-        public static string PATH_SETTINGDATA => Path.Combine(Application.persistentDataPath, FILENAME_SETTINGDATA);
-        public static string PATH_GAMEDATA => Path.Combine(Application.persistentDataPath, FILENAME_GAMEDATA);
+        public static string PATH_USERDATA => Path.Combine(Application.persistentDataPath, FILENAME_USERDATA);
+        public static string PATH_SETTINGDATA_LEGACY => Path.Combine(Application.persistentDataPath, FILENAME_SETTINGDATA_LEGACY);
+        public static string PATH_GAMEDATA_LEGACY => Path.Combine(Application.persistentDataPath, FILENAME_GAMEDATA_LEGACY);
 
         #endregion
         #region Methods
 
         public static void Initialize()
         {
-            gameData = Load<GameData>();
-            settingData = Load<SettingData>();
+            bool loadedFromLegacy;
+            UserDataEnvelope envelope = LoadEnvelope(out loadedFromLegacy);
+
+            gameData = envelope.gameData ?? new GameData();
+            settingData = envelope.settingData ?? new SettingData();
+
+            ValidateUserData();
+
+            if (loadedFromLegacy)
+            {
+                Save();
+                CleanupLegacyFiles();
+            }
         }
 
         public static void ValidateUserData()
         {
-            gameData.ValidateData();
+            try
+            {
+                gameData.ValidateData();
+            }
+            catch
+            {
+                gameData = new GameData();
+            }
+
+            settingData.ValidateData();
         }
 
         public static void Save()
         {
-            gameData.ValidateData();
+            ValidateUserData();
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream stream = File.Create(PATH_GAMEDATA);
-            formatter.Serialize(stream, gameData);
+            UserDataEnvelope envelope = new()
+            {
+                schemaVersion = USER_DATA_SCHEMA_VERSION,
+                appVersion = Application.version,
+                gameData = gameData,
+                settingData = settingData,
+            };
+
+            string json = JsonConvert.SerializeObject(envelope, Formatting.Indented);
+            File.WriteAllText(PATH_USERDATA, json);
         }
 
         public static T Load<T>() where T : IUserData
         {
-            if (typeof(T) == typeof(GameData)) return (T)(object)LoadGameData();
-            else if (typeof(T) == typeof(SettingData)) return (T)(object)LoadSettingData();
-            throw new InvalidOperationException($"Unsupported data type: {typeof(T)}");
-
-            static GameData LoadGameData()
+            bool loadedFromLegacy;
+            UserDataEnvelope envelope = LoadEnvelope(out loadedFromLegacy);
+            if (loadedFromLegacy)
             {
-                if (File.Exists(PATH_GAMEDATA) == false)
-                    return new GameData();
-
-                try
-                {
-                    BinaryFormatter formatter = new();
-                    using FileStream stream = File.OpenRead(PATH_GAMEDATA);
-                    if (formatter.Deserialize(stream) is not GameData loadedGameData)
-                        return new GameData();
-
-                    loadedGameData.Initialize();
-                    return loadedGameData;
-                }
-                catch
-                {
-                    return new GameData();
-                }
+                gameData = envelope.gameData ?? new GameData();
+                settingData = envelope.settingData ?? new SettingData();
+                Save();
+                CleanupLegacyFiles();
             }
 
-            static SettingData LoadSettingData()
+            if (typeof(T) == typeof(GameData)) return (T)(object)(envelope.gameData ?? new GameData());
+            else if (typeof(T) == typeof(SettingData)) return (T)(object)(envelope.settingData ?? new SettingData());
+            throw new InvalidOperationException($"Unsupported data type: {typeof(T)}");
+        }
+
+        private static UserDataEnvelope LoadEnvelope(out bool loadedFromLegacy)
+        {
+            loadedFromLegacy = false;
+
+            if (TryLoadUnifiedEnvelope(out UserDataEnvelope envelope))
+                return envelope;
+
+            loadedFromLegacy = File.Exists(PATH_GAMEDATA_LEGACY) || File.Exists(PATH_SETTINGDATA_LEGACY);
+            return new UserDataEnvelope
             {
-                if (File.Exists(PATH_SETTINGDATA) == false)
-                    return new SettingData();
+                schemaVersion = USER_DATA_SCHEMA_VERSION,
+                appVersion = Application.version,
+                gameData = LoadLegacyGameData(),
+                settingData = LoadLegacySettingData(),
+            };
+        }
 
-                try
-                {
-                    string json = File.ReadAllText(PATH_SETTINGDATA);
-                    if (string.IsNullOrWhiteSpace(json))
-                        return new SettingData();
+        private static bool TryLoadUnifiedEnvelope(out UserDataEnvelope envelope)
+        {
+            envelope = null;
 
-                    SettingData loaded = JsonUtility.FromJson<SettingData>(json);
-                    return loaded ?? new SettingData();
-                }
-                catch
-                {
-                    return new SettingData();
-                }
+            if (File.Exists(PATH_USERDATA) == false)
+                return false;
+
+            try
+            {
+                string json = File.ReadAllText(PATH_USERDATA);
+                if (string.IsNullOrWhiteSpace(json))
+                    return false;
+
+                envelope = JsonConvert.DeserializeObject<UserDataEnvelope>(json);
+                return envelope != null;
+            }
+            catch
+            {
+                return false;
             }
         }
 
-        
+        private static GameData LoadLegacyGameData()
+        {
+            if (File.Exists(PATH_GAMEDATA_LEGACY) == false)
+                return new GameData();
+
+            try
+            {
+#pragma warning disable SYSLIB0011
+                BinaryFormatter formatter = new();
+                using FileStream stream = File.OpenRead(PATH_GAMEDATA_LEGACY);
+                if (formatter.Deserialize(stream) is not GameData loadedGameData)
+                    return new GameData();
+#pragma warning restore SYSLIB0011
+
+                loadedGameData.ValidateData();
+                return loadedGameData;
+            }
+            catch
+            {
+                return new GameData();
+            }
+        }
+
+        private static SettingData LoadLegacySettingData()
+        {
+            if (File.Exists(PATH_SETTINGDATA_LEGACY) == false)
+                return new SettingData();
+
+            try
+            {
+                string json = File.ReadAllText(PATH_SETTINGDATA_LEGACY);
+                if (string.IsNullOrWhiteSpace(json))
+                    return new SettingData();
+
+                SettingData loaded = JsonUtility.FromJson<SettingData>(json);
+                return loaded ?? new SettingData();
+            }
+            catch
+            {
+                return new SettingData();
+            }
+        }
+
+        private static void CleanupLegacyFiles()
+        {
+            try
+            {
+                if (File.Exists(PATH_GAMEDATA_LEGACY))
+                    File.Delete(PATH_GAMEDATA_LEGACY);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                if (File.Exists(PATH_SETTINGDATA_LEGACY))
+                    File.Delete(PATH_SETTINGDATA_LEGACY);
+            }
+            catch
+            {
+            }
+        }
 
         public static int GenerateInstanceId()
         {

@@ -54,10 +54,14 @@ namespace TDG0407.Domain.Archive
             }
             //roomViewObject.SetActive(false);
 
-            foreach (var warpPointState in warpPointStates.ToList())
+            Dictionary<Point, WarpPointState> filteredWarpPointStates = warpPointStates != null
+                ? new Dictionary<Point, WarpPointState>(warpPointStates)
+                : new Dictionary<Point, WarpPointState>();
+
+            foreach (var warpPointState in filteredWarpPointStates.ToList())
             {
-                if (!warpablePoints.Contains(warpPointState.Key))
-                    warpPointStates.Remove(warpPointState.Key);
+                if (warpablePoints != null && !warpablePoints.Contains(warpPointState.Key))
+                    filteredWarpPointStates.Remove(warpPointState.Key);
             }
 
             Dictionary<Point, PointState> pointStates = new();
@@ -88,8 +92,8 @@ namespace TDG0407.Domain.Archive
                 scale: scale,
                 size: size,
                 type: type,
-                pointStates: null,
-                warpPointStates: warpPointStates,
+                pointStates: pointStates,
+                warpPointStates: filteredWarpPointStates,
                 unavailablePoints: unavailablePoints
             ));
 
@@ -113,9 +117,10 @@ namespace TDG0407.Domain.Archive
             }
             //roomViewObject.SetActive(false);
 
+            roomState.warpPointStates ??= new Dictionary<Point, WarpPointState>();
             foreach (var warpPointState in roomState.warpPointStates.ToList())
             {
-                if (!warpablePoints.Contains(warpPointState.Key))
+                if (warpablePoints != null && !warpablePoints.Contains(warpPointState.Key))
                     roomState.warpPointStates.Remove(warpPointState.Key);
             }
 

@@ -1,0 +1,27 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Tests/uitest/testuss.uss?fileID=7433441132597879392&amp;guid=8d706bd93e69c924da988405cecfe365&amp;type=3#testuss"/>
+    <ui:VisualElement name="container" style="align-items: center; height: 100%; width: 100%; -unity-font-definition: url(&quot;project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&amp;guid=c83155f1d4d50984d864c82064877a34&amp;type=2#neodgm_SDF&quot;);">
+        <ui:VisualElement name="render_area" style="width: 100%; height: 50%; flex-direction: row; justify-content: space-around; align-items: flex-end;">
+            <ui:VisualElement name="image_boy" class="image-boy image-boy--inair"/>
+            <ui:VisualElement name="image_robot" style="width: 247px; height: 400px; background-image: url(&quot;project://database/Assets/Tests/uitest/Hyperspace%20-%20Robot%202.png?fileID=2800000&amp;guid=0a536b0cde7060543b2c8161cf1ac644&amp;type=3#Hyperspace - Robot 2&quot;);"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="panel" style="width: 100%; height: 50%; background-color: rgb(255, 255, 255); justify-content: space-between;">
+            <ui:VisualElement>
+                <ui:Label text="dsdsfdsfsdfsdfsdf" name="title" class="title-text"/>
+                <ui:Label text="LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabelLabelLabel LabelLabelLabelLabel" name="paragraph" class="paragraph-text"/>
+            </ui:VisualElement>
+            <ui:VisualElement style="width: 100%; height: 240px; justify-content: center; padding-right: 120px; padding-left: 120px;">
+                <ui:Button text="Button" name="open_btn" class="blhjeue-btn"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="container_bottom" style="position: absolute; width: 100%; height: 100%; display: none;">
+            <ui:VisualElement name="scrim" class="scrim"/>
+            <ui:VisualElement name="bottomsheet" class="bottomsheet">
+                <ui:Label text="Ommens" name="title" class="title-text"/>
+                <ui:VisualElement name="image_warning" class="image-warning image-warning--up"/>
+                <ui:Label text="Sed in rebus apertissimis nimiym longi sumus." name="message" class="paragraph-text" style="-unity-text-align: upper-center;"/>
+                <ui:Button text="✕" name="close_btn" class="close-btn" style="width: 150px; height: 150px; border-top-left-radius: 75px; border-top-right-radius: 75px; border-bottom-right-radius: 75px; border-bottom-left-radius: 75px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

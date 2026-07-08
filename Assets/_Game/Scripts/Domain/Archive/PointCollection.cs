@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TDG0407.Domain.Archive
@@ -10,22 +11,40 @@ namespace TDG0407.Domain.Archive
 
         public string id = string.Empty; // can use Level ID
         public PointDocument[] pointDocuments;
+        private Dictionary<string, PointDocument> pointDocumentById;
 
         #endregion
         #region Methods
 
-        public PointDocument GetPointDocument(string pointId)
+        private void OnEnable()
         {
-            if (pointDocuments == null)
-                return null;
+            RebuildIndex();
+        }
 
-            foreach (var pointDocument in pointDocuments)
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            RebuildIndex();
+        }
+        #endif
+
+        public bool TryGetPointDocument(string pointId, out PointDocument pointDocument)
+        {
+            EnsureIndex();
+            if (string.IsNullOrWhiteSpace(pointId))
             {
-                if (pointDocument.id == pointId)
-                    return pointDocument;
+                pointDocument = null;
+                return false;
             }
 
-            return null;
+            return pointDocumentById.TryGetValue(pointId, out pointDocument);
+        }
+
+        public PointDocument GetPointDocument(string pointId)
+        {
+            return TryGetPointDocument(pointId, out PointDocument pointDocument)
+                ? pointDocument
+                : null;
         }
 
         public PointDocument ChoiceOne(System.Random random = null)
@@ -37,6 +56,34 @@ namespace TDG0407.Domain.Archive
 
             int index = random.Next(pointDocuments.Length);
             return pointDocuments[index];
+        }
+
+        private void EnsureIndex()
+        {
+            if (pointDocumentById == null)
+                RebuildIndex();
+        }
+
+        private void RebuildIndex()
+        {
+            pointDocumentById = new Dictionary<string, PointDocument>();
+
+            if (pointDocuments == null)
+                return;
+
+            foreach (var pointDocument in pointDocuments)
+            {
+                if (pointDocument == null || string.IsNullOrWhiteSpace(pointDocument.id))
+                    continue;
+
+                if (pointDocumentById.ContainsKey(pointDocument.id))
+                {
+                    Debug.LogWarning($"Duplicated PointDocument id '{pointDocument.id}' detected in {name}. Last one is ignored.");
+                    continue;
+                }
+
+                pointDocumentById.Add(pointDocument.id, pointDocument);
+            }
         }
 
         #endregion

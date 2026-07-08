@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine; 
 
 namespace TDG0407.Core.Utils
@@ -12,7 +13,7 @@ namespace TDG0407.Core.Utils
         private static T instance = null;
         public static T Instance => instance;
 
-        protected virtual void Awake()
+        protected virtual async UniTaskVoid Awake()
         {
             instance ??= FindAnyObjectByType<T>(FindObjectsInactive.Include);
         }

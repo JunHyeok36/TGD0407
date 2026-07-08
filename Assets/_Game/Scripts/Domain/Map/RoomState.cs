@@ -6,7 +6,6 @@ namespace TDG0407.Domain.Map
 
     using Core.Grid;
     using Domain.Entities;
-    using TDG0407.View.Map;
 
     /// <summary>
     /// 레벨의 각 방 상태를 나타냅니다.
@@ -145,11 +144,6 @@ namespace TDG0407.Domain.Map
             warpPointStates[position] = warpPointState;
         }
 
-        public static implicit operator RoomState(RoomView v)
-        {
-            throw new NotImplementedException();
-        }
-
         public RoomState Clone()
         {
             Dictionary<Point, PointState> clonedPointStates = new();
@@ -157,6 +151,13 @@ namespace TDG0407.Domain.Map
             {
                 clonedPointStates[kvp.Key] = kvp.Value.Clone();
             }
+
+            Dictionary<Point, WarpPointState> clonedWarpPointStates = new();
+            foreach (var kvp in warpPointStates)
+            {
+                clonedWarpPointStates[kvp.Key] = (WarpPointState)kvp.Value.Clone();
+            }
+
             return new RoomState(
                 roomInstanceId: this.roomInstanceId ?? throw new InvalidOperationException("RoomInstanceId is null."),
                 roomId: this.roomId,
@@ -165,8 +166,8 @@ namespace TDG0407.Domain.Map
                 scale: this.scale,
                 size: this.size,
                 type: this.type,
-                pointStates: new Dictionary<Point, PointState>(this.pointStates),
-                warpPointStates: new Dictionary<Point, WarpPointState>(this.warpPointStates),
+                pointStates: clonedPointStates,
+                warpPointStates: clonedWarpPointStates,
                 unavailablePoints: this.unavailablePoints != null ? (Point[])this.unavailablePoints.Clone() : null,
                 nextPointInstanceId: this.nextPointInstanceId ?? 0
             );

@@ -14,19 +14,40 @@ namespace TDG0407.Domain.Archive
 
         public string id = string.Empty; // can use Level ID
         public RoomDocument[] roomDocuments;
+        private Dictionary<string, RoomDocument> roomDocumentById;
 
         #endregion
         #region Methods
+
+        private void OnEnable()
+        {
+            RebuildIndex();
+        }
+
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            RebuildIndex();
+        }
+        #endif
+
+        public bool TryGetRoomDocument(string roomId, out RoomDocument roomDocument)
+        {
+            EnsureIndex();
+            if (string.IsNullOrWhiteSpace(roomId))
+            {
+                roomDocument = null;
+                return false;
+            }
+
+            return roomDocumentById.TryGetValue(roomId, out roomDocument);
+        }
         
         public RoomDocument GetRoomDocument(string roomId)
         {
-            foreach (var roomDocument in roomDocuments)
-            {
-                if (roomDocument.id == roomId)
-                    return roomDocument;
-            }
-
-            return null;
+            return TryGetRoomDocument(roomId, out RoomDocument roomDocument)
+                ? roomDocument
+                : null;
         }
 
         public RoomDocument ChoiceOne(RoomScale scale = RoomScale.NULL, RoomType type = RoomType.NULL, System.Random random = null)
@@ -71,6 +92,34 @@ namespace TDG0407.Domain.Archive
             }
 
             return null;
+        }
+
+        private void EnsureIndex()
+        {
+            if (roomDocumentById == null)
+                RebuildIndex();
+        }
+
+        private void RebuildIndex()
+        {
+            roomDocumentById = new Dictionary<string, RoomDocument>();
+
+            if (roomDocuments == null)
+                return;
+
+            foreach (var roomDocument in roomDocuments)
+            {
+                if (roomDocument == null || string.IsNullOrWhiteSpace(roomDocument.id))
+                    continue;
+
+                if (roomDocumentById.ContainsKey(roomDocument.id))
+                {
+                    Debug.LogWarning($"Duplicated RoomDocument id '{roomDocument.id}' detected in {name}. Last one is ignored.");
+                    continue;
+                }
+
+                roomDocumentById.Add(roomDocument.id, roomDocument);
+            }
         }
 
         #endregion

@@ -13,20 +13,33 @@ namespace TDG0407.Systems.Data
     {
         #region Fields
 
-        public readonly ResolutionSetting resolution;
-        public readonly QualitySetting quality;
-        public readonly AudioSetting audio;
+        public ResolutionSetting resolution = new(1920, 1080, 60, false);
+        public QualitySetting quality = new();
+        public AudioSetting audio = new();
         public SystemLanguage? language;
     
+        #endregion
+        #region Constructors
+
+        public SettingData()
+        {
+            language = SystemLanguage.English;
+        }
+
         #endregion
         #region Methods
 
         public void ValidateData()
         {
+            resolution ??= new ResolutionSetting(1920, 1080, 60, false);
+            quality ??= new QualitySetting();
+            audio ??= new AudioSetting();
+
             resolution.ValidateData();
             quality.ValidateData();
             audio.ValidateData();
-            if (language.HasValue) language = SystemLanguage.English;
+            if (language.HasValue == false)
+                language = SystemLanguage.English;
         }
 
         #endregion

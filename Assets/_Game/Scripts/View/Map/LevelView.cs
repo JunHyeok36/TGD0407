@@ -5,8 +5,8 @@ using UnityEngine;
 namespace TDG0407.View.Map
 {
 
-    using Domain.Archive;
     using Domain.Map;
+    using Systems.Managers;
 
     /// <summary>
     /// 레벨 상태를 기반으로 맵을 시각적으로 표현하는 뷰입니다.
@@ -31,13 +31,7 @@ namespace TDG0407.View.Map
         public async UniTask Initialize(LevelState levelState)
         {
             _levelState = levelState;
-            _roomViews.Clear();
-            foreach (var roomState in levelState.roomStates.Values)
-            {
-                RoomDocument roomDocument = ArchiveManager.levelCollection.GetLevelDocument(levelState.levelId).roomCollection.GetRoomDocument(roomState.roomId);
-                RoomView roomView = await roomDocument.InstantiateRoomView(roomState, transform);
-                _roomViews.Add(roomView);
-            }
+            await LevelViewPresenter.BuildRoomViews(levelState, transform, _roomViews);
         }
 
         #endregion

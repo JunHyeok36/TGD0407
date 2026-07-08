@@ -22,10 +22,10 @@ namespace TDG0407.TEST
         [ContextMenuItem("Generate Map", nameof(Test))]
         private WorldState _worldState = null;
 
-        async void Start()
+        async UniTaskVoid Start()
         {
             await ArchiveManager.Initialize();
-            Test();
+            Test().Forget();
         }
 
         public void GenerateNewWorldSeed()
@@ -33,7 +33,7 @@ namespace TDG0407.TEST
             _worldSeed = SeedParser.NewIntSeed();
         }
 
-        public async void Test()
+        public async UniTaskVoid Test()
         {
             await GenerateNewWorldState();
             

@@ -1,0 +1,141 @@
+:root {
+    -unity-font-definition: url("project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&guid=c83155f1d4d50984d864c82064877a34&type=2#neodgm_SDF");
+}
+
+.blue-btn {
+    height: 100px;
+    color: rgb(255, 255, 255);
+    font-size: 55px;
+    background-color: rgb(106, 90, 205);
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    transition-timing-function: ease-in;
+    transition-duration: 0.1s;
+}
+
+.blue-btn:hover {
+    scale: 1.005 1.005;
+    background-color: rgb(92, 71, 224);
+}
+
+.blue-btn:active {
+    background-color: rgb(62, 48, 152);
+}
+
+.title-text {
+    font-size: 120px;
+    -unity-text-align: upper-center;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 40px;
+    padding-right: 0;
+    padding-bottom: 40px;
+    padding-left: 0;
+}
+
+.paragraph-text {
+    font-size: 60px;
+    white-space: normal;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 20px;
+    padding-right: 80px;
+    padding-bottom: 20px;
+    padding-left: 80px;
+    color: rgb(58, 58, 58);
+}
+
+.bottomsheet {
+    flex-grow: 1;
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    bottom: 0;
+    background-color: rgb(239, 255, 255);
+    border-top-left-radius: 60px;
+    border-top-right-radius: 60px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    opacity: 1;
+    translate: 0 100%;
+    transition-timing-function: ease-out;
+    transition-duration: 0.25s;
+}
+
+.bottomsheet--up {
+    translate: 0 0%;
+}
+
+.scrim {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.808);
+    opacity: 0;
+    transition-duration: 0.25s;
+}
+
+.scrim--fadein {
+    opacity: 1;
+}
+
+.image-boy {
+    background-image: url("project://database/Assets/Tests/uitest/Hyperspace%20-%20Floating.png?fileID=2800000&guid=960ad70530ddcf34a8573b18305e1e0b&type=3#Hyperspace - Floating");
+    width: 259px;
+    height: 400px;
+    transition-duration: 2s;
+}
+
+
+
+.image-boy--inair {
+    translate: -1234px -1310px;
+    rotate: 55deg;
+}
+
+.image-warning {
+    background-image: url("project://database/Assets/Plugins/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2346436936791262179&guid=91e6f65140b151b41b288fecb5005616&type=3#console.warnicon@2x");
+    aspect-ratio: 1;
+    align-self: center;
+    height: 400px;
+    transition-duration: 1s;
+}
+
+.image-warning--up {
+    translate: 0 -20px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 50px;
+    left: auto;
+    height: 100px;
+    width: 100px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-image: none;
+    font-size: 81px;
+    right: 50px;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    border-bottom-left-radius: 50px;
+    color: rgb(70, 70, 70);
+    background-color: rgba(239, 255, 255, 0);
+    transition-duration: 0.1s;
+}
+
+.close-btn:hover {
+    background-color: rgb(226, 210, 210);
+}
+
+.close-btn:active {
+    background-color: rgb(142, 133, 133);
+    color: rgb(209, 204, 204);
+}

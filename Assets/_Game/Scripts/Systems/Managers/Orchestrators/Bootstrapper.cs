@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+
 namespace TDG0407.Systems.Managers
 {
 
@@ -10,14 +12,13 @@ namespace TDG0407.Systems.Managers
     /// </summary>
     public sealed class Bootstrapper : Singleton<Bootstrapper>
     {
-        protected override void Awake()
+        protected override async UniTaskVoid Awake()
         {
-            base.Awake();
-
-            InitializeManagers();
+            base.Awake().Forget();
+            InitializeManagers().Forget();
         }   
 
-        private async void InitializeManagers()
+        private async UniTaskVoid InitializeManagers()
         {
             await ArchiveManager.Initialize();
         }

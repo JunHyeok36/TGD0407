@@ -70,8 +70,27 @@ namespace TDG0407.View.Map
                 foreach (var entityState in _state.PlacedEntities)
                 {
                     PointState pointState = _state.pointStates[entityState.position];
-                    EntityDocument entityDocument = ArchiveManager.levelCollection.GetLevelDocument(_state.levelId)
-                        .entityCollection.GetEntityDocument(entityState.entityId);
+                    if (ArchiveManager.levelCollection == null)
+                    {
+                        Debug.LogWarning("LevelCollection is not initialized.");
+                        continue;
+                    }
+                    if (!ArchiveManager.levelCollection.TryGetLevelDocument(_state.levelId, out LevelDocument levelDocument))
+                    {
+                        Debug.LogWarning($"LevelDocument not found for levelId '{_state.levelId}'.");
+                        continue;
+                    }
+                    if (levelDocument.entityCollection == null)
+                    {
+                        Debug.LogWarning($"EntityCollection is missing on level '{_state.levelId}'.");
+                        continue;
+                    }
+                    if (!levelDocument.entityCollection.TryGetEntityDocument(entityState.entityId, out EntityDocument entityDocument))
+                    {
+                        Debug.LogWarning($"EntityDocument not found for entityId '{entityState.entityId}'.");
+                        continue;
+                    }
+
                     EntityView entityView = await entityDocument.InstantiateEntityView(_state.levelId, entityState.entityInstanceId.Value, GetPointView(pointState.position));
                     _entityViews.Add(entityView);
                 }

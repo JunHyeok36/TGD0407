@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4245043659742510251}
-  - component: {fileID: 4261609258459275365}
+  - component: {fileID: 2936121518172029599}
   m_Layer: 0
   m_Name: Test_room_double_7x15_battle_0
   m_TagString: Untagged
@@ -137,7 +137,7 @@ Transform:
   - {fileID: 1520833623959995361}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4261609258459275365
+--- !u!114 &2936121518172029599
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,10 +146,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6906485075400745402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dabdf3d0f0417c478b8f4a35f270873, type: 3}
+  m_Script: {fileID: 11500000, guid: 65e7a6c6a3110ab498d079a5bfdc548c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.View.Map.RoomView
-  _pointViews:
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407.View.Map.RoomViewPrefab
+  pointViews:
   - {fileID: 4758245522909105906}
   - {fileID: 6158886546731340253}
   - {fileID: 7157193182205005771}
@@ -255,7 +255,7 @@ MonoBehaviour:
   - {fileID: 6400919113204574816}
   - {fileID: 2570571004884211230}
   - {fileID: 2360266381020966605}
-  _entityViews:
+  entityViews:
   - {fileID: 2448492806735187582}
   - {fileID: 2923057841389902175}
   - {fileID: 3660439301116137372}
