@@ -20,6 +20,9 @@ namespace TDG0407._prototype
         }
         public _prototype_Point(_prototype_Point other) : this(other.x, other.y) {}
 
+        public static bool operator ==(_prototype_Point a, _prototype_Point b) => a.x == b.x && a.y == b.y;
+        public static bool operator !=(_prototype_Point a, _prototype_Point b) => !(a == b);
+
         public static _prototype_Point operator +(_prototype_Point a, _prototype_Point b) => new(a.x + b.x, a.y + b.y);
         public static _prototype_Point operator -(_prototype_Point a, _prototype_Point b) => new(a.x - b.x, a.y - b.y);
         public static _prototype_Point operator *(_prototype_Point a, float m) => new((int)(a.x * m), (int)(a.y * m));

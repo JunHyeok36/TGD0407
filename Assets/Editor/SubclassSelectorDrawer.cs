@@ -30,7 +30,7 @@ public class SubclassSelectorDrawer : PropertyDrawer
         }
 
         // 2. 클래스 선택 드롭다운 버튼 배치
-        string typeName = hasValue ? property.managedReferenceValue.GetType().Name : "Null (클래스 선택)";
+        string typeName = hasValue ? property.managedReferenceValue.GetType().Name : "NULL";
         if (GUI.Button(buttonRect, typeName, EditorStyles.popup))
         {
             ShowTypeMenu(property);
