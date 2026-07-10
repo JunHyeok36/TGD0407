@@ -11,7 +11,7 @@ namespace TDG0407._prototype
         public string ename = "entity";
         public _prototype_BoundedValue<int> health = new(0, 100);
         public _prototype_BoundedValue<int> stamina = new(0, 10);
-        public _prototype_Point position = _prototype_Point.zero;
+        public _prototype_Point point = _prototype_Point.zero;
 
     }
 

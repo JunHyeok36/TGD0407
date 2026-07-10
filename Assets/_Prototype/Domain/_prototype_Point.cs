@@ -20,6 +20,8 @@ namespace TDG0407._prototype
         }
         public _prototype_Point(_prototype_Point other) : this(other.x, other.y) {}
 
+        public override readonly string ToString() => $"({x}, {y})";
+
         public static bool operator ==(_prototype_Point a, _prototype_Point b) => a.x == b.x && a.y == b.y;
         public static bool operator !=(_prototype_Point a, _prototype_Point b) => !(a == b);
 

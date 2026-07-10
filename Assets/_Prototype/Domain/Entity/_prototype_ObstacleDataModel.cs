@@ -14,7 +14,7 @@ namespace TDG0407._prototype
                 ename = ename,
                 health = health,
                 stamina = stamina,
-                position = position
+                point = point
             };
         }
 

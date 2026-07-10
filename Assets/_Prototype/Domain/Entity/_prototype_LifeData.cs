@@ -18,9 +18,9 @@ namespace TDG0407._prototype
             string name,
             _prototype_BoundedValue<int> health, 
             _prototype_BoundedValue<int> stamina, 
-            _prototype_Point position, 
+            _prototype_Point point, 
             IEnumerable<_prototype_CardData> allCardDatas) 
-            : base(name, health, stamina, position)
+            : base(name, health, stamina, point)
         {
             this.allCardDatas = new List<_prototype_CardData>();
             foreach (var cardData in allCardDatas) this.allCardDatas.Add(new(cardData));

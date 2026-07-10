@@ -3,6 +3,7 @@ namespace TDG0407._prototype
     
     public enum _prototype_Stat : sbyte
     {
+
         NULL = -1,
         None = 0,
         Health,
@@ -13,6 +14,7 @@ namespace TDG0407._prototype
         Avoidance,
         CriticalProb,
         CriticalWeight
+        
     }
 
 }
