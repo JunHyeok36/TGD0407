@@ -25,6 +25,8 @@ namespace TDG0407.View.Entities
             _state = state;
             _state.position = pointState.position;
             transform.localPosition = Vector3.zero;
+
+            
         }
 
         #endregion

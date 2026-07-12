@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,18 +8,21 @@ namespace TDG0407._prototype
     
     public class _prototype_PlayerController : MonoBehaviour
     {
+        public static _prototype_PlayerController Instance { get; private set; }
         
         [Header("References")]
         [SerializeField] private _prototype_EntityView _controlledEntityView;
-        [SerializeField] private _prototype_CameraController _cameraController;
+        [SerializeField] private _prototype_CameraController _cameraController; 
 
-        [Header("Settings")]
-        [SerializeField] private float longPressThreshold = 0.25f; // 이 시간(초) 이상 누르면 '길게 누르기'로 판단
-        [SerializeField] private float moveHoldInterval = 0.15f;   // 길게 누르고 있을 때 다음 칸으로 이동하는 시간 차(딜레이)
+        //[Header("Settings")]
 
-        private float buttonPressedTime = 0f;  // 버튼을 누르고 있는 누적 시간
-        private float holdMoveTimer = 0f;      // 연속 이동 간격을 계산하기 위한 타이머
-        private bool isExecutingHoldMove = false;
+        public _prototype_EntityView ControlledEntityView => _controlledEntityView;
+
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
 
         private void Update()
         {
@@ -37,7 +41,7 @@ namespace TDG0407._prototype
                 _prototype_GridVisualManager.Instance.UpdatePointHoverIndicatorColor(Color.white);
             }
             
-            _prototype_GridVisualManager.Instance.UpdatePointHoverIndicatorPosition(mousePoint);
+            _prototype_GridVisualManager.Instance.HighlightPoint(mousePoint);
         }
 
         public _prototype_Point? GetIsometricMousePoint()
@@ -67,13 +71,14 @@ namespace TDG0407._prototype
             {
                 if (_controlledEntityView.Point == targetPoint) return;
 
-                List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPathViews(_controlledEntityView.Point, targetPoint);
+                List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint);
                 if (path != null && path.Count > 0)
                 {
                     _prototype_PointView nextStep = path[0];
-                    _controlledEntityView.MoveTo(nextStep);
 
-                    //_prototype_TickManager.Instance.AdvanceTick();
+                    _prototype_TickManager.AdvanceTick(() => {
+                        return _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
+                    }).Forget();
                     //_prototype_GridVisualManager.Instance.PlayClickEffect(nextStep);
                 }
             }

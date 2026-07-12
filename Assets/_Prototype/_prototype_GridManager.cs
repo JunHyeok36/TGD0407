@@ -9,13 +9,13 @@ namespace TDG0407._prototype
     {
         private class Node : IComparable<Node>
         {
-            public _prototype_Point point;
+            public _prototype_PointView pointView;
             public Node parent;
             public float gCost; // 시작점부터의 거리
             public float hCost; // 목적지까지의 예상 거리
             public float FCost => gCost + hCost; // 총점
 
-            public Node(_prototype_Point point) => this.point = point;
+            public Node(_prototype_PointView pointView) => this.pointView = pointView;
 
             // 점수가 낮은 노드가 우선순위를 갖도록 정렬 기준 정의
             public int CompareTo(Node other)
@@ -25,7 +25,6 @@ namespace TDG0407._prototype
                 return compare;
             }
         }
-
 
         public static _prototype_GridManager Instance { get; private set; }
 
@@ -49,6 +48,7 @@ namespace TDG0407._prototype
 
         public void Initialize()
         {
+            // Initialize pointViews and pointViewMap
             pointViewMap = new();
             foreach (var pointView in pointViews)
             {
@@ -72,35 +72,26 @@ namespace TDG0407._prototype
             return null;
         }
 
-        public List<_prototype_PointView> FindPathViews(_prototype_Point start, _prototype_Point end)
-        {
-            List<_prototype_Point> pathPoints = FindPath(start, end);
-            if (pathPoints == null) return null;
-
-            List<_prototype_PointView> pathViews = new();
-            foreach (var point in pathPoints)
-            {
-                _prototype_PointView pointView = GetPointView(point);
-                if (pointView != null)
-                {
-                    pathViews.Add(pointView);
-                }
-            }
-
-            return pathViews;
-        }
-
-        public List<_prototype_Point> FindPath(_prototype_Point startPoint, _prototype_Point endPoint)
+        public List<_prototype_PointView> FindPath(_prototype_Point startPoint, _prototype_Point endPoint, bool includeDiagonals = false, bool checkEntityPlaceableInTerminatedPoints = false)
         {
             if (!IsWithinBounds(startPoint) || !IsWithinBounds(endPoint)) return null;
+            _prototype_PointView startPointView = GetPointView(startPoint);
+            _prototype_PointView endPointView = GetPointView(endPoint);
+            if (startPointView == null || endPointView == null) return null;
 
             // 2. 오픈 리스트(탐색 예정)와 클로즈 리스트(탐색 완료) 준비
             List<Node> openList = new();
-            HashSet<_prototype_Point> closedList = new();
+            HashSet<_prototype_PointView> closedList = new();
 
-            Node startNode = new(startPoint);
-            Node endNode = new(endPoint);
+            Node startNode = new(startPointView);
+            Node endNode = new(endPointView);
             openList.Add(startNode);
+
+            Func<_prototype_PointView, bool> CheckNode = null;
+            if (checkEntityPlaceableInTerminatedPoints)
+                CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.IsEntityPlaceable;
+            else
+                CheckNode = (_) => true;
 
             while (openList.Count > 0)
             {
@@ -109,31 +100,32 @@ namespace TDG0407._prototype
                 Node currentNode = openList[0];
                 openList.RemoveAt(0);
 
-                closedList.Add(currentNode.point);
+                closedList.Add(currentNode.pointView);
 
                 // 목적지에 도착했다면 역추적하여 경로 완성
-                if (currentNode.point == endNode.point)
+                if (currentNode.pointView.Point == endNode.pointView.Point)
                 {
                     return RetracePath(startNode, currentNode);
                 }
 
                 // 인접한 이웃 타일(4방향 또는 8방향)을 순회합니다.
-                foreach (_prototype_Point neighborPoint in GetNeighbors(currentNode.point))
+                foreach (_prototype_PointView neighborPointView in GetNeighbors(currentNode.pointView, includeDiagonals))
                 {
                     // 이미 탐색 완료한 곳이면 패스
-                    if (closedList.Contains(neighborPoint)) continue;
+                    if (closedList.Contains(neighborPointView)) continue;
+                    if (!CheckNode(neighborPointView)) continue;
 
                     // 새로운 G Cost 계산 (여기서는 한 칸 이동 비용을 1으로 가점)
                     float newMovementCostToNeighbor = currentNode.gCost + 1;
                     
-                    Node neighborNode = openList.Find(n => n.point == neighborPoint);
+                    Node neighborNode = openList.Find(n => n.pointView == neighborPointView);
 
                     if (neighborNode == null)
                     {
-                        neighborNode = new(neighborPoint)
+                        neighborNode = new(neighborPointView)
                         {
                             gCost = newMovementCostToNeighbor ,
-                            hCost = GetDistance(neighborPoint, endPoint),
+                            hCost = GetDistance(neighborPointView.Point, endPoint),
                             parent = currentNode
                         };
                         openList.Add(neighborNode);
@@ -150,15 +142,15 @@ namespace TDG0407._prototype
             return null; // 경로를 찾지 못함
         }
 
-        private List<_prototype_Point> RetracePath(Node startNode, Node endNode)
+        private List<_prototype_PointView> RetracePath(Node startNode, Node endNode)
         {
-            List<_prototype_Point> path = new();
+            List<_prototype_PointView> path = new();
             Node currentNode = endNode;
 
             // 목적지부터 부모를 타고 올라가며 역추적
             while (currentNode != startNode)
             {
-                path.Add(currentNode.point);
+                path.Add(currentNode.pointView);
                 currentNode = currentNode.parent;
             }
             path.Reverse(); // 시작점 -> 목적지 순서가 되도록 뒤집기
@@ -179,9 +171,9 @@ namespace TDG0407._prototype
             return pointViewMap.ContainsKey(p);
         }
         // 인접한 4방향 타일을 가져오는 함수
-        private List<_prototype_Point> GetNeighbors(_prototype_Point p, bool includeDiagonals = false)
+        private List<_prototype_PointView> GetNeighbors(_prototype_PointView pv, bool includeDiagonals = false)
         {
-            List<_prototype_Point> neighbors = new();
+            List<_prototype_PointView> neighbors = new();
 
             // 상하좌우 4방향
             _prototype_Point[] directions = new _prototype_Point[]
@@ -194,10 +186,10 @@ namespace TDG0407._prototype
 
             foreach (var dir in directions)
             {
-                _prototype_Point neighborPoint = p + dir;
+                _prototype_Point neighborPoint = pv.Point + dir;
                 if (IsWithinBounds(neighborPoint))
                 {
-                    neighbors.Add(neighborPoint);
+                    neighbors.Add(GetPointView(neighborPoint));
                 }
             }
 
@@ -214,10 +206,10 @@ namespace TDG0407._prototype
 
                 foreach (var dir in diagonalDirections)
                 {
-                    _prototype_Point neighborPoint = p + dir;
+                    _prototype_Point neighborPoint = pv.Point + dir;
                     if (IsWithinBounds(neighborPoint))
                     {
-                        neighbors.Add(neighborPoint);
+                        neighbors.Add(GetPointView(neighborPoint));
                     }
                 }
             }

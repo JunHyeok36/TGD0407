@@ -13,6 +13,8 @@ namespace TDG0407._prototype
 
         //[Header("Settings")]
 
+        private _prototype_PointView _lastHighlightedPointView;
+
         
         private void Awake()
         {
@@ -20,21 +22,38 @@ namespace TDG0407._prototype
             else Destroy(gameObject);
         }
 
-        public void UpdatePointHoverIndicatorPosition(_prototype_Point? point)
+        public void HighlightPoint(_prototype_Point? point)
         {
-            if (point.HasValue)
+            if (_lastHighlightedPointView != null)
             {
-                _prototype_Point minPoint = _prototype_GridManager.Instance.MinPoint;
-                _prototype_Point maxPoint = _prototype_GridManager.Instance.MaxPoint;
+                _lastHighlightedPointView.Hovering(false);
+                _lastHighlightedPointView = null;
+            }
 
-                if (!_prototype_GridManager.Instance.IsWithinBounds(point.Value))
+            _prototype_PointView pointView = point.HasValue ? _prototype_GridManager.Instance.GetPointView(point.Value) : null;
+            if (pointView != null)
+            {
+                if (pointView.IsEntityPlaceable)
+                {
+                    _prototype_Point minPoint = _prototype_GridManager.Instance.MinPoint;
+                    _prototype_Point maxPoint = _prototype_GridManager.Instance.MaxPoint;
+
+                    if (!_prototype_GridManager.Instance.IsWithinBounds(point.Value))
+                    {
+                        _pointHoverIndicator.gameObject.SetActive(false);
+                        return;
+                    }
+
+                    _pointHoverIndicator.gameObject.SetActive(true);
+                    _pointHoverIndicator.localPosition = new(point.Value.x, 0f, point.Value.y);
+                }
+                else
                 {
                     _pointHoverIndicator.gameObject.SetActive(false);
-                    return;
                 }
-
-                _pointHoverIndicator.gameObject.SetActive(true);
-                _pointHoverIndicator.localPosition = new(point.Value.x, 0f, point.Value.y);
+                
+                pointView.Hovering(true);
+                _lastHighlightedPointView = pointView;
             }
             else
             {

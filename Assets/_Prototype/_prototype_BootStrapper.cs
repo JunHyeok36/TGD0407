@@ -9,8 +9,10 @@ namespace TDG0407._prototype
         public void Start()
         {
             
+            _prototype_TickManager.Initialize();
             _prototype_GridManager.Instance.Initialize();
-
+            
+            
         }
 
     }

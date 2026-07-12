@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,19 @@ namespace TDG0407._prototype
                 context.modifiedDamage = 0;
 
             context.finalDamage = await context.target.TakeDamage(context);
+        }
+
+        public static UniTask MoveEntity(_prototype_EntityView entityView, _prototype_PointView fromPointView, _prototype_PointView toPointView)
+        {
+            if (entityView == null) throw new Exception("entityView is null.");
+            if (fromPointView == null) throw new Exception("fromPointView is null.");
+            if (toPointView == null) throw new Exception("toPointView is null.");
+            if (!fromPointView.Point.Equals(entityView.EntityData.point)) throw new Exception($"Entity {entityView.name} is not at the fromPoint {fromPointView.Point}.");
+            if (!toPointView.IsEntityPlaceable) throw new Exception($"Cannot move entity to point {toPointView.Point}. Point is not placeable.");
+
+            fromPointView.RemoveEntity(entityView);
+            toPointView.PlaceEntity(entityView);
+            return UniTask.CompletedTask;
         }
 
     }
