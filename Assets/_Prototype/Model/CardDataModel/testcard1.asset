@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
   m_Name: testcard1
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  id: testcard_1
+  cardType: 1
   costValue:
     costType: 5
     value: 1

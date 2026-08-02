@@ -8,6 +8,8 @@ namespace TDG0407._prototype
     public class _prototype_CardData
     {
 
+        public string id;
+        public _prototype_CardType cardType;
         public _prototype_CostValue costValue;
         public _prototype_BoundedValue<byte> coolTicks = new(0, 3);
         public _prototype_ICastRangeSelector castRange;
@@ -15,6 +17,8 @@ namespace TDG0407._prototype
         public List<_prototype_ICardAction> actionList;
 
         public _prototype_CardData(
+            string id,
+            _prototype_CardType cardType,
             _prototype_CostValue costValue, 
             _prototype_BoundedValue<byte> coolTicks, 
             _prototype_ICastRangeSelector castRange,
@@ -22,6 +26,8 @@ namespace TDG0407._prototype
             List<_prototype_ICardAction> actionList
             )
         {
+            this.id = id;
+            this.cardType = cardType;
             this.costValue = costValue;
             this.coolTicks = coolTicks;
             this.castRange = castRange;
@@ -31,6 +37,8 @@ namespace TDG0407._prototype
 
         public _prototype_CardData(_prototype_CardData other)
         {
+            this.id = other.id;
+            this.cardType = other.cardType;
             this.costValue = other.costValue;
             this.coolTicks = other.coolTicks;
             this.castRange = other.castRange;

@@ -8,12 +8,8 @@ namespace TDG0407._prototype
     public class _prototype_LifeDataModel : _prototype_EntityDataModel
     {
 
-        public List<_prototype_CardData> allCardDatas;
-        public List<_prototype_CardData> remainedCardDatas;
-        public List<_prototype_CardData> handedCardDatas;
-        public List<_prototype_CardData> discardedCardDatas;
-        public List<_prototype_CardData> destroyedCardDatas;
-
+        public _prototype_CardDeckModel cardDeck = null;
+        
         public _prototype_LifeData CreateLifeData()
         {
             return new()
@@ -22,12 +18,7 @@ namespace TDG0407._prototype
                 health = health,
                 stamina = stamina,
                 point = point,
-
-                allCardDatas = allCardDatas,
-                remainedCardDatas = remainedCardDatas,
-                handedCardDatas = handedCardDatas,
-                discardedCardDatas = discardedCardDatas,
-                destroyedCardDatas = destroyedCardDatas
+                cardDeck = cardDeck.CreateCardDeck()
             };
         }
 

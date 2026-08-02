@@ -72,7 +72,11 @@ namespace TDG0407._prototype
             return null;
         }
 
-        public List<_prototype_PointView> FindPath(_prototype_Point startPoint, _prototype_Point endPoint, bool includeDiagonals = false, bool checkEntityPlaceableInTerminatedPoints = false)
+        public List<_prototype_PointView> FindPath(
+            _prototype_Point startPoint, 
+            _prototype_Point endPoint, 
+            bool includeDiagonals = false, 
+            bool checkEntityPlaceableInTerminatedPoints = false)
         {
             if (!IsWithinBounds(startPoint) || !IsWithinBounds(endPoint)) return null;
             _prototype_PointView startPointView = GetPointView(startPoint);
@@ -91,7 +95,7 @@ namespace TDG0407._prototype
             if (checkEntityPlaceableInTerminatedPoints)
                 CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.IsEntityPlaceable;
             else
-                CheckNode = (_) => true;
+                CheckNode = (pointView) => pointView.IsEntityPlaceable;
 
             while (openList.Count > 0)
             {

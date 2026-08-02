@@ -15,7 +15,7 @@ MonoBehaviour:
   ename: testplayer
   health:
     _min: 0
-    _max: 100
+    _max: 223
     _cur: 100
   stamina:
     _min: 0
@@ -24,15 +24,4 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
-  allCardDatas:
-  - costValue:
-      costType: 0
-      value: 0
-    coolTicks:
-      _min: 0
-      _max: 0
-      _cur: 0
-  remainedCardDatas: []
-  handedCardDatas: []
-  discardedCardDatas: []
-  destroyedCardDatas: []
+  cardDeck: {fileID: 11400000, guid: fb49d46382d59f24f800bfd8339bb06c, type: 2}

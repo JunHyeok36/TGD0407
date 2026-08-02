@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using UnityEngine.Localization.SmartFormat.Utilities;
 
 namespace TDG0407._prototype
 {

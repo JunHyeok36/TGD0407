@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 namespace TDG0407._prototype
 {
@@ -12,18 +13,20 @@ namespace TDG0407._prototype
         
         [Header("References")]
         [SerializeField] private _prototype_EntityView _controlledEntityView;
-        [SerializeField] private _prototype_CameraController _cameraController; 
+        [SerializeField] private _prototype_CameraController _cameraController;
 
-        //[Header("Settings")]
+        //[Header("Settings")] 
 
+        public _prototype_Point ControlledEntityLastPoint => _controlledEntityLastPoint ?? _controlledEntityView.Point;
         public _prototype_EntityView ControlledEntityView => _controlledEntityView;
+        
+        private _prototype_Point? _controlledEntityLastPoint = null; 
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
         }
-
         private void Update()
         {
             _prototype_Point? mousePoint = GetIsometricMousePoint();
@@ -63,7 +66,6 @@ namespace TDG0407._prototype
             if (targetPoint == null) 
                 return;
 
-            // 1. 마우스 우클릭을 시작한 '첫 프레임' (짧은 클릭 처리)
             if (Mouse.current.rightButton.wasPressedThisFrame)
                 ExecuteSingleMoveStep(targetPoint.Value);
 
@@ -76,13 +78,16 @@ namespace TDG0407._prototype
                 {
                     _prototype_PointView nextStep = path[0];
 
-                    _prototype_TickManager.AdvanceTick(() => {
-                        return _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
+                    _controlledEntityLastPoint = _controlledEntityView.Point;
+                    _prototype_TickManager.AdvanceTick(async () => {  
+                        await _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
+                        _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
                     }).Forget();
                     //_prototype_GridVisualManager.Instance.PlayClickEffect(nextStep);
                 }
             }
         }
+
     }
 
 }

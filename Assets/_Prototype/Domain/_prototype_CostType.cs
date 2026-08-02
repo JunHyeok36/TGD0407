@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TDG0407._prototype
+﻿namespace TDG0407._prototype
 {
 
     public enum _prototype_CostType : sbyte
     {
+
         NULL = -1,
         None = 0,
         FixedHealth,
@@ -18,6 +15,7 @@ namespace TDG0407._prototype
         LostStaminaRatio,
         MaxStaminaRatio,
         Coin
+        
     }
 
 }
