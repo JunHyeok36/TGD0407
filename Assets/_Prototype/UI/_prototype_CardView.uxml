@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="CardView" style="background-color: rgb(106, 157, 164); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; -unity-font-definition: url(&quot;project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&amp;guid=c83155f1d4d50984d864c82064877a34&amp;type=2#neodgm_SDF&quot;); width: 300px; height: 450px; border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-left-color: rgb(62, 84, 87); border-right-color: rgb(62, 84, 87); border-top-color: rgb(62, 84, 87); border-bottom-color: rgb(62, 84, 87); transition-property: translate; transition-duration: 0.15s; flex-shrink: 0;">
+        <ui:Label text="name" name="CardName" style="font-size: 20px; color: rgb(30, 30, 30); -unity-text-align: upper-center;"/>
+        <ui:Label text="cost" name="CardCost" style="font-size: 20px; color: rgb(30, 30, 30); position: absolute; right: 0; top: 0;"/>
+        <ui:VisualElement name="CardSymbol" style="background-color: rgb(201, 201, 201); height: 150px;"/>
+        <ui:Label text="type" name="CardType" style="font-size: 18px; color: rgb(60, 60, 60); position: absolute; bottom: 0; left: 0; right: 0; -unity-text-align: upper-center;"/>
+    </ui:VisualElement>
+</ui:UXML>

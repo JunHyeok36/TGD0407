@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Wrapper" style="flex-grow: 1; justify-content: flex-end; -unity-font-definition: url(&quot;project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&amp;guid=c83155f1d4d50984d864c82064877a34&amp;type=2#neodgm_SDF&quot;);">
+        <ui:VisualElement name="PlayerInfo" style="flex-grow: 1;">
+            <ui:Label text="Pos : (0,0)" name="Point" style="font-size: 50px; color: rgb(255, 255, 255);"/>
+            <ui:Label text="Health : 100/100" name="Health" style="font-size: 50px; color: rgb(255, 255, 255);"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="CardsInfo" style="flex-grow: 1;">
+            <ui:Label text="Remains : 0" name="RemainsCount" style="position: absolute; height: auto; top: auto; width: 300px; left: 0; bottom: 0; font-size: 50px; color: rgb(255, 255, 255);"/>
+            <ui:VisualElement name="HandCardContainer" picking-mode="Ignore" style="height: 20%; width: auto; position: absolute; left: 400px; right: 400px; bottom: 0;"/>
+            <ui:Label text="Discarded : 0" name="DiscardedCount" style="position: absolute; height: auto; width: 300px; font-size: 44px; color: rgb(255, 255, 255); bottom: 0; right: 0;"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="CardDragArea" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
+    </ui:VisualElement>
+</ui:UXML>
