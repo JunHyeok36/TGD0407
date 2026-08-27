@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace TDG0407._prototype
 {
@@ -9,6 +10,7 @@ namespace TDG0407._prototype
     {
         
         public _prototype_CardDeck cardDeck = new();
+        [SerializeReference, SubclassSelector] public _prototype_EnemyAILogic aiLogic;
 
         public _prototype_LifeData() : base() { }
         public _prototype_LifeData(

@@ -25,14 +25,35 @@ namespace TDG0407._prototype
             OnPostTick = null;
         }
 
+        private static async UniTask InvokeEventAsync(Func<UniTask> evt)
+        {
+            if (evt == null) return;
+            foreach (Func<UniTask> handler in evt.GetInvocationList())
+            {
+                await handler();
+            }
+        }
+
+        public static bool IsTickProcessing { get; private set; }
+
         public static async UniTask AdvanceTick(Func<UniTask> playerAction)
         {
-            currentTick++;
+            if (IsTickProcessing) return;
+            IsTickProcessing = true;
+            
+            try
+            {
+                currentTick++;
 
-            if (OnPreTick != null) await OnPreTick.Invoke();
-            if (playerAction != null) await playerAction.Invoke();
-            if (OnTick != null) await OnTick.Invoke();
-            if (OnPostTick != null) await OnPostTick.Invoke();
+                await InvokeEventAsync(OnPreTick);
+                if (playerAction != null) await playerAction.Invoke();
+                await InvokeEventAsync(OnTick);
+                await InvokeEventAsync(OnPostTick);
+            }
+            finally
+            {
+                IsTickProcessing = false;
+            }
         }
 
         public static void RegisterPreTick(Func<UniTask> callback) => OnPreTick += callback;

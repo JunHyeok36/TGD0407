@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
@@ -129,8 +129,17 @@ namespace TDG0407._prototype
         #endregion
         #region Operators
 
-        public static bool operator ==(_prototype_BoundedValue<T> left, _prototype_BoundedValue<T> right) => left.Current.Equals(right.Current);
-        public static bool operator !=(_prototype_BoundedValue<T> left, _prototype_BoundedValue<T> right) => !left.Current.Equals(right.Current);
+        public static bool operator ==(_prototype_BoundedValue<T> left, _prototype_BoundedValue<T> right)
+        {
+            if (ReferenceEquals(left, null) && ReferenceEquals(right, null)) return true;
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null)) return false;
+            return left.Current.Equals(right.Current);
+        }
+
+        public static bool operator !=(_prototype_BoundedValue<T> left, _prototype_BoundedValue<T> right)
+        {
+            return !(left == right);
+        }
 
         public static implicit operator T(_prototype_BoundedValue<T> boundedValue) => boundedValue.Current;
 

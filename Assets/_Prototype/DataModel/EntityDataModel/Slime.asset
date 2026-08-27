@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef97ce57c1968b44a72198f2b9ec150, type: 3}
+  m_Name: Slime
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeDataModel
+  ename: Slime
+  health:
+    _min: 0
+    _max: 30
+    _cur: 30
+  stamina:
+    _min: 0
+    _max: 5
+    _cur: 5
+  point:
+    x: 0
+    y: 0
+  cardDeck: {fileID: 11400000, guid: 9601b4e07fb8de541842bfc89fe65aab, type: 2}
+  aiLogic:
+    rid: 2475498268826272099
+  references:
+    version: 2
+    RefIds:
+    - rid: 2475498268826272099
+      type: {class: _prototype_MeleeChaseAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        attackDamage: 5

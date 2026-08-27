@@ -39,6 +39,58 @@ namespace TDG0407._prototype
             foreach (var cardData in other.destroyedCardDatas) this.destroyedCardDatas.Add(new(cardData));
         }
 
+        public void InitializeDeck()
+        {
+            remainedCardDatas.Clear();
+            handedCardDatas.Clear();
+            discardedCardDatas.Clear();
+            
+            remainedCardDatas.AddRange(allCardDatas);
+            ShuffleRemained();
+        }
+
+        public void ShuffleRemained()
+        {
+            System.Random rnd = new System.Random();
+            int n = remainedCardDatas.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rnd.Next(n + 1);
+                var value = remainedCardDatas[k];
+                remainedCardDatas[k] = remainedCardDatas[n];
+                remainedCardDatas[n] = value;
+            }
+        }
+
+        public void DrawCards(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (remainedCardDatas.Count == 0)
+                {
+                    if (discardedCardDatas.Count == 0) return; // No cards left to draw
+                    
+                    remainedCardDatas.AddRange(discardedCardDatas);
+                    discardedCardDatas.Clear();
+                    ShuffleRemained();
+                }
+
+                if (remainedCardDatas.Count > 0)
+                {
+                    var drawnCard = remainedCardDatas[0];
+                    remainedCardDatas.RemoveAt(0);
+                    handedCardDatas.Add(drawnCard);
+                }
+            }
+        }
+
+        public void DiscardHand()
+        {
+            discardedCardDatas.AddRange(handedCardDatas);
+            handedCardDatas.Clear();
+        }
+
     }
 
 }

@@ -28,34 +28,14 @@ namespace TDG0407._prototype
 
         private async UniTask DetermineNextAction()
         {
-            
-            
+            if (_entityView == null || _entityView.EntityData == null) return;
+            if (_entityView.EntityData.health.Current <= 0) return; // 죽었으면 행동 안 함
 
-            await ChasePlayerEntity();
-
-            
-        }
-
-        async UniTask ChasePlayerEntity()
-        {
-            _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
-            _prototype_Point myPoint = _entityView.Point;
-
-            List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, playerPoint);
-            if (path != null && path.Count > 0)
+            var lifeData = _entityView.EntityData as _prototype_LifeData;
+            if (lifeData != null && lifeData.aiLogic != null)
             {
-                _prototype_PointView nextStep = path[0];
-                
-                if (nextStep != null && nextStep.IsEntityPlaceable)
-                {
-                    _prototype_PointView currentPointView = _prototype_GridManager.Instance.GetPointView(myPoint);
-                    
-                    if (currentPointView != null)
-                        await _prototype_InteractionManager.MoveEntity(_entityView, currentPointView, nextStep);
-                }
+                await lifeData.aiLogic.ExecuteAction(_entityView);
             }
         }
-
     }
-
 }

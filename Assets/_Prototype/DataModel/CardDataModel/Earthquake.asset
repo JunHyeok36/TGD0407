@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Name: Earthquake
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  id: Earthquake
+  description: "\uC790\uC2E0 \uC8FC\uBCC0\uC758 \uACE0\uB9AC \uBC94\uC704\uC5D0 \uC9C0\uC9C4\uC744
+    \uC77C\uC73C\uCF1C \uD0C0\uACA9\uD569\uB2C8\uB2E4."
+  cardType: 1
+  costValue:
+    costType: 5
+    value: 5
+  coolTicks:
+    _min: 0
+    _max: 3
+    _cur: 3
+  castRange:
+    rid: 2475498181128356195
+  targetRange:
+    rid: 2475498181128356196
+  actionList:
+  - rid: 2475498181128356197
+  references:
+    version: 2
+    RefIds:
+    - rid: 2475498181128356195
+      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data: 
+    - rid: 2475498181128356196
+      type: {class: _prototype_RingTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _radius: 2
+    - rid: 2475498181128356197
+      type: {class: _prototype_DamageCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        damageCoefficients:
+        - stat: 4
+          coefficient: 3

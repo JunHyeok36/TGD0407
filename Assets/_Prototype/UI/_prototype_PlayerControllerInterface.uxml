@@ -1,14 +1,30 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement name="Wrapper" style="flex-grow: 1; justify-content: flex-end; -unity-font-definition: url(&quot;project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&amp;guid=c83155f1d4d50984d864c82064877a34&amp;type=2#neodgm_SDF&quot;);">
-        <ui:VisualElement name="PlayerInfo" style="flex-grow: 1;">
-            <ui:Label text="Pos : (0,0)" name="Point" style="font-size: 50px; color: rgb(255, 255, 255);"/>
-            <ui:Label text="Health : 100/100" name="Health" style="font-size: 50px; color: rgb(255, 255, 255);"/>
+    <Style src="project://database/Assets/_Prototype/UI/_prototype_Styles.uss?fileID=7433441132597879392&amp;guid=27dfdf4058c8313438bfbfe93eccedb1&amp;type=3#_prototype_Styles"/>
+    <ui:VisualElement name="Wrapper" style="flex-grow: 1; justify-content: space-between; -unity-font-definition: url(&quot;project://database/Assets/Fonts/neodgm_SDF.asset?fileID=11400000&amp;guid=c83155f1d4d50984d864c82064877a34&amp;type=2#neodgm_SDF&quot;);">
+        <ui:VisualElement name="PlayerInfo" class="cmd-panel" style="position: absolute; top: 30px; left: 30px; width: 350px;">
+            <ui:Label text="&gt; POS : (0,0)" name="Point" class="cmd-text"/>
+            <ui:Label text="&gt; HP  : 100/100" name="Health" class="cmd-text"/>
+            <ui:Label text="&gt; SP  : 10/10" name="Stamina" class="cmd-text"/>
         </ui:VisualElement>
-        <ui:VisualElement name="CardsInfo" style="flex-grow: 1;">
-            <ui:Label text="Remains : 0" name="RemainsCount" style="position: absolute; height: auto; top: auto; width: 300px; left: 0; bottom: 0; font-size: 50px; color: rgb(255, 255, 255);"/>
-            <ui:VisualElement name="HandCardContainer" picking-mode="Ignore" style="height: 20%; width: auto; position: absolute; left: 400px; right: 400px; bottom: 0;"/>
-            <ui:Label text="Discarded : 0" name="DiscardedCount" style="position: absolute; height: auto; width: 300px; font-size: 44px; color: rgb(255, 255, 255); bottom: 0; right: 0;"/>
+        <ui:VisualElement name="CardsInfo" style="flex-grow: 1; justify-content: flex-end;">
+            <ui:VisualElement name="DrawDeck" class="deck-container" style="left: 40px;">
+                <ui:Label text="REMAIN" class="deck-title"/>
+                <ui:Label text="0" name="RemainsCount" class="deck-count"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="HandCardContainer" picking-mode="Ignore" class="hand-container"/>
+            <ui:VisualElement name="DiscardDeck" class="deck-container" style="right: 40px;">
+                <ui:Label text="DISCARD" class="deck-title"/>
+                <ui:Label text="0" name="DiscardedCount" class="deck-count deck-count-discard"/>
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="CardDragArea" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%;"/>
+        <ui:VisualElement name="CardDragArea" picking-mode="Ignore" style="position: absolute; width: 100%; height: 100%; top: -1px; left: 0;"/>
+        <ui:VisualElement name="TargetingHint" picking-mode="Ignore" style="display: none; position: absolute; top: 120px; width: 100%; align-items: center;">
+            <ui:Label text="[ 우클릭 또는 ESC로 취소 / 조준 범위 이외 클릭 시 취소 ]" style="color: rgb(0, 255, 0); background-color: rgba(0, 20, 0, 0.85); padding: 10px 20px; font-size: 24px; border-radius: 4px; border-width: 1px; border-color: rgb(0, 255, 0);"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="TargetingTooltip" picking-mode="Ignore" class="cmd-panel" style="display: none; position: absolute; width: 220px; padding: 15px; pointer-events: none;">
+            <ui:Label name="TooltipCardName" text="card_name" style="color: rgb(0, 255, 0); font-size: 24px; -unity-font-style: normal; margin-bottom: 8px; white-space: pre-wrap;"/>
+            <ui:Label name="TooltipCardCost" text="card_cost" style="color: rgb(0, 255, 0); font-size: 18px;"/>
+            <ui:Label text="card_description" name="TooltipCardDescription" style="color: rgb(0, 255, 0); white-space: pre-wrap;"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

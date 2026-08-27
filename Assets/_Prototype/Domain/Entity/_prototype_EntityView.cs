@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using DG.Tweening;
 
 namespace TDG0407._prototype
 { 
@@ -40,10 +41,10 @@ namespace TDG0407._prototype
             }
         }
 
-        public virtual void MoveTo(_prototype_PointView targetPointView)
+        public virtual async Cysharp.Threading.Tasks.UniTask MoveTo(_prototype_PointView targetPointView)
         {
-            transform.SetParent(targetPointView.transform, false);
-            transform.localPosition = Vector3.zero;
+            transform.SetParent(targetPointView.transform, true);
+            await transform.DOLocalMove(Vector3.zero, 0.2f).SetEase(Ease.InOutSine).AsyncWaitForCompletion();
             
             _entityData.point = targetPointView.Point;
         }

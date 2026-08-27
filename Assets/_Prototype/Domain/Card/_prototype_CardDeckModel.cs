@@ -28,7 +28,7 @@ namespace TDG0407._prototype
             foreach (var cardData in this.destroyedCardDatas) destroyedCardDatas.Add(cardData.CreateCardData());
 
 
-            return new _prototype_CardDeck
+            var deck = new _prototype_CardDeck
             {
                 allCardDatas = allCardDatas,
                 remainedCardDatas = remainedCardDatas,
@@ -36,6 +36,8 @@ namespace TDG0407._prototype
                 discardedCardDatas = discardedCardDatas,
                 destroyedCardDatas = destroyedCardDatas
             };
+            deck.InitializeDeck();
+            return deck;
         }
 
     }

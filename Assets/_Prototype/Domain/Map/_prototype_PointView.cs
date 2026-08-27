@@ -21,6 +21,7 @@ namespace TDG0407._prototype
         private Tween hoverTween;
 
         public _prototype_Point Point => _pointData.point;
+        public List<_prototype_EntityView> PlacedEntityViews => placedEntityViews;
         public bool IsEntityPlaceable => _pointData.isPlaceable && placedEntityViews.Count == 0;
         public bool IsHoverable => _pointData.isHoverable;
         
@@ -37,14 +38,14 @@ namespace TDG0407._prototype
             }
         }
 
-        public void PlaceEntity(_prototype_EntityView entityView)
+        public async Cysharp.Threading.Tasks.UniTask PlaceEntity(_prototype_EntityView entityView)
         {
             if (!_pointData.isPlaceable) throw new Exception($"Cannot place entity at point {point}. Point is not placeable.");
             if (placedEntityViews.Contains(entityView)) throw new Exception($"Entity {entityView.name} is already placed at point {point}.");
 
             placedEntityViews.Add(entityView);
             _pointData.placedEntityDatas.Add(entityView.EntityData);
-            entityView.MoveTo(this);
+            await entityView.MoveTo(this);
         }
 
         public void RemoveEntity(_prototype_EntityView entityView)

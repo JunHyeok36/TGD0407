@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace TDG0407._prototype
 {
@@ -12,8 +12,8 @@ namespace TDG0407._prototype
             return new()
             {
                 ename = ename,
-                health = health,
-                stamina = stamina,
+                health = health.Clone(),
+                stamina = stamina.Clone(),
                 point = point
             };
         }

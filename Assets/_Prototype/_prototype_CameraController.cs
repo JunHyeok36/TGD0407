@@ -47,15 +47,28 @@ namespace TDG0407._prototype
             }
         }
 
+        private Vector3 rawPosition;
+        private bool isInitialized = false;
+
+        private void InitializeIfNeeded()
+        {
+            if (!isInitialized)
+            {
+                rawPosition = transform.position;
+                targetYRotation = Mathf.Round(transform.eulerAngles.y / 45f) * 45f;
+                isInitialized = true;
+            }
+        }
+
         private void HandleCameraMovement()
         {
             if (cameraTarget == null) return;
+            InitializeIfNeeded();
 
             if (isCameraLocked)
             {
                 Vector3 targetPosition = cameraTarget.position;
-                Vector3 smoothedPosition = Vector3.Lerp(transform.position, targetPosition, cameraMoveSpeed * Time.unscaledDeltaTime);
-                transform.position = smoothedPosition;
+                rawPosition = Vector3.MoveTowards(rawPosition, targetPosition, cameraMoveSpeed * Time.unscaledDeltaTime);
             }
             else
             {
@@ -77,41 +90,54 @@ namespace TDG0407._prototype
                     moveDirection += cameraForward;
 
                 if (moveDirection != Vector3.zero)
-                    transform.Translate(cameraMoveSpeed * Time.unscaledDeltaTime * moveDirection.normalized, Space.World);
+                    rawPosition += cameraMoveSpeed * Time.unscaledDeltaTime * moveDirection.normalized;
             }
-        }
 
-        private void HandleCameraRotation()
-        {
-            if (Keyboard.current.qKey.isPressed)
+            // Apply Pixel Snapping along the camera's local plane to prevent jitter
+            if (mainCamera.orthographic)
             {
-                isRotating = true;
-                transform.Rotate(Vector3.up, cameraRotateSpeed * Time.deltaTime);
-                
-                targetYRotation = transform.eulerAngles.y;
-            }
-            else if (Keyboard.current.eKey.isPressed)
-            {
-                isRotating = true;
-                transform.Rotate(Vector3.up, -cameraRotateSpeed * Time.deltaTime);
-                
-                targetYRotation = transform.eulerAngles.y;
+                // Note: Set this to match your PixelArtPostProcess _PixelResolutionY
+                float virtualHeight = 243f; 
+                float orthoSize = mainCamera.orthographicSize;
+                float pixelSize = (orthoSize * 2f) / virtualHeight;
+
+                // Project raw position onto camera right/up vectors and snap
+                float rightOffset = Vector3.Dot(rawPosition, mainCamera.transform.right);
+                float upOffset = Vector3.Dot(rawPosition, mainCamera.transform.up);
+                float forwardOffset = Vector3.Dot(rawPosition, mainCamera.transform.forward);
+
+                float snappedRight = Mathf.Round(rightOffset / pixelSize) * pixelSize;
+                float snappedUp = Mathf.Round(upOffset / pixelSize) * pixelSize;
+
+                // Reconstruct world position
+                transform.position = mainCamera.transform.right * snappedRight + 
+                                     mainCamera.transform.up * snappedUp + 
+                                     mainCamera.transform.forward * forwardOffset;
             }
             else
             {
-                if (isRotating)
-                {
-                    float currentY = transform.eulerAngles.y;
-                    targetYRotation = Mathf.Round(currentY / 45f) * 45f;
-                    
-                    isRotating = false;
-                }
-
-                float currentAngle = transform.eulerAngles.y;
-                float smoothedAngle = Mathf.LerpAngle(currentAngle, targetYRotation, Time.unscaledDeltaTime * 10f);
-                
-                transform.rotation = Quaternion.Euler(0f, smoothedAngle, 0f);
+                transform.position = rawPosition;
             }
+        }
+
+
+        private void HandleCameraRotation()
+        {
+            // Discrete 45-degree rotation steps per press
+            if (Keyboard.current.qKey.wasPressedThisFrame)
+            {
+                targetYRotation += 45f;
+            }
+            else if (Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                targetYRotation -= 45f;
+            }
+
+            // Smoothly rotate towards the target rotation
+            float currentAngle = transform.eulerAngles.y;
+            float smoothedAngle = Mathf.LerpAngle(currentAngle, targetYRotation, Time.unscaledDeltaTime * 15f);
+            
+            transform.rotation = Quaternion.Euler(0f, smoothedAngle, 0f);
         }
     
     }

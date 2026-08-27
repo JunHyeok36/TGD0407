@@ -1,0 +1,142 @@
+.cmd-text {
+    font-size: 32px;
+    color: rgb(50, 255, 50);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+}
+
+.cmd-panel {
+    background-color: rgba(0, 15, 0, 0.85);
+    border-width: 2px;
+    border-color: rgb(50, 255, 50);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.deck-container {
+    width: 150px;
+    height: 180px;
+    position: absolute;
+    bottom: 40px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(20, 25, 20, 0.95);
+    border-color: rgb(100, 120, 100);
+    border-width: 4px;
+    border-radius: 12px;
+}
+
+.deck-title {
+    color: rgb(200, 200, 200);
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.deck-count {
+    color: rgb(50, 255, 50);
+    font-size: 40px;
+    text-shadow: 2px 2px 0 rgb(0, 0, 0);
+}
+
+.deck-count-discard {
+    color: rgb(255, 80, 80);
+}
+
+.card-base {
+    width: 300px;
+    height: 450px;
+    background-color: rgb(220, 220, 230);
+    border-radius: 12px;
+    border-width: 6px;
+    border-color: rgb(60, 60, 70);
+    transition-property: translate;
+    transition-duration: 0.15s;
+    flex-shrink: 0;
+    overflow: hidden;
+    margin: 0;
+}
+
+.card-header {
+    height: 50px;
+    background-color: rgb(40, 40, 50);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 10px;
+}
+
+.card-name {
+    font-size: 24px;
+    color: white;
+}
+
+.card-cost-container {
+    background-color: rgb(220, 40, 40);
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    justify-content: center;
+    align-items: center;
+    border-width: 2px;
+    border-color: white;
+}
+
+.card-cost {
+    font-size: 22px;
+    color: white;
+    -unity-text-align: upper-center;
+}
+
+.card-image {
+    background-color: rgb(180, 180, 190);
+    height: 130px;
+    margin: 10px;
+    border-width: 2px;
+    border-color: rgb(100, 100, 110);
+    justify-content: center;
+    align-items: center;
+}
+
+.card-description-container {
+    flex-grow: 1;
+    background-color: rgb(240, 240, 245);
+    margin: 0 10px 10px 10px;
+    padding: 10px;
+    border-width: 1px;
+    border-color: rgb(150, 150, 150);
+}
+
+.card-type {
+    font-size: 18px;
+    color: rgb(80, 80, 80);
+    -unity-font-style: italic;
+    margin-bottom: 5px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(200, 200, 200);
+}
+
+.card-desc-text {
+    font-size: 16px;
+    color: rgb(30, 30, 30);
+    white-space: normal;
+}
+
+.hand-container {
+    height: 380px;
+    width: auto;
+    position: absolute;
+    left: 280px;
+    right: 280px;
+    align-items: center;
+    bottom: -320px;
+    transition-property: bottom;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+}
+
+.hand-container-active {
+    bottom: -150px;
+}
+
+.unity-label {
+}

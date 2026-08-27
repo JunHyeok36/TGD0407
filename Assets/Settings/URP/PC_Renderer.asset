@@ -1,8 +1,8 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8819591689686819871
+--- !u!114 &-1508370954752242931
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
+  m_Name: PixelArtFeature
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
   m_Active: 1
-  injectionPoint: 550
-  fetchColorBuffer: 1
+  injectionPoint: 450
+  fetchColorBuffer: 0
   requirements: -1
-  passMaterial: {fileID: 2100000, guid: 92291d44f9fe4d64dbb11b735b038fc2, type: 2}
+  passMaterial: {fileID: 2100000, guid: 2657d71c2b0654241b74f91f1292c5de, type: 2}
   passIndex: 0
   bindDepthStencilAttachment: 1
   m_Version: 1
@@ -45,9 +45,8 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
-  - {fileID: -8819591689686819871}
-  m_RendererFeatureMap: e1db3a2016849a85
-  m_UseNativeRenderPass: 1
+  - {fileID: -1508370954752242931}
+  m_RendererFeatureMap: 
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
@@ -75,3 +74,4 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+  m_TileOnlyMode: 0
