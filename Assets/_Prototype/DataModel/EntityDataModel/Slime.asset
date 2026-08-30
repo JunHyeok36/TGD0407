@@ -24,6 +24,30 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  side: 0
+  lifeStat:
+    redPower: 0
+    bluePower: 0
+    redResist: 0
+    blueResist: 0
+    handCardSlotCount: 5
+    drawQuickness: 0
+    curseResist: 0
+    bleedingResist: 0
+    burningResist: 0
+    poisoningResist: 0
+    stunResist: 0
+    freezeResist: 0
+    silenceResist: 0
+    fearResist: 0
+    knockdownResist: 0
+    healthRecoverAmount: 0
+    staminaRecoverAmount: 0
+    knockbackResist: 0
+    deathResist: 0
+    dodgeProb: 0
+    criticalProb: 0
+    criticalWeight: 0
   cardDeck: {fileID: 11400000, guid: 9601b4e07fb8de541842bfc89fe65aab, type: 2}
   aiLogic:
     rid: 2475498268826272099
@@ -34,3 +58,5 @@ MonoBehaviour:
       type: {class: _prototype_MeleeChaseAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         attackDamage: 5
+        minIdleTicks: 0
+        maxIdleTicks: 1

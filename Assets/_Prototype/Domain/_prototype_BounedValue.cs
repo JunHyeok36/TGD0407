@@ -18,6 +18,8 @@ namespace TDG0407._prototype
         #endregion
         #region Properties
 
+        public event Action OnValueChanged;
+
         /// <summary>
         /// 최소값을 나타냅니다.
         /// </summary>
@@ -29,6 +31,7 @@ namespace TDG0407._prototype
                 _min = value;
                 if (_cur.CompareTo(_min) < 0)
                     _cur = _min;
+                OnValueChanged?.Invoke();
             }
         }
         /// <summary> 
@@ -42,6 +45,7 @@ namespace TDG0407._prototype
                 _max = value;
                 if (_cur.CompareTo(_max) > 0)
                     _cur = _max;
+                OnValueChanged?.Invoke();
             }
         }
         /// <summary>
@@ -58,6 +62,7 @@ namespace TDG0407._prototype
                     _cur = _max;
                 else
                     _cur = value;
+                OnValueChanged?.Invoke();
             }
         }
 

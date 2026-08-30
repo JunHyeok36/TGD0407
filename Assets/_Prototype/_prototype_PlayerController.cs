@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using System.Linq;
+using DG.Tweening;
 
 namespace TDG0407._prototype
 {
@@ -36,8 +37,56 @@ namespace TDG0407._prototype
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
         }
+        private bool _initialDrawDone = false;
+
+        private void Start()
+        {
+            _prototype_TickManager.RegisterPostTick(OnPostTick);
+        }
+
+        private void OnDestroy()
+        {
+            _prototype_TickManager.UnregisterPostTick(OnPostTick);
+        }
+
+        private async UniTask OnPostTick()
+        {
+            var playerLife = _controlledEntityView as _prototype_LifeView;
+            if (playerLife?.Data?.cardDeck != null)
+            {
+                var deck = playerLife.Data.cardDeck;
+                
+                // 최초 드로우 (턴 시작 시 뽑아야 할 만큼 뽑음)
+                int maxHandSize = playerLife.Data.lifeStat.handCardSlotCount;
+                if (maxHandSize <= 0) maxHandSize = 5;
+
+                if (deck.handedCardDatas.Count < maxHandSize)
+                {
+                    deck.DrawCards(maxHandSize - deck.handedCardDatas.Count, maxHandSize);
+                }
+                
+                // 항상 갱신하여 쿨타임 및 카드 변동이 UI에 반영되도록 함
+                if (_prototype_PlayerUIView.Instance != null)
+                    _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
+            }
+        }
+
         private void Update()
         {
+            // Data가 준비되면 최초 1회 자동 드로우 실행
+            if (!_initialDrawDone && _controlledEntityView != null && _controlledEntityView.EntityData != null)
+            {
+                _initialDrawDone = true;
+                OnPostTick().Forget();
+            }
+
+            if (Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
+                HandleRestInput();
+                return;
+            }
+
             Vector2 mousePos = Mouse.current.position.ReadValue();
             
             // 핸드 카드 보기 모드 스위칭: 마우스가 화면 하단의 10% 이내에 있거나, 카드에 호버 중이면 활성화
@@ -58,7 +107,7 @@ namespace TDG0407._prototype
 
             if (_targetingCard != null)
             {
-                _prototype_GridVisualManager.Instance.HighlightPoint(null); // Hide single white indicator while targeting
+                _prototype_GridVisualManager.Instance?.HighlightPoint(null); // Hide single white indicator while targeting
                 _prototype_PlayerUIView.Instance.UpdateTargetingTooltipPosition(mousePos);
                 HandleTargetingInput(mousePoint);
             }
@@ -67,16 +116,16 @@ namespace TDG0407._prototype
                 if (isHandViewActive)
                 {
                     // 핸드 컨테이너가 활성화된 상태에서는 이동 불가 및 이동 경로 숨김
-                    _prototype_GridVisualManager.Instance.ShowTargetRange(null);
-                    _prototype_GridVisualManager.Instance.HighlightPoint(null);
+                    _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
+                    _prototype_GridVisualManager.Instance?.HighlightPoint(null);
                     return;
                 }
 
                 if (!_isMovable)
                 {
                     // 카드 드래그 중 등 이동 불가 상태일 때 경로 표시 숨김
-                    _prototype_GridVisualManager.Instance.ShowTargetRange(null);
-                    _prototype_GridVisualManager.Instance.HighlightPoint(null);
+                    _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
+                    _prototype_GridVisualManager.Instance?.HighlightPoint(null);
                     return;
                 }
 
@@ -90,7 +139,18 @@ namespace TDG0407._prototype
                         foreach (var pv in path) pathPoints.Add(pv.Point);
 
                         // 경로 표시 (TargetRange 색상 활용)
-                        _prototype_GridVisualManager.Instance.ShowTargetRange(pathPoints);
+                        _prototype_GridVisualManager.Instance?.ShowTargetRange(pathPoints);
+
+                        if (Mouse.current.rightButton.wasPressedThisFrame)
+                        {
+                            HandleMovementInput(mousePoint.Value);
+                        }
+                    }
+                    else if (mousePoint.Value == _controlledEntityView.Point)
+                    {
+                        // 자기 자신 위치를 호버 중일 때 클릭하면 대기(Rest)
+                        List<_prototype_Point> selfPoint = new() { mousePoint.Value };
+                        _prototype_GridVisualManager.Instance?.ShowTargetRange(selfPoint);
 
                         if (Mouse.current.rightButton.wasPressedThisFrame)
                         {
@@ -99,16 +159,16 @@ namespace TDG0407._prototype
                     }
                     else
                     {
-                        _prototype_GridVisualManager.Instance.ShowTargetRange(null);
+                        _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
                     }
                 }
                 else
                 {
-                    _prototype_GridVisualManager.Instance.ShowTargetRange(null);
+                    _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
                 }
                 
                 // 단일 포인트 호버(원래 기능)은 숨기거나 다른 방식으로 씀 (여기선 하위 호환을 위해 투명화 혹은 제거 가능하나 일단 남겨둠)
-                _prototype_GridVisualManager.Instance.HighlightPoint(null);
+                _prototype_GridVisualManager.Instance?.HighlightPoint(null);
             }
         }
 
@@ -133,7 +193,12 @@ namespace TDG0407._prototype
         private void HandleMovementInput(_prototype_Point targetPoint)
         {
             if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
-            if (_controlledEntityView.Point == targetPoint) return;
+            
+            if (_controlledEntityView.Point == targetPoint)
+            {
+                HandleRestInput();
+                return;
+            }
 
             List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint);
             if (path != null && path.Count > 0)
@@ -148,6 +213,55 @@ namespace TDG0407._prototype
             }
         }
 
+        private void HandleRestInput()
+        {
+            if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.Data != null)
+            {
+                _prototype_TickManager.AdvanceTick(async () => {
+                    int recoverAmount = lifeView.Data.lifeStat.staminaRecoverAmount;
+                    if (recoverAmount <= 0) recoverAmount = 2; // Fallback 기본 회복량
+
+                    lifeView.Data.stamina.Current = Mathf.Min(lifeView.Data.stamina.Max, lifeView.Data.stamina.Current + recoverAmount);
+                    
+                    // 시각적 효과 (위로 뿅 튀어오르는 효과로 휴식 인지)
+                    lifeView.transform.DOPunchScale(new Vector3(0.2f, 0.4f, 0.2f), 0.3f, 2, 1);
+                    
+                    _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                    
+                    // 재생 완료까지 잠시 대기
+                    await UniTask.Delay(300);
+                }).Forget();
+            }
+        }
+
+        public void BurnCardForSP(_prototype_CardData cardToBurn)
+        {
+            if (_prototype_TickManager.IsTickProcessing) return;
+
+            var playerLife = _controlledEntityView as _prototype_LifeView;
+            if (playerLife?.Data?.cardDeck != null)
+            {
+                // 소각 처리 (이번 전투에서 영구 제외)
+                playerLife.Data.cardDeck.handedCardDatas.Remove(cardToBurn);
+                playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToBurn);
+
+                // 비용 기반 회복 (코스트 값이 높을수록 많이 회복, 최소 1)
+                int recoveryAmount = 1;
+                if (cardToBurn.costValue != null && cardToBurn.costValue.value > 0)
+                {
+                    recoveryAmount = Mathf.Max(1, (int)cardToBurn.costValue.value);
+                }
+                
+                playerLife.Data.stamina.Current = Mathf.Min(playerLife.Data.stamina.Max, playerLife.Data.stamina.Current + recoveryAmount);
+
+                // 시각적 효과 (불타듯 아래로 납작해졌다가 돌아옴)
+                playerLife.transform.DOPunchScale(new Vector3(-0.2f, -0.4f, -0.2f), 0.3f, 5, 1);
+                
+                _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
+            }
+        }
+
         private _prototype_CardData _targetingCard;
         private List<_prototype_Point> _currentCastRange;
 
@@ -159,7 +273,7 @@ namespace TDG0407._prototype
             if (_targetingCard.castRange != null)
             {
                 _currentCastRange = _targetingCard.castRange.GetValidCastPoints(_controlledEntityView.Point);
-                _prototype_GridVisualManager.Instance.ShowCastRange(_currentCastRange);
+                _prototype_GridVisualManager.Instance?.ShowCastRange(_currentCastRange);
             }
             _prototype_PlayerUIView.Instance.ShowTargetingUI(_targetingCard);
         }
@@ -169,7 +283,7 @@ namespace TDG0407._prototype
             _targetingCard = null;
             _isMovable = true;
             _currentCastRange = null;
-            _prototype_GridVisualManager.Instance.ClearRanges();
+            _prototype_GridVisualManager.Instance?.ClearRanges();
             _prototype_PlayerUIView.Instance.HideTargetingUI();
             _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
         }
@@ -188,7 +302,7 @@ namespace TDG0407._prototype
             {
                 // Show Target Range
                 List<_prototype_Point> targetRange = _targetingCard.targetRange?.GetValidTargetPoints(_controlledEntityView.Point, mousePoint.Value) ?? new List<_prototype_Point> { mousePoint.Value };
-                _prototype_GridVisualManager.Instance.ShowTargetRange(targetRange);
+                _prototype_GridVisualManager.Instance?.ShowTargetRange(targetRange);
 
                 // Execute on Left Click
                 if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -198,7 +312,7 @@ namespace TDG0407._prototype
             }
             else
             {
-                _prototype_GridVisualManager.Instance.ShowTargetRange(null); // clear target range
+                _prototype_GridVisualManager.Instance?.ShowTargetRange(null); // clear target range
                 
                 // 맨땅 좌클릭 시 취소
                 if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -249,7 +363,6 @@ namespace TDG0407._prototype
 
                 if (cardToCast.actionList != null)
                 {
-                    var param = new _prototype_CardActionParams();
                     foreach (var action in cardToCast.actionList)
                     {
                         var filteredTargets = targets;
@@ -257,7 +370,7 @@ namespace TDG0407._prototype
                         {
                             filteredTargets = targets.Where(t => t != _controlledEntityView.EntityData).ToList();
                         }
-                        await action.ExecuteCardAction(_controlledEntityView.EntityData, filteredTargets, param);
+                        await action.ExecuteCardAction(_controlledEntityView.EntityData, filteredTargets, null);
                     }
                 }
 

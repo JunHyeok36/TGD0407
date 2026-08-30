@@ -14,6 +14,6 @@ namespace TDG0407._prototype
         public abstract UniTask ExecuteCardAction(
             _prototype_EntityData source, 
             IEnumerable<_prototype_EntityData> targets,
-            _prototype_CardActionParams @params);
+            _prototype_ICardActionParams @params);
     }
 }

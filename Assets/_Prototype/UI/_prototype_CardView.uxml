@@ -14,5 +14,8 @@
             <ui:Label text="Attack" name="CardType" class="card-type"/>
             <ui:Label text="이 카드는 대상을 타겟하여 행동을 수행합니다." name="CardDesc" class="card-desc-text"/>
         </ui:VisualElement>
+        <ui:VisualElement name="CooldownOverlay" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: flex-start; border-radius: 12px;">
+            <ui:Label name="CooldownText" text="3" style="color: rgb(255, 255, 255); font-size: 80px; -unity-text-outline-width: 2px; -unity-text-outline-color: black; -unity-text-align: middle-center;"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

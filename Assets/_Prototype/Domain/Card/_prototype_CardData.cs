@@ -13,6 +13,7 @@ namespace TDG0407._prototype
         public _prototype_CardType cardType;
         public _prototype_CostValue costValue;
         public _prototype_BoundedValue<byte> coolTicks = new(0, 3);
+        public int currentCoolTicks = 0;
         public _prototype_ICastRangeSelector castRange;
         public _prototype_ITargetRangeSelector targetRange;
         public List<_prototype_CardAction> actionList;

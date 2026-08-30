@@ -7,7 +7,7 @@ namespace TDG0407._prototype
     [Serializable]
     public class _prototype_CardDeck
     {
-        
+
         public List<_prototype_CardData> allCardDatas = new();
         public List<_prototype_CardData> remainedCardDatas = new();
         public List<_prototype_CardData> handedCardDatas = new();
@@ -44,7 +44,7 @@ namespace TDG0407._prototype
             remainedCardDatas.Clear();
             handedCardDatas.Clear();
             discardedCardDatas.Clear();
-            
+
             remainedCardDatas.AddRange(allCardDatas);
             ShuffleRemained();
         }
@@ -63,14 +63,16 @@ namespace TDG0407._prototype
             }
         }
 
-        public void DrawCards(int count)
+        public void DrawCards(int count, int maxHandSize = 999)
         {
             for (int i = 0; i < count; i++)
             {
+                if (handedCardDatas.Count >= maxHandSize) return;
+
                 if (remainedCardDatas.Count == 0)
                 {
                     if (discardedCardDatas.Count == 0) return; // No cards left to draw
-                    
+
                     remainedCardDatas.AddRange(discardedCardDatas);
                     discardedCardDatas.Clear();
                     ShuffleRemained();
@@ -79,6 +81,7 @@ namespace TDG0407._prototype
                 if (remainedCardDatas.Count > 0)
                 {
                     var drawnCard = remainedCardDatas[0];
+                    drawnCard.currentCoolTicks = drawnCard.coolTicks.Current; // Set initial cooldown
                     remainedCardDatas.RemoveAt(0);
                     handedCardDatas.Add(drawnCard);
                 }

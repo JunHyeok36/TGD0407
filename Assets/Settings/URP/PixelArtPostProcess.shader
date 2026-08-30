@@ -15,8 +15,10 @@ Shader "Hidden/Custom/URP/PixelArtPostProcess"
         
         [Header(Debug)]
         [KeywordEnum(Off, DepthEdge, NormalEdge, Combined)] _DebugMode ("Debug Mode", Float) = 0
+        [Header(Toggles)]
         [Toggle(_ENABLE_PIXELATION)] _EnablePixelation ("Enable Pixelation", Float) = 1.0
         [Toggle(_ENABLE_OUTLINES)] _EnableOutlines ("Enable Outlines", Float) = 1.0
+        [Toggle] _UseGlobalResolution ("Use Global Dynamic Resolution", Float) = 1.0
     }
     SubShader
     {
@@ -63,6 +65,9 @@ Shader "Hidden/Custom/URP/PixelArtPostProcess"
             CBUFFER_START(UnityPerMaterial)
                 float _PixelResolutionX;
                 float _PixelResolutionY;
+                float _GlobalPixelResolutionX;
+                float _GlobalPixelResolutionY;
+                float _UseGlobalResolution;
                 
                 float4 _OutlineColor;
                 float4 _HighlightColor;
@@ -75,6 +80,10 @@ Shader "Hidden/Custom/URP/PixelArtPostProcess"
             {
                 // 1. Pixelate the UV
                 float2 res = float2(_PixelResolutionX, _PixelResolutionY);
+                if (_UseGlobalResolution > 0.5 && _GlobalPixelResolutionY > 0)
+                {
+                    res = float2(_GlobalPixelResolutionX, _GlobalPixelResolutionY);
+                }
                 res = max(res, float2(1, 1)); 
                 
                 float2 pixelatedUV = input.uv;

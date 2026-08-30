@@ -18,6 +18,7 @@ Material:
   - _DEBUGMODE_OFF
   - _ENABLEOUTLINES_ON
   - _ENABLEPIXELATION_ON
+  - _USEGLOBALRESOLUTION_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -35,9 +36,10 @@ Material:
     - _EnableOutlines: 1
     - _EnablePixelation: 1
     - _NormalThreshold: 0.3
-    - _OutlineThickness: 0.45
+    - _OutlineThickness: 0.4
     - _PixelResolutionX: 432
     - _PixelResolutionY: 243
+    - _UseGlobalResolution: 1
     m_Colors:
     - _HighlightColor: {r: 0.39215684, g: 0.39215684, b: 0.39215684, a: 1}
     - _OutlineColor: {r: 0.3921568, g: 0.3921568, b: 0.3921568, a: 0.7490196}

@@ -28,6 +28,9 @@ namespace TDG0407._prototype
         private Label _tooltipCardCost;
         private Label _tooltipCardDesc;
 
+        private VisualElement _warningMessageContainer;
+        private Label _warningMessageText;
+
         public bool IsCardHovered { get; private set; }
 
         private List<VisualElement> handCardViews = new();
@@ -63,8 +66,24 @@ namespace TDG0407._prototype
             _tooltipCardCost = root.Q<Label>("TooltipCardCost");
             _tooltipCardDesc = root.Q<Label>("TooltipCardDescription");
 
+            _warningMessageContainer = root.Q<VisualElement>("WarningMessageContainer");
+            _warningMessageText = root.Q<Label>("WarningMessageText");
+
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
+        }
+
+        public void ShowWarning(string message, float duration = 2.0f)
+        {
+            if (_warningMessageContainer == null || _warningMessageText == null) return;
+            
+            _warningMessageText.text = message;
+            _warningMessageContainer.style.display = DisplayStyle.Flex;
+            
+            // 일정 시간 후 숨기기
+            _warningMessageContainer.schedule.Execute(() => {
+                _warningMessageContainer.style.display = DisplayStyle.None;
+            }).ExecuteLater((long)(duration * 1000));
         }
 
         public void ShowTargetingUI(_prototype_CardData cardData)
@@ -181,6 +200,20 @@ namespace TDG0407._prototype
                             lblDesc.text = string.IsNullOrEmpty(cardData.description) ? "No description available." : cardData.description;
                         }
                         
+                        var cooldownOverlay = cardViewInstance.Q<VisualElement>("CooldownOverlay");
+                        var cooldownText = cardViewInstance.Q<Label>("CooldownText");
+
+                        // 쿨타임 시각적 피드백
+                        if (cardData.currentCoolTicks > 0)
+                        {
+                            if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.Flex;
+                            if (cooldownText != null) cooldownText.text = cardData.currentCoolTicks.ToString();
+                        }
+                        else
+                        {
+                            if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
+                        }
+
                         cardViewInstance.style.position = Position.Absolute;
                         // 드래그 기능 등록
                         RegisterDragEvents(cardViewInstance, cardData);
@@ -202,7 +235,24 @@ namespace TDG0407._prototype
             
             card.RegisterCallback<PointerDownEvent>(evt =>
             {
+                if (evt.button == 1) // Right click to Burn
+                {
+                    if (_prototype_PlayerController.Instance != null)
+                    {
+                        _prototype_PlayerController.Instance.BurnCardForSP(cardData);
+                    }
+                    evt.StopPropagation();
+                    return;
+                }
+
                 if (evt.button != 0) return;
+
+                if (cardData.currentCoolTicks > 0)
+                {
+                    ShowWarning("현재 사용할 수 없습니다! (대기 중)");
+                    evt.StopPropagation();
+                    return;
+                }
 
                 bool hasEnoughCost = true;
                 if (_prototype_PlayerController.Instance != null && _prototype_PlayerController.Instance.ControlledEntityView is _prototype_LifeView lifeView)
@@ -214,7 +264,7 @@ namespace TDG0407._prototype
                 
                 if (!hasEnoughCost)
                 {
-                    Debug.Log("Not enough cost to use this card!");
+                    ShowWarning("소모 자원이 부족합니다!");
                     return;
                 }
 

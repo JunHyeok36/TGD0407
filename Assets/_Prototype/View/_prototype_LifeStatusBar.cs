@@ -26,20 +26,22 @@ namespace TDG0407._prototype
             if (hpFill == null) hpFill = transform.Find("HP_BG/HP_Fill")?.GetComponent<Image>();
             if (spFill == null) spFill = transform.Find("SP_BG/SP_Fill")?.GetComponent<Image>();
 
-            // Setup Shared World Canvas from Scene
+            // Setup Shared World Canvas
             if (_sharedWorldCanvas == null)
             {
-                var canvasObj = GameObject.Find("GlobalWorldCanvas");
-                if (canvasObj != null)
-                {
-                    _sharedWorldCanvas = canvasObj.GetComponent<Canvas>();
-                }
+                GameObject canvasObj = new GameObject("GlobalWorldCanvas");
+                _sharedWorldCanvas = canvasObj.AddComponent<Canvas>();
+                _sharedWorldCanvas.renderMode = RenderMode.WorldSpace;
+                _sharedWorldCanvas.worldCamera = Camera.main; // Optional for world space, but good for sorting
+                canvasObj.AddComponent<CanvasScaler>();
+                
+                // Set reasonable default scale/size for the world canvas itself
+                RectTransform canvasRT = canvasObj.GetComponent<RectTransform>();
+                canvasRT.sizeDelta = new Vector2(100, 100);
+                canvasRT.localScale = Vector3.one; // 1 unit = 1 pixel ratio isn't strictly needed if we just place elements directly in world space inside it
             }
 
-            if (_sharedWorldCanvas != null)
-            {
-                transform.SetParent(_sharedWorldCanvas.transform, false);
-            }
+            transform.SetParent(_sharedWorldCanvas.transform, false);
             
             // In World Space canvas, setting rotation ensures it faces exactly the same way
             transform.localScale = Vector3.one;
