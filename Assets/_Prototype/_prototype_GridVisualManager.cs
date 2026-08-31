@@ -43,7 +43,7 @@ namespace TDG0407._prototype
             _prototype_PointView pointView = point.HasValue ? _prototype_GridManager.Instance.GetPointView(point.Value) : null;
             if (pointView != null)
             {
-                if (pointView.IsEntityPlaceable)
+                if (pointView.CanPlaceEntity(_prototype_MovementType.Ground))
                 {
                     _prototype_Point minPoint = _prototype_GridManager.Instance.MinPoint;
                     _prototype_Point maxPoint = _prototype_GridManager.Instance.MaxPoint;

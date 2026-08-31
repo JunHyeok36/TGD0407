@@ -57,7 +57,7 @@ namespace TDG0407._prototype
                 }
             }
 
-            if (context.modifiedDamage > 0)
+            if (context.modifiedDamage > 0 && !(context.target is _prototype_ObstacleData))
             {
                 var pointView = _prototype_GridManager.Instance.GetPointView(context.target.point);
                 if (pointView != null)
@@ -85,7 +85,9 @@ namespace TDG0407._prototype
             if (fromPointView == null) throw new Exception("fromPointView is null.");
             if (toPointView == null) throw new Exception("toPointView is null.");
             if (!fromPointView.Point.Equals(entityView.EntityData.point)) throw new Exception($"Entity {entityView.name} is not at the fromPoint {fromPointView.Point}.");
-            if (!toPointView.IsEntityPlaceable) throw new Exception($"Cannot move entity to point {toPointView.Point}. Point is not placeable.");
+            if (!toPointView.IsTraversable(entityView.EntityData.movementType)) throw new Exception($"Cannot move entity to point {toPointView.Point}. Terrain is blocked.");
+            if (entityView.EntityData.movementType == _prototype_MovementType.Ground && toPointView.PlacedEntityViews.Count > 0)
+                throw new Exception($"Cannot move Ground entity to point {toPointView.Point}. Point is occupied.");
 
             fromPointView.RemoveEntity(entityView);
             await toPointView.PlaceEntity(entityView);

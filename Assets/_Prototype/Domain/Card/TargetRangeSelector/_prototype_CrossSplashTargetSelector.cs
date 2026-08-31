@@ -7,6 +7,9 @@ namespace TDG0407._prototype
     [Serializable]
     public class _prototype_CrossSplashTargetSelector : _prototype_ITargetRangeSelector
     {
+        public bool includeEmptyPoints = false;
+        public bool IncludeEmptyPoints => includeEmptyPoints;
+
         [SerializeField] private int _range = 1;
 
         public List<_prototype_Point> GetValidTargetPoints(_prototype_Point selfPoint, _prototype_Point targetPoint)

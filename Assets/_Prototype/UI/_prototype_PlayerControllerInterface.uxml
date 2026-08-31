@@ -26,9 +26,12 @@
             <ui:Label name="TooltipCardCost" text="card_cost" style="color: rgb(0, 255, 0); font-size: 18px;"/>
             <ui:Label text="card_description" name="TooltipCardDescription" style="color: rgb(0, 255, 0); white-space: pre-wrap;"/>
         </ui:VisualElement>
-        
         <ui:VisualElement name="WarningMessageContainer" picking-mode="Ignore" style="position: absolute; top: 50%; width: 100%; align-items: center; display: none;">
             <ui:Label name="WarningMessageText" text="WARNING!" style="color: rgb(255, 50, 50); background-color: rgba(50, 0, 0, 0.85); padding: 15px 30px; font-size: 28px; border-radius: 6px; border-width: 2px; border-color: rgb(255, 50, 50); -unity-font-style: bold;"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="GameOverContainer" picking-mode="Position" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); align-items: center; justify-content: center; display: none;">
+            <ui:Label text="GAME OVER" style="color: rgb(255, 0, 0); font-size: 80px; -unity-font-style: normal; margin-bottom: 30px; -unity-text-align: middle-center;"/>
+            <ui:Label text="플레이어가 사망했습니다." style="color: rgb(255, 255, 255); font-size: 24px; -unity-text-align: middle-center;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

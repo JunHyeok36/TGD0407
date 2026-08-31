@@ -6,6 +6,9 @@ namespace TDG0407._prototype
     
     public class _prototype_LineTargetSelector : _prototype_ITargetRangeSelector
     {
+        public bool includeEmptyPoints = false;
+        public bool IncludeEmptyPoints => includeEmptyPoints;
+
 
         public List<_prototype_Point> GetValidTargetPoints(_prototype_Point selfPoint, _prototype_Point targetPoint)
         {

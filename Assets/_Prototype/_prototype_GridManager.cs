@@ -75,6 +75,7 @@ namespace TDG0407._prototype
         public List<_prototype_PointView> FindPath(
             _prototype_Point startPoint, 
             _prototype_Point endPoint, 
+            _prototype_MovementType movementType = _prototype_MovementType.Ground,
             bool includeDiagonals = false, 
             bool checkEntityPlaceableInTerminatedPoints = false)
         {
@@ -93,9 +94,9 @@ namespace TDG0407._prototype
 
             Func<_prototype_PointView, bool> CheckNode = null;
             if (checkEntityPlaceableInTerminatedPoints)
-                CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.IsEntityPlaceable;
+                CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.CanPlaceEntity(movementType);
             else
-                CheckNode = (pointView) => pointView.IsEntityPlaceable;
+                CheckNode = (pointView) => pointView.CanPlaceEntity(movementType);
 
             while (openList.Count > 0)
             {

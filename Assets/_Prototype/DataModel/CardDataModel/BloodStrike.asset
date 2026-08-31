@@ -17,8 +17,8 @@ MonoBehaviour:
     \uB0A0\uB9BD\uB2C8\uB2E4."
   cardType: 1
   costValue:
-    costType: 1
-    value: 5
+    costType: 2
+    value: 0.1
   coolTicks:
     _min: 0
     _max: 3
@@ -42,6 +42,9 @@ MonoBehaviour:
     - rid: 2475498181128356185
       type: {class: _prototype_DamageCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
+        includeSelf: 0
         damageCoefficients:
-        - stat: 1
-          coefficient: 2
+        - stat: 0
+          coefficient: 25
+        - stat: 4
+          coefficient: 1.5

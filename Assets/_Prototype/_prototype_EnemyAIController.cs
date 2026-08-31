@@ -11,6 +11,7 @@ namespace TDG0407._prototype
     {
         
         [SerializeReference, ReadOnly] private _prototype_EntityView _entityView;
+        public _prototype_EntityView EntityView => _entityView;
 
         private void Awake()
         {

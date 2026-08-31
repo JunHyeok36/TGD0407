@@ -80,7 +80,7 @@ namespace TDG0407._prototype
                 OnPostTick().Forget();
             }
 
-            if (Keyboard.current.spaceKey.wasPressedThisFrame)
+            if (Keyboard.current.rKey.wasPressedThisFrame)
             {
                 if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
                 HandleRestInput();
@@ -132,7 +132,7 @@ namespace TDG0407._prototype
                 // 평소에는 이동 모드로 동작: 현재 마우스 위치까지의 경로(Path)를 TargetRange로 표시
                 if (mousePoint.HasValue)
                 {
-                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value);
+                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value, _controlledEntityView.EntityData.movementType);
                     if (path != null && path.Count > 0)
                     {
                         List<_prototype_Point> pathPoints = new();
@@ -200,7 +200,7 @@ namespace TDG0407._prototype
                 return;
             }
 
-            List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint);
+            List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint, _controlledEntityView.EntityData.movementType);
             if (path != null && path.Count > 0)
             {
                 _prototype_PointView nextStep = path[0];
@@ -234,30 +234,20 @@ namespace TDG0407._prototype
             }
         }
 
-        public void BurnCardForSP(_prototype_CardData cardToBurn)
+        public void DiscardCard(_prototype_CardData cardToDiscard)
         {
             if (_prototype_TickManager.IsTickProcessing) return;
 
             var playerLife = _controlledEntityView as _prototype_LifeView;
             if (playerLife?.Data?.cardDeck != null)
             {
-                // 소각 처리 (이번 전투에서 영구 제외)
-                playerLife.Data.cardDeck.handedCardDatas.Remove(cardToBurn);
-                playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToBurn);
+                // 일반 버리기 처리 (버린 카드 더미로 이동)
+                playerLife.Data.cardDeck.handedCardDatas.Remove(cardToDiscard);
+                playerLife.Data.cardDeck.discardedCardDatas.Add(cardToDiscard);
 
-                // 비용 기반 회복 (코스트 값이 높을수록 많이 회복, 최소 1)
-                int recoveryAmount = 1;
-                if (cardToBurn.costValue != null && cardToBurn.costValue.value > 0)
-                {
-                    recoveryAmount = Mathf.Max(1, (int)cardToBurn.costValue.value);
-                }
+                // 시각적 효과 (아래로 납작해졌다가 돌아옴)
+                playerLife.transform.DOPunchScale(new Vector3(0.2f, -0.4f, 0.2f), 0.3f, 5, 1);
                 
-                playerLife.Data.stamina.Current = Mathf.Min(playerLife.Data.stamina.Max, playerLife.Data.stamina.Current + recoveryAmount);
-
-                // 시각적 효과 (불타듯 아래로 납작해졌다가 돌아옴)
-                playerLife.transform.DOPunchScale(new Vector3(-0.2f, -0.4f, -0.2f), 0.3f, 5, 1);
-                
-                _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
                 _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
             }
         }
@@ -356,8 +346,16 @@ namespace TDG0407._prototype
                     var pointView = _prototype_GridManager.Instance.GetPointView(pt);
                     if (pointView != null)
                     {
+                        bool found = false;
                         foreach (var entityView in pointView.PlacedEntityViews)
+                        {
                             targets.Add(entityView.EntityData);
+                            found = true;
+                        }
+                        if (!found && cardToCast.targetRange != null && cardToCast.targetRange.IncludeEmptyPoints)
+                        {
+                            targets.Add(new _prototype_EmptyPointData(pt));
+                        }
                     }
                 }
 

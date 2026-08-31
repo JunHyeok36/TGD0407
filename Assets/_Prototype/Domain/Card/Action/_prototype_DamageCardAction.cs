@@ -8,11 +8,11 @@ namespace TDG0407._prototype
     [Serializable]
     public class _prototype_DamageCardAction : _prototype_CardAction
     {
-        
+
         public _prototype_CoefficientValue[] damageCoefficients;
 
         public override async UniTask ExecuteCardAction(
-            _prototype_EntityData source, 
+            _prototype_EntityData source,
             IEnumerable<_prototype_EntityData> targets,
             _prototype_ICardActionParams @params)
         {
@@ -39,17 +39,14 @@ namespace TDG0407._prototype
                     calculatedDamage += statValue * coeff.coefficient;
                 }
             }
-            else
-            {
-                calculatedDamage = 10f;
-            }
-
             int finalDamage = (int)calculatedDamage;
+
+            List<UniTask> tasks = new();
 
             foreach (var target in targets)
             {
                 var targetLife = target as _prototype_LifeData;
-                
+
                 // 팀킬 방지 (같은 팀끼리는 공격 불가, 단 None은 제외)
                 if (sourceLife != null && targetLife != null)
                 {
@@ -66,8 +63,10 @@ namespace TDG0407._prototype
                     finalDamage,
                     finalDamage
                 );
-                await _prototype_InteractionManager.ApplyDamage(damageContext);
+                tasks.Add(_prototype_InteractionManager.ApplyDamage(damageContext));
             }
+
+            await UniTask.WhenAll(tasks);
         }
 
     }

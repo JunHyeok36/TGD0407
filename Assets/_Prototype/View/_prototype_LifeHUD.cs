@@ -32,10 +32,11 @@ namespace TDG0407._prototype
                 return;
             }
 
-            GameObject hudInstance = Instantiate(prefab, transform);
-            hudInstance.name = "LifeHUD";
+            // Sorting Group에 묶여 가려지는 현상을 방지하기 위해 부모로 설정하지 않고 최상단에 생성합니다.
+            GameObject hudInstance = Instantiate(prefab);
+            hudInstance.name = "LifeHUD_" + gameObject.name;
             _hudRoot = hudInstance.transform;
-            _hudRoot.localPosition = new Vector3(0, 0.25f, -0.5f);
+            // 로컬 좌표 대신 LateUpdate에서 월드 좌표로 따라가도록 합니다.
 
             _hpFill = _hudRoot.Find("HP_Fill").GetComponent<SpriteRenderer>();
             _spFill = _hudRoot.Find("SP_Fill").GetComponent<SpriteRenderer>();
@@ -63,6 +64,10 @@ namespace TDG0407._prototype
                 _lifeView.Data.health.OnValueChanged -= UpdateHUD;
                 _lifeView.Data.stamina.OnValueChanged -= UpdateHUD;
             }
+            if (_hudRoot != null)
+            {
+                Destroy(_hudRoot.gameObject);
+            }
         }
 
         public void UpdateHUD()
@@ -76,20 +81,21 @@ namespace TDG0407._prototype
             float spRatio = sp.Max > 0 ? (float)sp.Current / sp.Max : 0;
 
             if (_hpFill != null)
-                _hpFill.transform.localScale = new Vector3(0.8f * hpRatio, 0.1f, 1f);
+                _hpFill.transform.localScale = new Vector3(0.8f * hpRatio, 0.15f, 1f);
             if (_spFill != null)
-                _spFill.transform.localScale = new Vector3(0.8f * spRatio, 0.05f, 1f);
+                _spFill.transform.localScale = new Vector3(0.8f * spRatio, 0.1f, 1f);
 
             if (_hpText != null)
-                _hpText.text = $"<color=red>{hp.Current}</color> | <color=yellow>{sp.Current}</color>";
+                _hpText.text = $"<color=red>{hp.Current}</color> <size=80%>| <color=yellow>{sp.Current}</color></size>";
         }
 
         private void LateUpdate()
         {
             if (_hudRoot != null)
             {
-                _hudRoot.position = _lifeView.transform.position + new Vector3(0, 0.25f, -0.5f);
-                //_hudRoot.rotation = Quaternion.Euler(30f, 45f, 0f);
+                // 오브젝트에 종속되지 않았으므로 매 프레임 위치를 직접 갱신합니다.
+                _hudRoot.position = transform.position + new Vector3(0, 0.25f, -0.5f);
+
             }
         }
     }

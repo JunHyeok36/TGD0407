@@ -30,6 +30,7 @@ namespace TDG0407._prototype
 
         private VisualElement _warningMessageContainer;
         private Label _warningMessageText;
+        private VisualElement _gameOverContainer;
 
         public bool IsCardHovered { get; private set; }
 
@@ -68,6 +69,8 @@ namespace TDG0407._prototype
 
             _warningMessageContainer = root.Q<VisualElement>("WarningMessageContainer");
             _warningMessageText = root.Q<Label>("WarningMessageText");
+            
+            _gameOverContainer = root.Q<VisualElement>("GameOverContainer");
 
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
@@ -84,6 +87,20 @@ namespace TDG0407._prototype
             _warningMessageContainer.schedule.Execute(() => {
                 _warningMessageContainer.style.display = DisplayStyle.None;
             }).ExecuteLater((long)(duration * 1000));
+        }
+
+        public void ShowGameOver()
+        {
+            if (_gameOverContainer != null)
+            {
+                _gameOverContainer.style.display = DisplayStyle.Flex;
+                _gameOverContainer.pickingMode = PickingMode.Position;
+            }
+
+            if (_prototype_PlayerController.Instance != null)
+            {
+                _prototype_PlayerController.Instance.enabled = false;
+            }
         }
 
         public void ShowTargetingUI(_prototype_CardData cardData)
@@ -237,9 +254,37 @@ namespace TDG0407._prototype
             {
                 if (evt.button == 1) // Right click to Burn
                 {
+                    if (!evt.shiftKey)
+                    {
+                        ShowWarning("카드를 소각하려면 Shift 키를 누른 상태로 우클릭하세요!");
+                        evt.StopPropagation();
+                        return;
+                    }
+
                     if (_prototype_PlayerController.Instance != null)
                     {
-                        _prototype_PlayerController.Instance.BurnCardForSP(cardData);
+                        // 1. Play Burn Animation
+                        card.style.transitionProperty = new List<StylePropertyName> { 
+                            new StylePropertyName("scale"), 
+                            new StylePropertyName("opacity"), 
+                            new StylePropertyName("background-color") 
+                        };
+                        card.style.transitionDuration = new List<TimeValue> { 
+                            new TimeValue(0.3f, TimeUnit.Second),
+                            new TimeValue(0.3f, TimeUnit.Second),
+                            new TimeValue(0.3f, TimeUnit.Second)
+                        };
+                        
+                        card.style.scale = new StyleScale(new Vector2(0.1f, 0.1f));
+                        card.style.opacity = 0f;
+                        card.style.backgroundColor = new StyleColor(new Color(1f, 0.2f, 0.2f, 1f));
+                        card.pickingMode = PickingMode.Ignore;
+
+                        // 2. Execute Burn after animation
+                        card.schedule.Execute(() => {
+                            // 우클릭으로 카드 버리기
+                            _prototype_PlayerController.Instance.DiscardCard(cardData);
+                        }).ExecuteLater(300);
                     }
                     evt.StopPropagation();
                     return;

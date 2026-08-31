@@ -21,8 +21,8 @@ MonoBehaviour:
     value: 1
   coolTicks:
     _min: 0
-    _max: 3
-    _cur: 3
+    _max: 1
+    _cur: 1
   castRange:
     rid: 2475498181128356177
   targetRange:
@@ -47,4 +47,4 @@ MonoBehaviour:
         - stat: 0
           coefficient: 10
         - stat: 4
-          coefficient: 1.1
+          coefficient: 1

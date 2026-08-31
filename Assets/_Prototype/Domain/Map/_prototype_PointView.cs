@@ -11,7 +11,7 @@ namespace TDG0407._prototype
     {
         [Header("Dev References")]
         [SerializeField] private _prototype_Point point;
-        [SerializeField] private bool isPlaceable = true;
+        [SerializeField] private _prototype_PointType type = _prototype_PointType.Normal;
         [SerializeField] private bool isHoverable = true;
         
         [Header("Runtime State")]
@@ -21,15 +21,31 @@ namespace TDG0407._prototype
         private Tween hoverTween;
 
         public _prototype_Point Point => _pointData.point;
+        public _prototype_PointData PointData => _pointData;
         public List<_prototype_EntityView> PlacedEntityViews => placedEntityViews;
-        public bool IsEntityPlaceable => _pointData.isPlaceable && placedEntityViews.Count == 0;
+        
+        public bool IsTraversable(_prototype_MovementType movementType)
+        {
+            if (movementType == _prototype_MovementType.Ground)
+                return _pointData.type == _prototype_PointType.Normal;
+            else if (movementType == _prototype_MovementType.Flying)
+                return _pointData.type == _prototype_PointType.Normal || _pointData.type == _prototype_PointType.Abyss;
+            else // Ghost
+                return _pointData.type != _prototype_PointType.OuterWall;
+        }
+
+        public bool CanPlaceEntity(_prototype_MovementType movementType)
+        {
+            return IsTraversable(movementType) && placedEntityViews.Count == 0;
+        }
+
         public bool IsHoverable => _pointData.isHoverable;
         
 
         public void Initialize(_prototype_Point point)
         {
             this.point = point;
-            this._pointData = new(point, isPlaceable, isHoverable);
+            this._pointData = new(point, type, isHoverable);
             this.placedEntityViews = GetComponentsInChildren<_prototype_EntityView>(true).ToList();
             this._pointData.placedEntityDatas.AddRange(placedEntityViews.Select(entityView => entityView.EntityData));
             foreach (var entityView in placedEntityViews)
@@ -40,7 +56,7 @@ namespace TDG0407._prototype
 
         public async Cysharp.Threading.Tasks.UniTask PlaceEntity(_prototype_EntityView entityView)
         {
-            if (!_pointData.isPlaceable) throw new Exception($"Cannot place entity at point {point}. Point is not placeable.");
+            if (!IsTraversable(entityView.EntityData.movementType)) throw new Exception($"Cannot place entity at point {point}. Point is blocked by terrain.");
             if (placedEntityViews.Contains(entityView)) throw new Exception($"Entity {entityView.name} is already placed at point {point}.");
 
             placedEntityViews.Add(entityView);

@@ -1,6 +1,6 @@
 namespace TDG0407._prototype
 {
-    
+
     public enum _prototype_Stat : sbyte
     {
 
@@ -9,15 +9,14 @@ namespace TDG0407._prototype
         Health,
         Stamina,
         Shield,
-        Attack,
-        Defense,
-        Avoidance,
-        CriticalProb,
-        CriticalWeight,
         RedPower,
         BluePower,
         RedResist,
-        BlueResist
+        BlueResist,
+        Avoidance,
+        CriticalProb,
+        CriticalWeight,
+
     }
 
 }

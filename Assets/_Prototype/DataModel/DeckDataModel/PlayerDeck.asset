@@ -23,6 +23,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e40d90891df1bc4cae765edcc9be143, type: 2}
   - {fileID: 11400000, guid: 431dee964b91d7a4e87194b5302a1c91, type: 2}
   - {fileID: 11400000, guid: c7d2c21003f58024db1823bb74b67f3d, type: 2}
+  - {fileID: 11400000, guid: 23c85482a6fd6f74c9b3f2920a9caf3f, type: 2}
   remainedCardDatas: []
   handedCardDatas: []
   discardedCardDatas: []

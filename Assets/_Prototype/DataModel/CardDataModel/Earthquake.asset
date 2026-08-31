@@ -18,11 +18,11 @@ MonoBehaviour:
   cardType: 1
   costValue:
     costType: 5
-    value: 5
+    value: 8
   coolTicks:
     _min: 0
-    _max: 3
-    _cur: 3
+    _max: 2
+    _cur: 2
   castRange:
     rid: 2475498181128356195
   targetRange:
@@ -42,6 +42,9 @@ MonoBehaviour:
     - rid: 2475498181128356197
       type: {class: _prototype_DamageCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
+        includeSelf: 0
         damageCoefficients:
+        - stat: 0
+          coefficient: 15
         - stat: 4
           coefficient: 3

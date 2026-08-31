@@ -15,6 +15,9 @@ MonoBehaviour:
   allCardDatas:
   - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
   - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+  - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+  - {fileID: 11400000, guid: c7d2c21003f58024db1823bb74b67f3d, type: 2}
+  - {fileID: 11400000, guid: c7d2c21003f58024db1823bb74b67f3d, type: 2}
   remainedCardDatas: []
   handedCardDatas: []
   discardedCardDatas: []

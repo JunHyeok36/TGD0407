@@ -43,6 +43,9 @@ MonoBehaviour:
     - rid: 2475498181128356182
       type: {class: _prototype_DamageCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
+        includeSelf: 0
         damageCoefficients:
+        - stat: 0
+          coefficient: 15
         - stat: 4
-          coefficient: 0.5
+          coefficient: 1.5

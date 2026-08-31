@@ -1,4 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using System;
 
 namespace TDG0407._prototype
@@ -11,18 +11,21 @@ namespace TDG0407._prototype
         public _prototype_BoundedValue<int> health = new(0, 100);
         public _prototype_BoundedValue<int> stamina = new(0, 10);
         public _prototype_Point point = _prototype_Point.zero;
+        public _prototype_MovementType movementType = _prototype_MovementType.Ground;
 
         public _prototype_EntityData() { }
         public _prototype_EntityData(
             string name,
             _prototype_BoundedValue<int> health,
             _prototype_BoundedValue<int> stamina,
-            _prototype_Point point)
+            _prototype_Point point,
+            _prototype_MovementType movementType = _prototype_MovementType.Ground)
         {
             this.ename = name;
             this.health = health;
             this.stamina = stamina;
             this.point = point;
+            this.movementType = movementType;
         }
         public _prototype_EntityData(_prototype_EntityData other)
         {
@@ -30,6 +33,7 @@ namespace TDG0407._prototype
             this.health = other.health.Clone();
             this.stamina = other.stamina.Clone();
             this.point = other.point;
+            this.movementType = other.movementType;
         }
 
         public virtual UniTask<int> TakeDamage(_prototype_DamageContext context)
