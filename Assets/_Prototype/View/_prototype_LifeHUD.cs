@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 namespace TDG0407._prototype
 {
@@ -41,10 +42,25 @@ namespace TDG0407._prototype
             _hpFill = _hudRoot.Find("HP_Fill").GetComponent<SpriteRenderer>();
             _spFill = _hudRoot.Find("SP_Fill").GetComponent<SpriteRenderer>();
             _hpText = _hudRoot.Find("HUD_Text").GetComponent<TextMeshPro>();
+
+            if (_hpText != null)
+            {
+                // ZTest를 무시하고 가장 위에 그려지도록 Overlay 셰이더로 변경
+                var overlayShader = Shader.Find("TextMeshPro/Distance Field Overlay");
+                if (overlayShader != null)
+                {
+                    _hpText.fontMaterial.shader = overlayShader;
+                }
+            }
+
+            UpdateHUD();
         }
 
         public void SetupEvents()
         {
+            if (_lifeView == null)
+                _lifeView = GetComponent<_prototype_LifeView>();
+
             if (_lifeView != null && _lifeView.Data != null)
             {
                 // 중복 등록 방지를 위해 뺐다가 다시 넣기
@@ -77,8 +93,8 @@ namespace TDG0407._prototype
             var hp = _lifeView.Data.health;
             var sp = _lifeView.Data.stamina;
 
-            float hpRatio = hp.Max > 0 ? (float)hp.Current / hp.Max : 0;
-            float spRatio = sp.Max > 0 ? (float)sp.Current / sp.Max : 0;
+            float hpRatio = hp.Max > 0 ? Mathf.Clamp01((float)hp.Current / hp.Max) : 0;
+            float spRatio = sp.Max > 0 ? Mathf.Clamp01((float)sp.Current / sp.Max) : 0;
 
             if (_hpFill != null)
                 _hpFill.transform.localScale = new Vector3(0.8f * hpRatio, 0.15f, 1f);
@@ -86,7 +102,11 @@ namespace TDG0407._prototype
                 _spFill.transform.localScale = new Vector3(0.8f * spRatio, 0.1f, 1f);
 
             if (_hpText != null)
-                _hpText.text = $"<color=red>{hp.Current}</color> <size=80%>| <color=yellow>{sp.Current}</color></size>";
+            {
+                int displayHp = Mathf.Max(0, hp.Current);
+                int displaySp = Mathf.Max(0, sp.Current);
+                _hpText.text = $"<color=red>{displayHp}</color> <size=80%>| <color=yellow>{displaySp}</color></size>";
+            }
         }
 
         private void LateUpdate()

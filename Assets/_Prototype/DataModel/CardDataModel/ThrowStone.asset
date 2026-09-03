@@ -51,4 +51,4 @@ MonoBehaviour:
           coefficient: 50
         - stat: 5
           coefficient: 10
-        speed: 2
+        speed: 1

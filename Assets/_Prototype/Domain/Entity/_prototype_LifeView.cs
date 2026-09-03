@@ -77,21 +77,44 @@ namespace TDG0407._prototype
             }
         }
 
-        private Cysharp.Threading.Tasks.UniTask ProcessLifeTick()
+        private Cysharp.Threading.Tasks.UniTask<_prototype_TickIntent> ProcessLifeTick()
         {
-            if (Data != null && Data.cardDeck != null)
+            var intent = new _prototype_TickIntent
             {
-                foreach (var card in Data.cardDeck.handedCardDatas)
+                TargetsPlayer = false,
+                Execute = async () =>
                 {
-                    if (card.currentCoolTicks > 0)
+                    if (Data != null)
                     {
-                        // drawQuickness를 이용해 쿨타임을 더 빠르게 줄일 수 있음
-                        int reduction = 1 + Data.lifeStat.drawQuickness;
-                        card.currentCoolTicks = UnityEngine.Mathf.Max(0, card.currentCoolTicks - reduction);
+                        if (Data.cardDeck != null)
+                        {
+                            foreach (var card in Data.cardDeck.handedCardDatas)
+                            {
+                                if (card.currentCoolTicks > 0)
+                                {
+                                    int reduction = 1 + Data.lifeStat.drawQuickness;
+                                    card.currentCoolTicks = UnityEngine.Mathf.Max(0, card.currentCoolTicks - reduction);
+                                }
+                            }
+                        }
+
+                        if (Data.statusEffects != null)
+                        {
+                            for (int i = Data.statusEffects.Count - 1; i >= 0; i--)
+                            {
+                                var effect = Data.statusEffects[i];
+                                effect.durationTicks--;
+                                if (effect.durationTicks <= 0)
+                                {
+                                    Data.statusEffects.RemoveAt(i);
+                                }
+                            }
+                        }
                     }
+                    await Cysharp.Threading.Tasks.UniTask.Yield();
                 }
-            }
-            return Cysharp.Threading.Tasks.UniTask.CompletedTask;
+            };
+            return Cysharp.Threading.Tasks.UniTask.FromResult(intent);
         }
     }
 

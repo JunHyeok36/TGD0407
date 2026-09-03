@@ -43,7 +43,8 @@ namespace TDG0407._prototype
             _prototype_PointView pointView = point.HasValue ? _prototype_GridManager.Instance.GetPointView(point.Value) : null;
             if (pointView != null)
             {
-                if (pointView.CanPlaceEntity(_prototype_MovementType.Ground))
+                var playerEntity = _prototype_PlayerController.Instance != null ? _prototype_PlayerController.Instance.ControlledEntityView?.EntityData : null;
+                if (pointView.CanPlaceEntity(playerEntity))
                 {
                     _prototype_Point minPoint = _prototype_GridManager.Instance.MinPoint;
                     _prototype_Point maxPoint = _prototype_GridManager.Instance.MaxPoint;

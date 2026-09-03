@@ -11,7 +11,8 @@ namespace TDG0407._prototype
         private static int currentTick = 0;
 
         private static event Func<UniTask> OnPreTick;
-        private static event Func<UniTask> OnTick;
+        public delegate UniTask<_prototype_TickIntent> TickActionPlanner();
+        private static event TickActionPlanner OnTickPlan;
         private static event Func<UniTask> OnPostTick;
 
         public static int CurrentTick { get { return currentTick; } }
@@ -21,7 +22,7 @@ namespace TDG0407._prototype
             currentTick = 0;
 
             OnPreTick = null;
-            OnTick = null;
+            OnTickPlan = null;
             OnPostTick = null;
         }
 
@@ -47,7 +48,39 @@ namespace TDG0407._prototype
 
                 await InvokeEventAsync(OnPreTick);
                 if (playerAction != null) await playerAction.Invoke();
-                await InvokeEventAsync(OnTick);
+                
+                System.Collections.Generic.List<_prototype_TickIntent> playerTargetingIntents = new();
+                System.Collections.Generic.List<_prototype_TickIntent> otherIntents = new();
+
+                if (OnTickPlan != null)
+                {
+                    foreach (TickActionPlanner planner in OnTickPlan.GetInvocationList())
+                    {
+                        var intent = await planner();
+                        if (intent != null)
+                        {
+                            if (intent.TargetsPlayer) playerTargetingIntents.Add(intent);
+                            else otherIntents.Add(intent);
+                        }
+                    }
+                }
+
+                foreach (var intent in playerTargetingIntents)
+                {
+                    if (intent.Execute != null) await intent.Execute();
+                }
+
+                System.Collections.Generic.List<UniTask> parallelTasks = new();
+                foreach (var intent in otherIntents)
+                {
+                    if (intent.Execute != null) parallelTasks.Add(intent.Execute());
+                }
+
+                if (parallelTasks.Count > 0)
+                {
+                    await UniTask.WhenAll(parallelTasks);
+                }
+
                 await InvokeEventAsync(OnPostTick);
             }
             finally
@@ -58,8 +91,8 @@ namespace TDG0407._prototype
 
         public static void RegisterPreTick(Func<UniTask> callback) => OnPreTick += callback;
         public static void UnregisterPreTick(Func<UniTask> callback) => OnPreTick -= callback;
-        public static void RegisterTick(Func<UniTask> callback) => OnTick += callback;
-        public static void UnregisterTick(Func<UniTask> callback) => OnTick -= callback;
+        public static void RegisterTick(TickActionPlanner callback) => OnTickPlan += callback;
+        public static void UnregisterTick(TickActionPlanner callback) => OnTickPlan -= callback;
         public static void RegisterPostTick(Func<UniTask> callback) => OnPostTick += callback;
         public static void UnregisterPostTick(Func<UniTask> callback) => OnPostTick -= callback;
 

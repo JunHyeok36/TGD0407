@@ -13,6 +13,9 @@ namespace TDG0407._prototype
         
         public static async UniTask ApplyDamage(_prototype_DamageContext context)
         {
+            if (context == null || context.target == null) return;
+            if (context.target.health.Current <= 0) return;
+
             List<(_prototype_EntityData, _prototype_IDamageModifier)> modifiers = new();
             //if (context.source != null) modifiers.AddRange((context.source, context.source.GetDamageModifiers()));
             //if (context.target != null) modifiers.AddRange((context.target, context.target.GetDamageModifiers()));
@@ -86,11 +89,31 @@ namespace TDG0407._prototype
             if (toPointView == null) throw new Exception("toPointView is null.");
             if (!fromPointView.Point.Equals(entityView.EntityData.point)) throw new Exception($"Entity {entityView.name} is not at the fromPoint {fromPointView.Point}.");
             if (!toPointView.IsTraversable(entityView.EntityData.movementType)) throw new Exception($"Cannot move entity to point {toPointView.Point}. Terrain is blocked.");
-            if (entityView.EntityData.movementType == _prototype_MovementType.Ground && toPointView.PlacedEntityViews.Count > 0)
-                throw new Exception($"Cannot move Ground entity to point {toPointView.Point}. Point is occupied.");
+            if (!toPointView.CanPlaceEntity(entityView.EntityData))
+                throw new Exception($"Cannot move entity to point {toPointView.Point}. Point is occupied.");
 
             fromPointView.RemoveEntity(entityView);
             await toPointView.PlaceEntity(entityView);
+
+            if (entityView.EntityData is _prototype_LifeData lifeData)
+            {
+                var projectiles = toPointView.PlacedEntityViews
+                    .Where(v => v.EntityData is _prototype_ProjectileData)
+                    .ToList();
+
+                foreach (var projView in projectiles)
+                {
+                    if (projView.EntityData is _prototype_ProjectileData projData)
+                    {
+                        if (lifeData.side != _prototype_Side.None && lifeData.side == projData.side) continue;
+
+                        if (projView is _prototype_ProjectileView pv)
+                        {
+                            await pv.HitTarget(lifeData);
+                        }
+                    }
+                }
+            }
         }
 
     }

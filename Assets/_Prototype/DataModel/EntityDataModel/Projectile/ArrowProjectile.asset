@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 612a39be3ae8e45449fcb6c4ed8f22cc, type: 3}
-  m_Name: Rock
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleDataModel
-  ename: Rock
+  m_Script: {fileID: 11500000, guid: d5a9c0bec0179e94e8cecb05066224fd, type: 3}
+  m_Name: ArrowProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ProjectileDataModel
+  ename: Arrow
   health:
     _min: 0
-    _max: 200
-    _cur: 200
+    _max: 5
+    _cur: 5
   stamina:
     _min: 0
     _max: 0
@@ -24,3 +24,4 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  movementType: 1

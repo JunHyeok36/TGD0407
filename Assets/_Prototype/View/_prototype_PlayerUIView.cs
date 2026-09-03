@@ -166,9 +166,12 @@ namespace TDG0407._prototype
                 _prototype_EntityData entityData = controlledEntityView.EntityData;
                 if (entityData != null)
                 {
+                    int displayHp = Mathf.Max(0, entityData.health.Current);
+                    int displaySp = Mathf.Max(0, entityData.stamina.Current);
+
                     if (_label_point != null) _label_point.text = $"> POS : {controlledEntityView.Point}";
-                    if (_label_health != null) _label_health.text = $"> HP  : {entityData.health.Current}/{entityData.health.Max}";
-                    if (_label_stamina != null) _label_stamina.text = $"> SP  : {entityData.stamina.Current}/{entityData.stamina.Max}";
+                    if (_label_health != null) _label_health.text = $"> HP  : {displayHp}/{entityData.health.Max}";
+                    if (_label_stamina != null) _label_stamina.text = $"> SP  : {displaySp}/{entityData.stamina.Max}";
                 }
                 else
                 {

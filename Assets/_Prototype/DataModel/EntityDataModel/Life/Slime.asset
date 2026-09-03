@@ -16,14 +16,15 @@ MonoBehaviour:
   health:
     _min: 0
     _max: 30
-    _cur: 50
+    _cur: 30
   stamina:
     _min: 0
     _max: 5
-    _cur: 8
+    _cur: 5
   point:
     x: 0
     y: 0
+  movementType: 0
   side: 0
   lifeStat:
     redPower: 0
@@ -48,7 +49,7 @@ MonoBehaviour:
     dodgeProb: 0
     criticalProb: 0
     criticalWeight: 0
-  cardDeck: {fileID: 11400000, guid: 9601b4e07fb8de541842bfc89fe65aab, type: 2}
+  cardDeck: {fileID: 11400000, guid: 9b873f7c2d9decd47bb9d1ecd9caff01, type: 2}
   aiLogic:
     rid: 2475498268826272099
   references:

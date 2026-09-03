@@ -132,7 +132,7 @@ namespace TDG0407._prototype
                 // 평소에는 이동 모드로 동작: 현재 마우스 위치까지의 경로(Path)를 TargetRange로 표시
                 if (mousePoint.HasValue)
                 {
-                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value, _controlledEntityView.EntityData.movementType);
+                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value, _controlledEntityView.EntityData);
                     if (path != null && path.Count > 0)
                     {
                         List<_prototype_Point> pathPoints = new();
@@ -190,17 +190,33 @@ namespace TDG0407._prototype
             return null;
         }
         
+        private bool CheckAndHandleStun()
+        {
+            var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
+            if (lifeData != null && lifeData.statusEffects.Find(s => s.type == _prototype_StatusType.Stun) != null)
+            {
+                _prototype_TickManager.AdvanceTick(async () => {
+                    _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
+                    await UniTask.Delay(300);
+                }).Forget();
+                return true;
+            }
+            return false;
+        }
+
         private void HandleMovementInput(_prototype_Point targetPoint)
         {
             if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
             
+            if (CheckAndHandleStun()) return;
+
             if (_controlledEntityView.Point == targetPoint)
             {
                 HandleRestInput();
                 return;
             }
 
-            List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint, _controlledEntityView.EntityData.movementType);
+            List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, targetPoint, _controlledEntityView.EntityData);
             if (path != null && path.Count > 0)
             {
                 _prototype_PointView nextStep = path[0];
@@ -215,6 +231,8 @@ namespace TDG0407._prototype
 
         private void HandleRestInput()
         {
+            if (CheckAndHandleStun()) return;
+
             if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.Data != null)
             {
                 _prototype_TickManager.AdvanceTick(async () => {
@@ -314,6 +332,12 @@ namespace TDG0407._prototype
 
         private void ExecuteCardCast(List<_prototype_Point> targetRange)
         {
+            if (CheckAndHandleStun()) 
+            {
+                CancelTargeting();
+                return;
+            }
+
             var cardToCast = _targetingCard;
             var playerLife = _controlledEntityView as _prototype_LifeView;
             

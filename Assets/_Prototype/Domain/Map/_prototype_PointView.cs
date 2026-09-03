@@ -39,6 +39,41 @@ namespace TDG0407._prototype
             return IsTraversable(movementType) && placedEntityViews.Count == 0;
         }
 
+        public bool CanPlaceEntity(_prototype_EntityData entityData)
+        {
+            if (entityData == null) return CanPlaceEntity(_prototype_MovementType.Ground);
+            if (!IsTraversable(entityData.movementType)) return false;
+
+            if (entityData is _prototype_LifeData)
+            {
+                foreach (var entityView in placedEntityViews)
+                {
+                    if (entityView.EntityData is _prototype_LifeData)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else if (entityData is _prototype_ObstacleData)
+            {
+                foreach (var entityView in placedEntityViews)
+                {
+                    if (entityView.EntityData is _prototype_ObstacleData)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else if (entityData is _prototype_ProjectileData || entityData is _prototype_LaserProjectileData)
+            {
+                return true;
+            }
+            
+            return placedEntityViews.Count == 0;
+        }
+
         public bool IsHoverable => _pointData.isHoverable;
         
 

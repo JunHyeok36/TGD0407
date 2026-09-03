@@ -28,6 +28,64 @@ namespace TDG0407._prototype
             };
         }
 
+        public override async UniTask<_prototype_TickIntent> PlanAction(_prototype_EntityView entityView)
+        {
+            var intent = new _prototype_TickIntent
+            {
+                TargetsPlayer = false,
+                Execute = async () => { await ExecuteAction(entityView); }
+            };
+
+            if (_currentIdleTicks > 0) return intent;
+
+            var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
+            if (playerView == null || playerView.EntityData.health.Current <= 0) return intent;
+
+            var lifeData = entityView.EntityData as _prototype_LifeData;
+            if (lifeData == null || lifeData.cardDeck == null) return intent;
+
+            bool willAttackPlayer = false;
+            _prototype_Point playerCurrentPoint = playerView.Point;
+            _prototype_Point myPoint = entityView.Point;
+
+            foreach (var card in lifeData.cardDeck.handedCardDatas)
+            {
+                if (card.currentCoolTicks <= 0)
+                {
+                    bool canAfford = true;
+                    if (card.costValue != null)
+                    {
+                        int amount = (int)card.costValue.value;
+                        if (card.costValue.costType == _prototype_CostType.FixedStamina && lifeData.stamina.Current < amount) canAfford = false;
+                        if (card.costValue.costType == _prototype_CostType.FixedHealth && lifeData.health.Current <= amount) canAfford = false;
+                    }
+
+                    if (canAfford)
+                    {
+                        bool inRange = false;
+                        if (card.castRange != null)
+                        {
+                            var validCastPoints = card.castRange.GetValidCastPoints(myPoint);
+                            if (validCastPoints.Contains(playerCurrentPoint)) inRange = true;
+                        }
+                        else
+                        {
+                            if (Math.Abs(myPoint.x - playerCurrentPoint.x) + Math.Abs(myPoint.y - playerCurrentPoint.y) == 1) inRange = true;
+                        }
+                        
+                        if (inRange)
+                        {
+                            willAttackPlayer = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            intent.TargetsPlayer = willAttackPlayer;
+            return intent;
+        }
+
         public override async UniTask ExecuteAction(_prototype_EntityView entityView)
         {
             if (_currentIdleTicks > 0)
@@ -181,11 +239,11 @@ namespace TDG0407._prototype
                 if (!needsSpInAdvance)
                 {
                     // 카드를 사용할 수 없으나 이동은 가능한 상태라면 플레이어 방향으로 이동 시도
-                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, targetPoint, entityView.EntityData.movementType, false, true);
+                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, targetPoint, entityView.EntityData, false, true);
                     if (path != null && path.Count > 0)
                     {
                         _prototype_PointView nextStep = path[0];
-                        if (nextStep.CanPlaceEntity(entityView.EntityData.movementType))
+                        if (nextStep.CanPlaceEntity(entityView.EntityData))
                         {
                             _prototype_PointView currentPointView = _prototype_GridManager.Instance.GetPointView(myPoint);
                             if (currentPointView != null)

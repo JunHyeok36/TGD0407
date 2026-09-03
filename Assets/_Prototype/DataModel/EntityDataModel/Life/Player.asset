@@ -15,15 +15,16 @@ MonoBehaviour:
   ename: Player
   health:
     _min: 0
-    _max: 100
-    _cur: 100
+    _max: 500
+    _cur: 500
   stamina:
     _min: 0
-    _max: 10
-    _cur: 8
+    _max: 15
+    _cur: 15
   point:
     x: 0
     y: 0
+  movementType: 0
   side: 0
   lifeStat:
     redPower: 0
