@@ -15,6 +15,7 @@ namespace TDG0407._prototype
         //[Header("Settings")]
 
         private _prototype_PointView _lastHighlightedPointView;
+        private _prototype_MoveIndicator _moveIndicator;
 
         
         private void Awake()
@@ -30,6 +31,10 @@ namespace TDG0407._prototype
                     Destroy(col);
                 }
             }
+            
+            GameObject moveIndObj = new GameObject("MoveIndicator");
+            moveIndObj.transform.SetParent(transform);
+            _moveIndicator = moveIndObj.AddComponent<_prototype_MoveIndicator>();
         }
 
         public void HighlightPoint(_prototype_Point? point)
@@ -137,6 +142,54 @@ namespace TDG0407._prototype
             }
         }
 
-    }
+        public void ShowMovementPath(List<_prototype_Point> path)
+        {
+            if (_moveIndicator != null)
+            {
+                _moveIndicator.ShowPath(path);
+            }
+        }
 
+        public void HideMovementPath()
+        {
+            if (_moveIndicator != null)
+            {
+                _moveIndicator.Hide();
+            }
+        }
+
+        private Dictionary<_prototype_EntityView, List<Transform>> _hazardIndicators = new();
+
+        public void ShowHazard(_prototype_Point pt, _prototype_EntityView owner)
+        {
+            if (!_prototype_GridManager.Instance.IsWithinBounds(pt)) return;
+
+            if (!_hazardIndicators.ContainsKey(owner))
+                _hazardIndicators[owner] = new List<Transform>();
+
+            Transform newIndicator = Instantiate(_pointHoverIndicator, transform);
+            newIndicator.gameObject.SetActive(true);
+            newIndicator.localPosition = new Vector3(pt.x, 0.05f, pt.y);
+            
+            if (newIndicator.TryGetComponent<Renderer>(out var renderer))
+            {
+                // Dark red/orange warning color with high opacity
+                renderer.material.color = new Color(1f, 0.2f, 0f, 0.7f);
+            }
+            
+            _hazardIndicators[owner].Add(newIndicator);
+        }
+
+        public void ClearAllHazards(_prototype_EntityView owner)
+        {
+            if (_hazardIndicators.TryGetValue(owner, out var list))
+            {
+                foreach (var ind in list)
+                {
+                    if (ind != null) Destroy(ind.gameObject);
+                }
+                list.Clear();
+            }
+        }
+    }
 }

@@ -43,8 +43,17 @@ namespace TDG0407._prototype
 
             List<UniTask> tasks = new();
 
+            var sourceView = _prototype_GridManager.Instance.GetPointView(source.point)?.PlacedEntityViews.Find(v => v.EntityData == source);
+            bool hasFaced = false;
+
             foreach (var target in targets)
             {
+                if (!hasFaced && sourceView != null && target != source)
+                {
+                    sourceView.FaceTowards(target.point, 0.2f);
+                    hasFaced = true;
+                }
+
                 var targetLife = target as _prototype_LifeData;
 
                 // 팀킬 방지 (같은 팀끼리는 공격 불가, 단 None은 제외)

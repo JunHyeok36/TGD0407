@@ -31,8 +31,12 @@ namespace TDG0407._prototype
             return intent; // Archer never targets the player directly (it spawns projectiles)
         }
 
-        public override async UniTask ExecuteAction(_prototype_EntityView entityView)
+        public override void EvaluateIntent(_prototype_EntityView entityView)
         {
+            hasPlannedIntent = false;
+            plannedCard = null;
+            plannedTarget = entityView.Point;
+            
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
 
@@ -48,7 +52,6 @@ namespace TDG0407._prototype
 
             _prototype_Point myPoint = entityView.EntityData.point;
             _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
-            
             int distToPlayer = Math.Abs(myPoint.x - playerPoint.x) + Math.Abs(myPoint.y - playerPoint.y);
 
             _prototype_CardData dashCard = null;
@@ -91,21 +94,10 @@ namespace TDG0407._prototype
                 }
             }
 
-            bool hasActed = false;
             _prototype_CardData cardToPlay = dashCard != null ? dashCard : attackCard;
-
             if (cardToPlay != null)
             {
-                var cost = cardToPlay.costValue;
-                if (cost != null)
-                {
-                    if (cost.costType == _prototype_CostType.FixedStamina) lifeData.stamina.Current -= (int)cost.value;
-                    else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= (int)cost.value;
-                }
-
-                lifeData.cardDeck.handedCardDatas.Remove(cardToPlay);
-                lifeData.cardDeck.discardedCardDatas.Add(cardToPlay);
-
+                plannedCard = cardToPlay;
                 _prototype_Point abilityTargetPoint = playerPoint;
 
                 if (cardToPlay == dashCard)
@@ -129,12 +121,100 @@ namespace TDG0407._prototype
                     }
                     abilityTargetPoint = bestPoint;
                 }
-
-                if (cardToPlay.actionList != null)
+                
+                plannedTarget = abilityTargetPoint;
+                hasPlannedIntent = true;
+                
+                // Show hazard markers visually on the target range
+                _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+                bool showsHazard = false;
+                foreach (var action in plannedCard.actionList)
                 {
-                    List<_prototype_Point> targetRange = cardToPlay.targetRange != null 
-                        ? cardToPlay.targetRange.GetValidTargetPoints(myPoint, abilityTargetPoint) 
-                        : new List<_prototype_Point> { abilityTargetPoint };
+                    if (action is _prototype_DamageCardAction) showsHazard = true;
+                    if (action is _prototype_SpawnTargetedProjectileCardAction || 
+                        action is _prototype_SpawnDirectionalProjectileCardAction || 
+                        action is _prototype_ShootLaserCardAction)
+                    {
+                        showsHazard = false;
+                        break;
+                    }
+                }
+                
+                if (showsHazard)
+                {
+                    if (plannedCard.targetRange != null)
+                    {
+                        var targetPoints = plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget);
+                        foreach (var pt in targetPoints)
+                        {
+                            _prototype_GridVisualManager.Instance.ShowHazard(pt, entityView);
+                        }
+                    }
+                    else
+                    {
+                        _prototype_GridVisualManager.Instance.ShowHazard(plannedTarget, entityView);
+                    }
+                }
+            }
+            else
+            {
+                // Clear hazards if no intent
+                _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+            }
+        }
+
+        public override async UniTask ExecuteAction(_prototype_EntityView entityView)
+        {
+            var lifeData = entityView.EntityData as _prototype_LifeData;
+            if (lifeData == null) return;
+
+            _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+
+            if (await HandleStatusEffectsOverride(entityView))
+            {
+                hasPlannedIntent = false;
+                EvaluateIntent(entityView);
+                return;
+            }
+
+            _prototype_Point myPoint = entityView.EntityData.point;
+            _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
+            int distToPlayer = Math.Max(Math.Abs(myPoint.x - playerPoint.x), Math.Abs(myPoint.y - playerPoint.y));
+
+            bool hasActed = false;
+
+            if (hasPlannedIntent && plannedCard != null)
+            {
+                if (lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+                {
+                    // Can't cast card
+                }
+                else
+                {
+                    var burning = lifeData.GetStatusEffect(_prototype_StatusType.Burning);
+                    bool destroyed = false;
+                    if (burning != null)
+                    {
+                        float destroyProb = burning.value / (burning.value + 200f);
+                        if (UnityEngine.Random.value < destroyProb) destroyed = true;
+                    }
+
+                    lifeData.cardDeck.handedCardDatas.Remove(plannedCard);
+                    if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(plannedCard);
+                    else lifeData.cardDeck.discardedCardDatas.Add(plannedCard);
+
+                    var cost = plannedCard.costValue;
+                    if (cost != null)
+                    {
+                        if (cost.costType == _prototype_CostType.FixedStamina) lifeData.stamina.Current -= (int)cost.value;
+                        else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= (int)cost.value;
+                    }
+
+                    if (!destroyed && plannedCard.actionList != null)
+                {
+                    List<_prototype_Point> targetRange = plannedCard.targetRange != null 
+                        ? plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
+                        : new List<_prototype_Point> { plannedTarget };
 
                     List<_prototype_EntityData> targets = new();
                     foreach (var pt in targetRange)
@@ -148,53 +228,116 @@ namespace TDG0407._prototype
                                 targets.Add(ev.EntityData);
                                 found = true;
                             }
-                            if (!found && cardToPlay.targetRange != null && cardToPlay.targetRange.IncludeEmptyPoints)
+                            if (!found && plannedCard.targetRange != null && plannedCard.targetRange.IncludeEmptyPoints)
                                 targets.Add(new _prototype_EmptyPointData(pt));
                         }
                     }
 
-                    foreach (var action in cardToPlay.actionList)
+                    foreach (var action in plannedCard.actionList)
                     {
                         var filteredTargets = targets;
                         if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
                         await action.ExecuteCardAction(entityView.EntityData, filteredTargets, null);
                     }
+                    }
+                    hasActed = true;
                 }
-                hasActed = true;
             }
             else
             {
-                bool needsSpInAdvance = false;
-                if (lifeData.cardDeck != null)
+                bool shouldRest = false;
+
+                if (lifeData.stamina.Current < lifeData.stamina.Max && distToPlayer > optimalRangeMax)
                 {
-                    int minSpNeeded = 999;
-                    foreach (var card in lifeData.cardDeck.handedCardDatas)
+                    shouldRest = true;
+                }
+                else
+                {
+                    if (lifeData.cardDeck != null)
                     {
-                        if (card.costValue != null && card.costValue.costType == _prototype_CostType.FixedStamina)
-                            minSpNeeded = Math.Min(minSpNeeded, (int)card.costValue.value);
-                        else minSpNeeded = 0;
+                        int minSpNeeded = 999;
+                        foreach (var card in lifeData.cardDeck.handedCardDatas)
+                        {
+                            if (card.currentCoolTicks <= 0)
+                            {
+                                if (card.costValue != null && card.costValue.costType == _prototype_CostType.FixedStamina)
+                                    minSpNeeded = Math.Min(minSpNeeded, (int)card.costValue.value);
+                                else minSpNeeded = 0;
+                            }
+                        }
+                        if (minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < minSpNeeded)
+                            shouldRest = true;
                     }
-                    if (minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < minSpNeeded)
-                        needsSpInAdvance = true;
                 }
 
-                if (!needsSpInAdvance)
+                HashSet<_prototype_Point> hazardousPoints = new HashSet<_prototype_Point>();
+                var allProjectiles = UnityEngine.Object.FindObjectsOfType<_prototype_ProjectileView>();
+                foreach (var proj in allProjectiles)
                 {
-                    if (distToPlayer > optimalRangeMax || distToPlayer < optimalRangeMin)
+                    if (proj.Data != null && lifeData != null && proj.Data.side != lifeData.side) // 다른 편의 투사체라면
                     {
-                        List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, playerPoint, entityView.EntityData, false, true);
+                        foreach (var p in proj.GetPlannedPathPoints())
+                            hazardousPoints.Add(p);
+                    }
+                }
+
+                if (shouldRest && hazardousPoints.Contains(myPoint))
+                {
+                    shouldRest = false;
+                }
+
+                if (!shouldRest)
+                {
+                    bool isInHazard = hazardousPoints.Contains(myPoint);
+
+                    if (distToPlayer > optimalRangeMax && !isInHazard)
+                    {
+                        // 다가가기
+                        List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, playerPoint, entityView.EntityData, false, true, hazardousPoints);
                         if (path != null && path.Count > 0)
                         {
-                            if (distToPlayer > optimalRangeMax)
+                            _prototype_PointView nextStep = path[0];
+                            if (nextStep.CanPlaceEntity(entityView.EntityData))
                             {
-                                _prototype_PointView nextStep = path[0];
-                                if (nextStep.CanPlaceEntity(entityView.EntityData))
+                                var currentPv = _prototype_GridManager.Instance.GetPointView(myPoint);
+                                await _prototype_InteractionManager.MoveEntity(entityView, currentPv, nextStep);
+                                hasActed = true;
+                            }
+                        }
+                    }
+                    else if (distToPlayer < optimalRangeMin || isInHazard)
+                    {
+                        // 도망치기 (카이팅)
+                        _prototype_PointView bestEscapePoint = null;
+                        int maxDist = distToPlayer;
+
+                        _prototype_Point[] dirs = new _prototype_Point[] {
+                            new _prototype_Point(0, 1), new _prototype_Point(1, 0),
+                            new _prototype_Point(0, -1), new _prototype_Point(-1, 0),
+                            new _prototype_Point(1, 1), new _prototype_Point(1, -1),
+                            new _prototype_Point(-1, 1), new _prototype_Point(-1, -1)
+                        };
+
+                        foreach (var d in dirs)
+                        {
+                            _prototype_Point p = myPoint + d;
+                            var pv = _prototype_GridManager.Instance.GetPointView(p);
+                            if (pv != null && pv.CanPlaceEntity(entityView.EntityData) && !hazardousPoints.Contains(p))
+                            {
+                                int testDist = Math.Max(Math.Abs(p.x - playerPoint.x), Math.Abs(p.y - playerPoint.y));
+                                if (testDist > maxDist || bestEscapePoint == null)
                                 {
-                                    var currentPv = _prototype_GridManager.Instance.GetPointView(myPoint);
-                                    await _prototype_InteractionManager.MoveEntity(entityView, currentPv, nextStep);
-                                    hasActed = true;
+                                    maxDist = testDist;
+                                    bestEscapePoint = pv;
                                 }
                             }
+                        }
+
+                        if (bestEscapePoint != null)
+                        {
+                            var currentPv = _prototype_GridManager.Instance.GetPointView(myPoint);
+                            await _prototype_InteractionManager.MoveEntity(entityView, currentPv, bestEscapePoint);
+                            hasActed = true;
                         }
                     }
                 }
@@ -205,39 +348,56 @@ namespace TDG0407._prototype
                     entityView.transform.DOPunchScale(new Vector3(0.1f, -0.1f, 0), 0.2f, 1, 0f);
                 }
             }
+
+            // Next turn intent evaluation
+            EvaluateIntent(entityView);
         }
 
         private bool HasClearLineOfSight(_prototype_Point start, _prototype_Point end)
         {
-            _prototype_Point dir = _prototype_Point.zero;
-            
-            if (end.x > start.x) dir.x = 1;
-            else if (end.x < start.x) dir.x = -1;
+            int x0 = start.x;
+            int y0 = start.y;
+            int x1 = end.x;
+            int y1 = end.y;
 
-            if (end.y > start.y) dir.y = 1;
-            else if (end.y < start.y) dir.y = -1;
+            int dx = Math.Abs(x1 - x0);
+            int dy = Math.Abs(y1 - y0);
+            int sx = x0 < x1 ? 1 : -1;
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx - dy;
 
-            _prototype_Point current = start + dir;
-
-            // 100 limit to prevent infinite loops just in case
-            int limit = 100;
-            while (current != end && limit > 0)
+            while (true)
             {
-                limit--;
-                var ptView = _prototype_GridManager.Instance.GetPointView(current);
-                if (ptView == null) return false;
-                
-                if (!ptView.IsTraversable(_prototype_MovementType.Flying)) return false;
+                if (x0 == x1 && y0 == y1) break;
 
-                foreach (var ev in ptView.PlacedEntityViews)
+                if (x0 != start.x || y0 != start.y)
                 {
-                    if (ev.EntityData is _prototype_ObstacleData) return false;
+                    var current = new _prototype_Point(x0, y0);
+                    var ptView = _prototype_GridManager.Instance.GetPointView(current);
+                    if (ptView == null) return false;
+                    
+                    if (!ptView.IsTraversable(_prototype_MovementType.Flying)) return false;
+
+                    foreach (var ev in ptView.PlacedEntityViews)
+                    {
+                        if (ev.EntityData is _prototype_ObstacleData) return false;
+                    }
                 }
 
-                current += dir;
+                int e2 = 2 * err;
+                if (e2 > -dy)
+                {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx)
+                {
+                    err += dx;
+                    y0 += sy;
+                }
             }
 
-            return limit > 0;
+            return true;
         }
     }
 }

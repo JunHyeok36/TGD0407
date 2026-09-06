@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef97ce57c1968b44a72198f2b9ec150, type: 3}
+  m_Name: Dummy
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeDataModel
+  ename: Dummy
+  health:
+    _min: 0
+    _max: 10000
+    _cur: 10000
+  stamina:
+    _min: 0
+    _max: 10
+    _cur: 10
+  point:
+    x: 0
+    y: 0
+  movementType: 0
+  side: 2
+  lifeStat:
+    redPower: 5
+    bluePower: 0
+    redResist: 0
+    blueResist: 0
+    handCardSlotCount: 5
+    drawQuickness: 0
+    curseResist: 0
+    bleedingResist: 0
+    burningResist: 0
+    poisoningResist: 0
+    stunResist: 0
+    freezeResist: 0
+    silenceResist: 0
+    fearResist: 0
+    knockdownResist: 0
+    healthRecoverAmount: 5
+    staminaRecoverAmount: 3
+    knockbackResist: 0
+    deathResist: 0
+    dodgeProb: 0
+    criticalProb: 0
+    criticalWeight: 0
+  cardDeck: {fileID: 0}
+  aiLogic:
+    rid: 8244397786603454558
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244397786603454558
+      type: {class: _prototype_StandStillAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data: 

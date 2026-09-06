@@ -16,14 +16,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
   - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
   - {fileID: 11400000, guid: 9bb1b1f8b8cb11b479e09cef4cb63bb5, type: 2}
-  - {fileID: 11400000, guid: c774a71358ad5d3499a46a50281d66f1, type: 2}
-  - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
-  - {fileID: 11400000, guid: 7ae1ac854d50e674a86d3867261c4478, type: 2}
-  - {fileID: 11400000, guid: 7a0f21675c444024f9c72eb94be6f65d, type: 2}
-  - {fileID: 11400000, guid: 0e40d90891df1bc4cae765edcc9be143, type: 2}
-  - {fileID: 11400000, guid: 431dee964b91d7a4e87194b5302a1c91, type: 2}
-  - {fileID: 11400000, guid: c7d2c21003f58024db1823bb74b67f3d, type: 2}
   - {fileID: 11400000, guid: 23c85482a6fd6f74c9b3f2920a9caf3f, type: 2}
+  - {fileID: 11400000, guid: 85e6330b9719fba47bf2a8fa9e5134b3, type: 2}
+  - {fileID: 11400000, guid: 11c1eaa21cc5da44f938925d0e4d1c49, type: 2}
   remainedCardDatas: []
   handedCardDatas: []
   discardedCardDatas: []

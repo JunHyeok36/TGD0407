@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using System.Text;
 
 namespace TDG0407._prototype
 {
@@ -42,6 +43,7 @@ namespace TDG0407._prototype
             _hpFill = _hudRoot.Find("HP_Fill").GetComponent<SpriteRenderer>();
             _spFill = _hudRoot.Find("SP_Fill").GetComponent<SpriteRenderer>();
             _hpText = _hudRoot.Find("HUD_Text").GetComponent<TextMeshPro>();
+            _statusText = _hudRoot.Find("Status_Text").GetComponent<TextMeshPro>();
 
             if (_hpText != null)
             {
@@ -86,6 +88,8 @@ namespace TDG0407._prototype
             }
         }
 
+        private TextMeshPro _statusText;
+
         public void UpdateHUD()
         {
             if (_lifeView == null || _lifeView.Data == null) return;
@@ -107,15 +111,36 @@ namespace TDG0407._prototype
                 int displaySp = Mathf.Max(0, sp.Current);
                 _hpText.text = $"<color=red>{displayHp}</color> <size=80%>| <color=yellow>{displaySp}</color></size>";
             }
+
+            if (_statusText != null)
+            {
+                if (_lifeView.Data.statusEffects != null && _lifeView.Data.statusEffects.Count > 0)
+                {
+                    StringBuilder statusStr = new();
+                    foreach (var s in _lifeView.Data.statusEffects)
+                        statusStr.Append($"[{s.type} {s.durationTicks}] ");
+                    _statusText.text = statusStr.ToString().TrimEnd();
+                }
+                else
+                    _statusText.text = "";
+            }
         }
 
         private void LateUpdate()
         {
             if (_hudRoot != null)
             {
-                // 오브젝트에 종속되지 않았으므로 매 프레임 위치를 직접 갱신합니다.
-                _hudRoot.position = transform.position + new Vector3(0, 0.25f, -0.5f);
+                UpdateHUD();
 
+                // 오브젝트에 종속되지 않았으므로 매 프레임 위치를 직접 갱신합니다.
+                _hudRoot.position = transform.position + new Vector3(.0f, -0.25f, .0f);
+
+                // 카메라를 바라보도록 회전 (빌보드 효과)
+                Camera mainCamera = _prototype_CameraController.Instance.MainCamera;
+                if (mainCamera != null)
+                {
+                    _hudRoot.rotation = mainCamera.transform.rotation;
+                }
             }
         }
     }

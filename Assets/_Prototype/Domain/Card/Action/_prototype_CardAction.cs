@@ -8,11 +8,10 @@ namespace TDG0407._prototype
     [Serializable]
     public abstract class _prototype_CardAction
     {
-        [Header("Targeting Options")]
         public bool includeSelf = false;
 
         public abstract UniTask ExecuteCardAction(
-            _prototype_EntityData source, 
+            _prototype_EntityData source,
             IEnumerable<_prototype_EntityData> targets,
             _prototype_ICardActionParams @params);
     }

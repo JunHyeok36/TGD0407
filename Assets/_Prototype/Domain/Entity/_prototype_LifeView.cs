@@ -38,6 +38,7 @@ namespace TDG0407._prototype
             {
                 Data.side = side;
                 Data.health.OnValueChanged += CheckDeath;
+                Data.stamina.OnValueChanged += CheckStaminaForKnockdown;
             }
 
             _prototype_TickManager.RegisterTick(ProcessLifeTick);
@@ -48,8 +49,17 @@ namespace TDG0407._prototype
             if (Data != null)
             {
                 Data.health.OnValueChanged -= CheckDeath;
+                Data.stamina.OnValueChanged -= CheckStaminaForKnockdown;
             }
             _prototype_TickManager.UnregisterTick(ProcessLifeTick);
+        }
+
+        private void CheckStaminaForKnockdown()
+        {
+            if (Data.stamina.Current <= 0)
+            {
+                Data.ApplyStatusEffect(new _prototype_StatusEffect(_prototype_StatusType.Knockdown, 3));
+            }
         }
 
         private async void CheckDeath()
@@ -88,11 +98,16 @@ namespace TDG0407._prototype
                     {
                         if (Data.cardDeck != null)
                         {
+                            bool hasKnockdown = Data.HasStatusEffect(_prototype_StatusType.Knockdown);
                             foreach (var card in Data.cardDeck.handedCardDatas)
                             {
-                                if (card.currentCoolTicks > 0)
+                                int reduction = 1 + Data.lifeStat.drawQuickness;
+                                if (hasKnockdown)
                                 {
-                                    int reduction = 1 + Data.lifeStat.drawQuickness;
+                                    card.currentCoolTicks = UnityEngine.Mathf.Min(card.coolTicks.Max, card.currentCoolTicks + reduction);
+                                }
+                                else if (card.currentCoolTicks > 0)
+                                {
                                     card.currentCoolTicks = UnityEngine.Mathf.Max(0, card.currentCoolTicks - reduction);
                                 }
                             }
@@ -103,10 +118,28 @@ namespace TDG0407._prototype
                             for (int i = Data.statusEffects.Count - 1; i >= 0; i--)
                             {
                                 var effect = Data.statusEffects[i];
-                                effect.durationTicks--;
-                                if (effect.durationTicks <= 0)
+                                
+                                if (_prototype_TickManager.CurrentTick > effect.appliedTick)
                                 {
-                                    Data.statusEffects.RemoveAt(i);
+                                    if (effect.type == _prototype_StatusType.Bleeding)
+                                    {
+                                        Data.health.Current -= (int)effect.value;
+                                    }
+                                    else if (effect.type == _prototype_StatusType.Burning)
+                                    {
+                                        await Data.TakeDamage(new _prototype_DamageContext(Data, Data, _prototype_DamageType.Physical, (int)effect.value, (int)effect.value));
+                                    }
+                                    else if (effect.type == _prototype_StatusType.Poisoning)
+                                    {
+                                        int poisonDmg = (int)(effect.durationTicks * effect.value);
+                                        await Data.TakeDamage(new _prototype_DamageContext(Data, Data, _prototype_DamageType.Magical, poisonDmg, poisonDmg));
+                                    }
+
+                                    effect.durationTicks--;
+                                    if (effect.durationTicks <= 0)
+                                    {
+                                        Data.statusEffects.RemoveAt(i);
+                                    }
                                 }
                             }
                         }

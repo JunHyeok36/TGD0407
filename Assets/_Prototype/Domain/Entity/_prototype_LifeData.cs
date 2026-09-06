@@ -63,6 +63,96 @@ namespace TDG0407._prototype
 
             return Cysharp.Threading.Tasks.UniTask.FromResult(health.Current);
         }
+
+        public void RecoverHealth(int amount)
+        {
+            var poisoning = statusEffects.Find(s => s.type == _prototype_StatusType.Poisoning);
+            if (poisoning != null)
+            {
+                amount = UnityEngine.Mathf.RoundToInt(amount * 0.5f);
+            }
+            health.Current += amount;
+        }
+
+        public void ApplyStatusEffect(_prototype_StatusEffect effect)
+        {
+            float resist = 0f;
+            switch (effect.type)
+            {
+                case _prototype_StatusType.Stun: resist = lifeStat.stunResist; break;
+                case _prototype_StatusType.Knockdown: resist = lifeStat.knockdownResist; break;
+                case _prototype_StatusType.Silence: resist = lifeStat.silenceResist; break;
+                case _prototype_StatusType.Fear: resist = lifeStat.fearResist; break;
+                case _prototype_StatusType.Curse: resist = GetCurseResist(); break;
+                case _prototype_StatusType.Bleeding: resist = lifeStat.bleedingResist; break;
+                case _prototype_StatusType.Burning: resist = lifeStat.burningResist; break;
+                case _prototype_StatusType.Freeze: resist = lifeStat.freezeResist; break;
+                case _prototype_StatusType.Poisoning: resist = lifeStat.poisoningResist; break;
+            }
+
+            float resistProb = resist > 0 ? resist / (resist + 100f) : 0f;
+            if (UnityEngine.Random.value < resistProb)
+            {
+                // Resisted
+                return;
+            }
+
+            // Check mutually exclusive Burning/Freeze
+            if (effect.type == _prototype_StatusType.Burning)
+            {
+                var freeze = statusEffects.Find(s => s.type == _prototype_StatusType.Freeze);
+                if (freeze != null)
+                {
+                    statusEffects.Remove(freeze);
+                    return; // Cancel each other out
+                }
+            }
+            else if (effect.type == _prototype_StatusType.Freeze)
+            {
+                var burning = statusEffects.Find(s => s.type == _prototype_StatusType.Burning);
+                if (burning != null)
+                {
+                    statusEffects.Remove(burning);
+                    return; // Cancel each other out
+                }
+            }
+
+            // Knockdown initial damage
+            if (effect.type == _prototype_StatusType.Knockdown)
+            {
+                // check if we don't already have knockdown
+                if (statusEffects.Find(s => s.type == _prototype_StatusType.Knockdown) == null)
+                {
+                    int dmg = UnityEngine.Mathf.RoundToInt(health.Max * 0.3f);
+                    if (health.Current - dmg <= 0)
+                        health.Current = 1;
+                    else
+                        health.Current -= dmg;
+                }
+            }
+
+            statusEffects.Add(effect);
+        }
+
+        public float GetCurseResist()
+        {
+            float resist = lifeStat.curseResist;
+            foreach (var s in statusEffects)
+            {
+                if (s.type == _prototype_StatusType.Curse) resist -= s.value;
+            }
+            return resist;
+        }
+
+        public bool HasStatusEffect(_prototype_StatusType type)
+        {
+            return statusEffects.Find(s => s.type == type) != null;
+        }
+
+        public _prototype_StatusEffect GetStatusEffect(_prototype_StatusType type)
+        {
+            return statusEffects.Find(s => s.type == type);
+        }
     }
 
 }

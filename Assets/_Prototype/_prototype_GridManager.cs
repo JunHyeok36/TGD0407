@@ -77,7 +77,8 @@ namespace TDG0407._prototype
             _prototype_Point endPoint,
             _prototype_EntityData entityData,
             bool includeDiagonals = false,
-            bool checkEntityPlaceableInTerminatedPoints = false)
+            bool checkEntityPlaceableInTerminatedPoints = false,
+            HashSet<_prototype_Point> hazardousPoints = null)
         {
             if (!IsWithinBounds(startPoint) || !IsWithinBounds(endPoint)) return null;
             _prototype_PointView startPointView = GetPointView(startPoint);
@@ -97,6 +98,8 @@ namespace TDG0407._prototype
                 CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.CanPlaceEntity(entityData);
             else
                 CheckNode = (pointView) => pointView.CanPlaceEntity(entityData);
+
+            Func<_prototype_PointView, bool> IsSafeNode = (pointView) => hazardousPoints == null || !hazardousPoints.Contains(pointView.Point) || pointView == startPointView;
 
             while (openList.Count > 0)
             {
@@ -120,9 +123,10 @@ namespace TDG0407._prototype
                     if (closedList.Contains(neighborPointView)) continue;
                     if (!CheckNode(neighborPointView)) continue;
 
-                    // 새로운 G Cost 계산 (여기서는 한 칸 이동 비용을 1으로 가점)
+                    // 새로운 G Cost 계산 (여기서는 한 칸 이동 비용을 1으로 가점, 위험한 곳은 비용 100 추가)
                     float newMovementCostToNeighbor = currentNode.gCost + 1;
-                    
+                    if (!IsSafeNode(neighborPointView)) newMovementCostToNeighbor += 100f;
+
                     Node neighborNode = openList.Find(n => n.pointView == neighborPointView);
 
                     if (neighborNode == null)

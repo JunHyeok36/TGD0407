@@ -20,14 +20,14 @@ MonoBehaviour:
     value: 2
   coolTicks:
     _min: 0
-    _max: 3
-    _cur: 3
+    _max: 2
+    _cur: 2
   castRange:
     rid: 8244397704902606951
   targetRange:
     rid: 8244397704902606952
   actionList:
-  - rid: 8244397704902606953
+  - rid: 8244397786603454640
   references:
     version: 2
     RefIds:
@@ -39,15 +39,23 @@ MonoBehaviour:
       type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         includeEmptyPoints: 1
-    - rid: 8244397704902606953
-      type: {class: _prototype_SpawnProjectileCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+    - rid: 8244397786603454640
+      type: {class: _prototype_SpawnTargetedProjectileCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         includeSelf: 0
         projectileModel: {fileID: 11400000, guid: f43c401533ace1e43aeec7413f20eb2a, type: 2}
         projectilePrefab: {fileID: 6189849110252678611, guid: c3b448b8c1995d14f9fb9c9975435282, type: 3}
+        onHitActions:
+        - rid: 8244397786603454642
+        targetingType: 0
+        endCondition: 2
+        speed: 2
+        homingAnglePerStep: 15
+        maxDistance: 5
+    - rid: 8244397786603454642
+      type: {class: _prototype_DamageCardAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
         damageCoefficients:
         - stat: 0
-          coefficient: 75
-        - stat: 4
-          coefficient: 2
-        speed: 1
+          coefficient: 12

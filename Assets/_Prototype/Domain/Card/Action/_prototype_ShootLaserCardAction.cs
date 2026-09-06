@@ -23,6 +23,12 @@ namespace TDG0407._prototype
             var startPoint = source.point;
             var targetPoint = target.point;
 
+            var sourceView = _prototype_GridManager.Instance.GetPointView(startPoint)?.PlacedEntityViews.Find(v => v.EntityData == source);
+            if (sourceView != null && targetPoint != startPoint)
+            {
+                sourceView.FaceTowards(targetPoint, 0.2f);
+            }
+
             _prototype_Point dir = _prototype_Point.zero;
             if (targetPoint.x > startPoint.x) dir.x = 1;
             else if (targetPoint.x < startPoint.x) dir.x = -1;

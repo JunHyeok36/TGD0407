@@ -10,7 +10,7 @@ public class UpdateShootArrowCard
         var shootCard = AssetDatabase.LoadAssetAtPath<_prototype_CardDataModel>("Assets/_Prototype/DataModel/CardDataModel/ShootArrow.asset");
         if (shootCard != null && shootCard.actionList != null && shootCard.actionList.Count > 0)
         {
-            var shootAction = shootCard.actionList[0] as _prototype_SpawnProjectileCardAction;
+            var shootAction = shootCard.actionList[0] as _prototype_SpawnDirectionalProjectileCardAction;
             if (shootAction != null)
             {
                 var newPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Prototype/Prefabs/ArrowProjectile.prefab");

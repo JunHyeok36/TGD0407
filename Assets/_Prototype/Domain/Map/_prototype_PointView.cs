@@ -48,7 +48,7 @@ namespace TDG0407._prototype
             {
                 foreach (var entityView in placedEntityViews)
                 {
-                    if (entityView.EntityData is _prototype_LifeData)
+                    if (entityView.EntityData is _prototype_LifeData || entityView.EntityData is _prototype_ObstacleData)
                     {
                         return false;
                     }
@@ -59,7 +59,7 @@ namespace TDG0407._prototype
             {
                 foreach (var entityView in placedEntityViews)
                 {
-                    if (entityView.EntityData is _prototype_ObstacleData)
+                    if (entityView.EntityData is _prototype_ObstacleData || entityView.EntityData is _prototype_LifeData)
                     {
                         return false;
                     }
@@ -89,14 +89,21 @@ namespace TDG0407._prototype
             }
         }
 
-        public async Cysharp.Threading.Tasks.UniTask PlaceEntity(_prototype_EntityView entityView)
+        public async Cysharp.Threading.Tasks.UniTask PlaceEntity(_prototype_EntityView entityView, bool animate = true)
         {
             if (!IsTraversable(entityView.EntityData.movementType)) throw new Exception($"Cannot place entity at point {point}. Point is blocked by terrain.");
             if (placedEntityViews.Contains(entityView)) throw new Exception($"Entity {entityView.name} is already placed at point {point}.");
 
             placedEntityViews.Add(entityView);
             _pointData.placedEntityDatas.Add(entityView.EntityData);
-            await entityView.MoveTo(this);
+            if (animate)
+            {
+                await entityView.MoveTo(this);
+            }
+            else
+            {
+                entityView.SetPointImmediate(this);
+            }
         }
 
         public void RemoveEntity(_prototype_EntityView entityView)

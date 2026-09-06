@@ -13,9 +13,11 @@ namespace TDG0407._prototype
         
         
         protected _prototype_EntityData _entityData;
-
         public _prototype_EntityData EntityData { get { return _entityData; } }
+
         public _prototype_Point Point { get { return _entityData.point; } }
+
+        protected virtual Vector3 LocalPositionOffset => Vector3.zero;
 
         public virtual void Initialize(_prototype_PointView pointView)
         {
@@ -43,10 +45,52 @@ namespace TDG0407._prototype
 
         public virtual async Cysharp.Threading.Tasks.UniTask MoveTo(_prototype_PointView targetPointView)
         {
+            if (this == null || gameObject == null || targetPointView == null) return;
+            
             transform.SetParent(targetPointView.transform, true);
-            await transform.DOLocalMove(Vector3.zero, 0.2f).SetEase(Ease.InOutSine).AsyncWaitForCompletion();
+
+            var moveTask = transform.DOLocalMove(LocalPositionOffset, 0.2f).SetEase(Ease.InOutSine).AsyncWaitForCompletion();
+            
+            FaceTowards(targetPointView.Point, 0.2f);
+            
+            await moveTask;
             
             _entityData.point = targetPointView.Point;
+        }
+
+        public virtual void SetPointImmediate(_prototype_PointView targetPointView)
+        {
+            if (this == null || gameObject == null || targetPointView == null) return;
+
+            transform.SetParent(targetPointView.transform, false);
+            transform.localPosition = LocalPositionOffset;
+            if (_entityData != null)
+            {
+                _entityData.point = targetPointView.Point;
+            }
+        }
+
+        public virtual void FaceTowards(_prototype_Point targetPoint, float duration = 0.2f)
+        {
+            if (!(_entityData is _prototype_LifeData || _entityData is _prototype_ProjectileData || _entityData is _prototype_LaserProjectileData)) return;
+
+            var targetPointView = _prototype_GridManager.Instance.GetPointView(targetPoint);
+            if (targetPointView == null) return;
+
+            Vector3 dir = targetPointView.transform.position - transform.position;
+            dir.y = 0;
+            if (dir != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
+                if (duration > 0f)
+                {
+                    transform.DORotateQuaternion(targetRot, duration).SetEase(Ease.InOutSine);
+                }
+                else
+                {
+                    transform.rotation = targetRot;
+                }
+            }
         }
 
     }

@@ -116,30 +116,32 @@ namespace TDG0407._prototype
                 if (isHandViewActive)
                 {
                     // 핸드 컨테이너가 활성화된 상태에서는 이동 불가 및 이동 경로 숨김
-                    _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
+                    _prototype_GridVisualManager.Instance?.HideMovementPath();
                     _prototype_GridVisualManager.Instance?.HighlightPoint(null);
                     return;
                 }
 
-                if (!_isMovable)
+                if (!_isMovable || _prototype_TickManager.IsTickProcessing)
                 {
-                    // 카드 드래그 중 등 이동 불가 상태일 때 경로 표시 숨김
-                    _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
+                    // 카드 드래그 중 등 이동 불가 상태이거나 턴이 진행 중일 때 경로 표시 숨김
+                    _prototype_GridVisualManager.Instance?.HideMovementPath();
                     _prototype_GridVisualManager.Instance?.HighlightPoint(null);
                     return;
                 }
 
-                // 평소에는 이동 모드로 동작: 현재 마우스 위치까지의 경로(Path)를 TargetRange로 표시
+                // 평소에는 이동 모드로 동작: 현재 마우스 위치까지의 경로(Path)를 표시
                 if (mousePoint.HasValue)
                 {
                     List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value, _controlledEntityView.EntityData);
                     if (path != null && path.Count > 0)
                     {
                         List<_prototype_Point> pathPoints = new();
+                        pathPoints.Add(_controlledEntityView.Point); // 출발점 추가
                         foreach (var pv in path) pathPoints.Add(pv.Point);
 
-                        // 경로 표시 (TargetRange 색상 활용)
-                        _prototype_GridVisualManager.Instance?.ShowTargetRange(pathPoints);
+                        // 경로 표시
+                        _prototype_GridVisualManager.Instance?.ShowMovementPath(pathPoints);
+                        _prototype_GridVisualManager.Instance?.ShowTargetRange(null); // 혹시 남아있을 수 있는 타겟 레인지 제거
 
                         if (Mouse.current.rightButton.wasPressedThisFrame)
                         {
@@ -149,8 +151,8 @@ namespace TDG0407._prototype
                     else if (mousePoint.Value == _controlledEntityView.Point)
                     {
                         // 자기 자신 위치를 호버 중일 때 클릭하면 대기(Rest)
-                        List<_prototype_Point> selfPoint = new() { mousePoint.Value };
-                        _prototype_GridVisualManager.Instance?.ShowTargetRange(selfPoint);
+                        _prototype_GridVisualManager.Instance?.HideMovementPath();
+                        _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
 
                         if (Mouse.current.rightButton.wasPressedThisFrame)
                         {
@@ -159,11 +161,13 @@ namespace TDG0407._prototype
                     }
                     else
                     {
+                        _prototype_GridVisualManager.Instance?.HideMovementPath();
                         _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
                     }
                 }
                 else
                 {
+                    _prototype_GridVisualManager.Instance?.HideMovementPath();
                     _prototype_GridVisualManager.Instance?.ShowTargetRange(null);
                 }
                 
@@ -195,6 +199,7 @@ namespace TDG0407._prototype
             var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
             if (lifeData != null && lifeData.statusEffects.Find(s => s.type == _prototype_StatusType.Stun) != null)
             {
+                _controlledEntityLastPoint = _controlledEntityView.Point;
                 _prototype_TickManager.AdvanceTick(async () => {
                     _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
                     await UniTask.Delay(300);
@@ -209,6 +214,20 @@ namespace TDG0407._prototype
             if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
             
             if (CheckAndHandleStun()) return;
+
+            var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
+            if (lifeData != null)
+            {
+                if (lifeData.HasStatusEffect(_prototype_StatusType.Freeze)) return;
+
+                var fearEffect = lifeData.GetStatusEffect(_prototype_StatusType.Fear);
+                if (fearEffect != null && fearEffect.sourceEntity != null)
+                {
+                    int oldDist = Mathf.Abs(lifeData.point.x - fearEffect.sourceEntity.point.x) + Mathf.Abs(lifeData.point.y - fearEffect.sourceEntity.point.y);
+                    int newDist = Mathf.Abs(targetPoint.x - fearEffect.sourceEntity.point.x) + Mathf.Abs(targetPoint.y - fearEffect.sourceEntity.point.y);
+                    if (newDist < oldDist) return;
+                }
+            }
 
             if (_controlledEntityView.Point == targetPoint)
             {
@@ -235,6 +254,7 @@ namespace TDG0407._prototype
 
             if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.Data != null)
             {
+                _controlledEntityLastPoint = _controlledEntityView.Point;
                 _prototype_TickManager.AdvanceTick(async () => {
                     int recoverAmount = lifeView.Data.lifeStat.staminaRecoverAmount;
                     if (recoverAmount <= 0) recoverAmount = 2; // Fallback 기본 회복량
@@ -308,6 +328,22 @@ namespace TDG0407._prototype
 
             if (mousePoint.HasValue && _currentCastRange != null && _currentCastRange.Contains(mousePoint.Value))
             {
+                var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
+                if (lifeData != null)
+                {
+                    if (lifeData.HasStatusEffect(_prototype_StatusType.Silence)) return;
+
+                    var fearEffect = lifeData.GetStatusEffect(_prototype_StatusType.Fear);
+                    if (fearEffect != null && fearEffect.sourceEntity != null)
+                    {
+                        var ptView = _prototype_GridManager.Instance.GetPointView(mousePoint.Value);
+                        if (ptView != null && ptView.PlacedEntityViews.Exists(v => v.EntityData == fearEffect.sourceEntity))
+                        {
+                            return; // Cannot target feared entity
+                        }
+                    }
+                }
+
                 // Show Target Range
                 List<_prototype_Point> targetRange = _targetingCard.targetRange?.GetValidTargetPoints(_controlledEntityView.Point, mousePoint.Value) ?? new List<_prototype_Point> { mousePoint.Value };
                 _prototype_GridVisualManager.Instance?.ShowTargetRange(targetRange);
@@ -345,7 +381,26 @@ namespace TDG0407._prototype
             if (playerLife?.Data?.cardDeck != null)
             {
                 playerLife.Data.cardDeck.handedCardDatas.Remove(cardToCast);
-                playerLife.Data.cardDeck.discardedCardDatas.Add(cardToCast);
+                
+                var burning = playerLife.Data.GetStatusEffect(_prototype_StatusType.Burning);
+                bool destroyed = false;
+                if (burning != null)
+                {
+                    float destroyProb = burning.value / (burning.value + 200f);
+                    if (UnityEngine.Random.value < destroyProb)
+                    {
+                        destroyed = true;
+                    }
+                }
+
+                if (destroyed)
+                {
+                    playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToCast);
+                }
+                else
+                {
+                    playerLife.Data.cardDeck.discardedCardDatas.Add(cardToCast);
+                }
 
                 var cost = cardToCast.costValue;
                 int amount = (int)cost.value;

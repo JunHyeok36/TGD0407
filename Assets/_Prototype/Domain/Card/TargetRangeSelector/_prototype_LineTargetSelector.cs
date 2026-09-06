@@ -19,33 +19,17 @@ namespace TDG0407._prototype
                 return ret;
             }
 
-            int diffX = Mathf.Abs(targetPoint.x - selfPoint.x);
-            int diffY = Mathf.Abs(targetPoint.y - selfPoint.y);
+            int diffX = targetPoint.x - selfPoint.x;
+            int diffY = targetPoint.y - selfPoint.y;
 
-            int stepX = diffX > 0 ? (targetPoint.x > selfPoint.x ? 1 : -1) : 0;
-            int stepY = diffY > 0 ? (targetPoint.y > selfPoint.y ? 1 : -1) : 0;
+            int stepX = diffX == 0 ? 0 : (diffX > 0 ? 1 : -1);
+            int stepY = diffY == 0 ? 0 : (diffY > 0 ? 1 : -1);
 
-            int err = diffX - diffY;
+            int steps = Mathf.Max(Mathf.Abs(diffX), Mathf.Abs(diffY));
 
-            _prototype_Point curPoint = selfPoint;
-            while (true)
+            for (int i = 0; i <= steps; i++)
             {
-                ret.Add(curPoint);
-
-                if (curPoint == targetPoint)
-                    break;
-
-                int err2 = err * 2;
-                if (err2 > -diffY)
-                {
-                    err -= diffY;
-                    curPoint.x += stepX;
-                }
-                if (err2 < diffX)
-                {
-                    err += diffX;
-                    curPoint.y += stepY;
-                }
+                ret.Add(new _prototype_Point(selfPoint.x + i * stepX, selfPoint.y + i * stepY));
             }
 
             return ret;
