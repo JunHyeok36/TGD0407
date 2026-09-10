@@ -48,7 +48,7 @@ MonoBehaviour:
     deathResist: 0
     dodgeProb: 0
     criticalProb: 0
-    criticalWeight: 0
+    criticalWeight: 50
   cardDeck: {fileID: 0}
   aiLogic:
     rid: 8244397786603454558
@@ -57,4 +57,5 @@ MonoBehaviour:
     RefIds:
     - rid: 8244397786603454558
       type: {class: _prototype_StandStillAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data: 
+      data:
+        mistakeRate: 0.05

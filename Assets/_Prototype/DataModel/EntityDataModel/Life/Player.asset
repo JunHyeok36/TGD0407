@@ -27,9 +27,9 @@ MonoBehaviour:
   movementType: 0
   side: 0
   lifeStat:
-    redPower: 0
+    redPower: 10
     bluePower: 0
-    redResist: 0
+    redResist: 12
     blueResist: 0
     handCardSlotCount: 5
     drawQuickness: 0
@@ -47,8 +47,8 @@ MonoBehaviour:
     knockbackResist: 0
     deathResist: 0
     dodgeProb: 0
-    criticalProb: 0
-    criticalWeight: 0
+    criticalProb: 50.34
+    criticalWeight: 50
   cardDeck: {fileID: 11400000, guid: 84e4082eb2efbfe4ca1a479f09543486, type: 2}
   aiLogic:
     rid: -2

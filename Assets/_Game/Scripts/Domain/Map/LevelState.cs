@@ -14,7 +14,7 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
     
-        public int? levelInstanceId = null;
+        [NonSerialized] public int? levelInstanceId = null;
         public string levelId = null;
         public LevelScale scale = LevelScale.Medium;
         public Point size;

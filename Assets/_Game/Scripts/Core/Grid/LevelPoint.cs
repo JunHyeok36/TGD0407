@@ -11,7 +11,7 @@ namespace TDG0407.Core.Grid
     {
         #region Fields
 
-        public int? levelInstanceId = null;
+        [NonSerialized] public int? levelInstanceId = null;
 
         #endregion
         #region Constructors

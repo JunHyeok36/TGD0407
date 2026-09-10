@@ -15,7 +15,7 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
 
-        public int? roomInstanceId = null;
+        [NonSerialized] public int? roomInstanceId = null;
         public string roomId = null;
         public string levelId = null;
         public Point[] position = { Point.zero };
@@ -26,7 +26,7 @@ namespace TDG0407.Domain.Map
         public Dictionary<Point, WarpPointState> warpPointStates = new();
         public Point[] unavailablePoints = null;
         
-        public int? nextPointInstanceId = null;
+        [NonSerialized] public int? nextPointInstanceId = null;
 
         #endregion
         #region Properties

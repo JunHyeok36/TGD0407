@@ -11,7 +11,7 @@ namespace TDG0407.Core.Grid
     {
         #region Fields
     
-        public int? roomInstanceId = null;
+        [NonSerialized] public int? roomInstanceId = null;
         public Point position = Point.zero;
 
         #endregion

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace TDG0407.Systems.Data
@@ -9,6 +10,7 @@ namespace TDG0407.Systems.Data
     /// <summary>
     /// 게임 설정 데이터를 관리하는 클래스입니다.
     /// </summary>
+    [Serializable]
     public class SettingData : IUserData
     {
         #region Fields
@@ -16,7 +18,7 @@ namespace TDG0407.Systems.Data
         public ResolutionSetting resolution = new(1920, 1080, 60, false);
         public QualitySetting quality = new();
         public AudioSetting audio = new();
-        public SystemLanguage? language;
+        public SystemLanguage language;
     
         #endregion
         #region Constructors
@@ -38,8 +40,7 @@ namespace TDG0407.Systems.Data
             resolution.ValidateData();
             quality.ValidateData();
             audio.ValidateData();
-            if (language.HasValue == false)
-                language = SystemLanguage.English;
+            language = SystemLanguage.English;
         }
 
         #endregion

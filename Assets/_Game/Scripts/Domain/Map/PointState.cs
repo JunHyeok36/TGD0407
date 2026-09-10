@@ -16,7 +16,7 @@ namespace TDG0407.Domain.Map
     {
         #region Fields
 
-        public int? pointInstanceId = null;
+        [NonSerialized] public int? pointInstanceId = null;
         public Point position;
         public List<EntityState> placedEntities = new(1);
 

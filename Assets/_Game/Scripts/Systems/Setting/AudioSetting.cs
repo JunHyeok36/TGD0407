@@ -7,6 +7,7 @@ namespace TDG0407.Systems.Setting
     /// <summary>
     /// 오디오 설정에 대해 관리합니다. 
     /// </summary>
+    [Serializable]
     public class AudioSetting : IDataValidatable
     {
         #region Fields

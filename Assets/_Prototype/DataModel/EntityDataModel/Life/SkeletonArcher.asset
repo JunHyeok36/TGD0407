@@ -29,7 +29,7 @@ MonoBehaviour:
   lifeStat:
     redPower: 5
     bluePower: 0
-    redResist: 0
+    redResist: 2
     blueResist: 0
     handCardSlotCount: 3
     drawQuickness: 0
@@ -42,13 +42,13 @@ MonoBehaviour:
     silenceResist: 0
     fearResist: 0
     knockdownResist: 0
-    healthRecoverAmount: 5
+    healthRecoverAmount: 3
     staminaRecoverAmount: 2
     knockbackResist: 0
     deathResist: 0
     dodgeProb: 0
-    criticalProb: 0
-    criticalWeight: 0
+    criticalProb: 0.05
+    criticalWeight: 50
   cardDeck: {fileID: 11400000, guid: 74fa46a5893473e43b3fe4e2848172d5, type: 2}
   aiLogic:
     rid: 8244397704902606954
@@ -58,5 +58,6 @@ MonoBehaviour:
     - rid: 8244397704902606954
       type: {class: _prototype_ArcherAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
+        mistakeRate: 0.05
         optimalRangeMin: 2
         optimalRangeMax: 4

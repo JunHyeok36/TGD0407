@@ -19,7 +19,7 @@ namespace TDG0407.Domain.Entities
 
         public int durability = 0;
         public TickDuration duration = new();
-        public int? performedEntityInstanceId = null;
+        [NonSerialized] public int? performedEntityInstanceId = null;
 
         #endregion
         #region Properties

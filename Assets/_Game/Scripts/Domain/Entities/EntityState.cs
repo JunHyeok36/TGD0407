@@ -20,7 +20,7 @@ namespace TDG0407.Domain.Entities
     {
         #region Fields
 
-        public int? entityInstanceId = null;
+        [NonSerialized] public int? entityInstanceId = null;
         public string entityId = null;
         public Point position = Point.zero;
         public readonly BoundedValue<int> health = new(0, 50);

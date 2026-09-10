@@ -13,8 +13,8 @@ namespace TDG0407.Domain.Effects
 
         public string effectId = null;
         public Coefficients coefficients = new();
-        public TickDuration? duration = null;
-        public int? performedEntityInstanceId = null;
+        [NonSerialized] public TickDuration? duration = null;
+        [NonSerialized] public int? performedEntityInstanceId = null;
 
         #endregion
         #region Properties

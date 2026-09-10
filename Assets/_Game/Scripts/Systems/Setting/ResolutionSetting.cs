@@ -1,3 +1,5 @@
+using System;
+
 namespace TDG0407.Systems.Setting
 {
 
@@ -6,6 +8,7 @@ namespace TDG0407.Systems.Setting
     /// <summary>
     /// 해상도 설정에 대해 관리합니다. 
     /// </summary>
+    [Serializable]
     public class ResolutionSetting : IDataValidatable
     {
         #region Fields

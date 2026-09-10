@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Name: PiercingThrust
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  id: PiercingThrust
+  description: "\uC9C1\uC120\uC73C\uB85C \uAE38\uAC8C \uBED7\uC5B4\uB098\uAC00\uB294
+    \uCC0C\uB974\uAE30 \uACF5\uACA9\uC785\uB2C8\uB2E4."
+  cardType: 1
+  costValue:
+    costType: 5
+    value: 3
+  coolTicks:
+    _min: 0
+    _max: 1
+    _cur: 1
+  castRange:
+    rid: 2475498181128356189
+  targetRange:
+    rid: 2475498181128356190
+  actionList:
+  - rid: 2475498181128356191
+  references:
+    version: 2
+    RefIds:
+    - rid: 2475498181128356189
+      type: {class: _prototype_CrossCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _range: 3
+    - rid: 2475498181128356190
+      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeEmptyPoints: 0
+    - rid: 2475498181128356191
+      type: {class: _prototype_DamageEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        damageType: 0
+        damageCoefficients:
+        - stat: 0
+          coefficient: 10
+        - stat: 4
+          coefficient: 2

@@ -24,6 +24,7 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  movementType: 0
   side: 0
   lifeStat:
     redPower: 0
@@ -46,8 +47,8 @@ MonoBehaviour:
     knockbackResist: 0
     deathResist: 0
     dodgeProb: 0
-    criticalProb: 0
-    criticalWeight: 0
+    criticalProb: 0.05
+    criticalWeight: 50
   cardDeck: {fileID: 11400000, guid: 9601b4e07fb8de541842bfc89fe65aab, type: 2}
   aiLogic:
     rid: 2475498268826272100
@@ -57,6 +58,7 @@ MonoBehaviour:
     - rid: 2475498268826272100
       type: {class: _prototype_MeleeChaseAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
+        mistakeRate: 0.05
         attackDamage: 15
         minIdleTicks: 0
         maxIdleTicks: 1

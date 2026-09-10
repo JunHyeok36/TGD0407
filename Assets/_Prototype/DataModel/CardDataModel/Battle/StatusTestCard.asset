@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Name: StatusTestCard
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  id: StatusTestCard
+  description: StatusTestCard
+  cardType: 2
+  costValue:
+    costType: 0
+    value: 0
+  coolTicks:
+    _min: 0
+    _max: 0
+    _cur: 1
+  castRange:
+    rid: 8244397807253061863
+  targetRange:
+    rid: 8244397807253061864
+  actionList:
+  - rid: 8244397807253061866
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244397807253061863
+      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _range: 5
+    - rid: 8244397807253061864
+      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeEmptyPoints: 0
+    - rid: 8244397807253061866
+      type: {class: _prototype_ApplyStatusEffectEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        statusType: 3
+        durationTicks: 2
+        value: 0
