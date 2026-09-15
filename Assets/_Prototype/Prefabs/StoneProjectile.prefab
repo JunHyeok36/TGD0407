@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6764331286456957707}
   - component: {fileID: 7833026167100082747}
+  - component: {fileID: 2256766079112869721}
   m_Layer: 0
   m_Name: StoneProjectile
   m_TagString: Untagged
@@ -46,6 +47,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ProjectileView
   entityDataModel: {fileID: 11400000, guid: b1ac4b6d8378b414495c83840f0c05e8, type: 2}
+--- !u!114 &2256766079112869721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 33660005366139304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0740ea5f5b9e0404b92f04a0907723be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_EntityAnimationPlayer
 --- !u!1 &2194109013316542947
 GameObject:
   m_ObjectHideFlags: 0

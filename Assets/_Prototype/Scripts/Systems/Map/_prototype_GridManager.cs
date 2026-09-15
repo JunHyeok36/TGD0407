@@ -26,7 +26,19 @@ namespace TDG0407._prototype
             }
         }
 
-        public static _prototype_GridManager Instance { get; private set; }
+        private static _prototype_GridManager _instance;
+        public static _prototype_GridManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindAnyObjectByType<_prototype_GridManager>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+            private set => _instance = value;
+        }
 
         [Header("References")]
         [SerializeField, ReadOnly] private _prototype_Point minPoint = _prototype_Point.zero;
@@ -40,10 +52,42 @@ namespace TDG0407._prototype
         public _prototype_Point MinPoint { get { return minPoint; } }
         public _prototype_Point MaxPoint { get { return maxPoint; } }
 
+        public List<_prototype_PointView> PointViews { get { return pointViews; } }
+        public List<_prototype_EntityView> GetAllEntityViews()
+        {
+            List<_prototype_EntityView> entityViews = new();
+            if (pointViewMap == null) return entityViews;
+            foreach (var pointView in pointViewMap.Values)
+            {
+                if (pointView.PlacedEntityViews != null)
+                {
+                    entityViews.AddRange(pointView.PlacedEntityViews);
+                }
+            }
+            return entityViews;
+        }
+        public List<_prototype_LifeView> GetAllLifeViews()
+        {
+            List<_prototype_LifeView> lifeViews = new();
+            if (pointViewMap == null) return lifeViews;
+            foreach (var pointView in pointViewMap.Values)
+            {
+                if (pointView.PlacedEntityViews != null)
+                {
+                    foreach (var entityView in pointView.PlacedEntityViews)
+                    {
+                        if (entityView is _prototype_LifeView lifeView)
+                            lifeViews.Add(lifeView);
+                    }
+                }
+            }
+            return lifeViews;
+        }
+
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
         }
 
         public void Initialize()
@@ -53,11 +97,18 @@ namespace TDG0407._prototype
             foreach (var pointView in pointViews)
             {
                 Vector3 pointViewPosition = pointView.transform.localPosition;
-                _prototype_Point point = new((int)pointViewPosition.x, (int)pointViewPosition.z);
+                _prototype_Point point = new(Mathf.RoundToInt(pointViewPosition.x), Mathf.RoundToInt(pointViewPosition.z));
 
                 pointView.name = $"Point ({point.x}, {point.y})";
                 pointView.Initialize(point);
-                pointViewMap.Add(point, pointView);
+                if (!pointViewMap.ContainsKey(point))
+                {
+                    pointViewMap.Add(point, pointView);
+                }
+                else
+                {
+                    Debug.LogWarning($"[GridManager] Duplicate point at ({point.x}, {point.y}) by {pointView.name}. Already registered by {pointViewMap[point].name}");
+                }
 
                 if (point.x < minPoint.x) minPoint.x = point.x;
                 if (point.y < minPoint.y) minPoint.y = point.y;

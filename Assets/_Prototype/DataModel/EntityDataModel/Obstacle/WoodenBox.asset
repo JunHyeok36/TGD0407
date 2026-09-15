@@ -16,7 +16,7 @@ MonoBehaviour:
   health:
     _min: 0
     _max: 2
-    _cur: 200
+    _cur: 2
   stamina:
     _min: 0
     _max: 0
@@ -25,3 +25,7 @@ MonoBehaviour:
     x: 0
     y: 0
   movementType: 0
+  components: []
+  references:
+    version: 2
+    RefIds: []

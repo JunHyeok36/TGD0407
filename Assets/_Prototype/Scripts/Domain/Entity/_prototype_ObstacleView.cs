@@ -7,9 +7,11 @@ namespace TDG0407._prototype
     {
         public _prototype_ObstacleData Data => _entityData as _prototype_ObstacleData;
 
-        public override void Initialize(_prototype_PointView pointView)
+        public override void Initialize(
+            _prototype_EntityData entityData,
+            _prototype_PointView pointView)
         {
-            base.Initialize(pointView);
+            base.Initialize(entityData, pointView);
 
             if (Data != null)
             {
@@ -17,7 +19,7 @@ namespace TDG0407._prototype
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             if (Data != null)
             {

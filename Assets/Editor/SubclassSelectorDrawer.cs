@@ -10,6 +10,12 @@ public class SubclassSelectorDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        if (property.propertyType != SerializedPropertyType.ManagedReference)
+        {
+            EditorGUI.PropertyField(position, property, label, true);
+            return;
+        }
+
         EditorGUI.BeginProperty(position, label, property);
 
         bool hasValue = property.managedReferenceValue != null;
@@ -73,6 +79,11 @@ public class SubclassSelectorDrawer : PropertyDrawer
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
+        if (property.propertyType != SerializedPropertyType.ManagedReference)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, true);
+        }
+
         float height = EditorGUIUtility.singleLineHeight;
         bool hasValue = property.managedReferenceValue != null;
 

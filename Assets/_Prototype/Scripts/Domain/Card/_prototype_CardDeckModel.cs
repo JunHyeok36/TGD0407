@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace TDG0407._prototype
 {
     
-    [CreateAssetMenu(fileName = "_prototype_CardDeckModel", menuName = "_Prototype/CardDeck Model")]
-    public class _prototype_CardDeckModel : ScriptableObject
+    [Serializable]
+    public class _prototype_CardDeckModel
     {
         
         public List<_prototype_CardDataModel> allCardDatas = new();

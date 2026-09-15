@@ -86,7 +86,7 @@ namespace TDG0407._prototype
             this._pointData.placedEntityDatas.AddRange(placedEntityViews.Select(entityView => entityView.EntityData));
             foreach (var entityView in placedEntityViews)
             {
-                entityView.Initialize(this);
+                entityView.Initialize(null, this); // test
             }
         }
 

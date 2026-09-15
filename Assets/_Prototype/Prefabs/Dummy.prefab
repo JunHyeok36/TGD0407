@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1391073042390650907}
   - component: {fileID: 2305490701650222190}
+  - component: {fileID: 4493460468477811764}
   m_Layer: 0
   m_Name: Dummy
   m_TagString: Untagged
@@ -47,6 +48,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeView
   entityDataModel: {fileID: 11400000, guid: 90214cab79212d0439d48d128fcf45a4, type: 2}
   side: 0
+--- !u!114 &4493460468477811764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795372557216574039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f65d26325018b4ba7afaff399ee9ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeAnimationPlayer
 --- !u!1 &7156874662626936367
 GameObject:
   m_ObjectHideFlags: 0

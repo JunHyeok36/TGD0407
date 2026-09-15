@@ -19,10 +19,16 @@ namespace TDG0407._prototype
 
         private static Sprite _squareSprite;
 
-        private void Awake()
+        private bool _isInitialized = false;
+
+        public void Initialize()
         {
+            if (_isInitialized) return;
+            _isInitialized = true;
+
             _lifeView = GetComponent<_prototype_LifeView>();
             InitializeHUD();
+            SetupEvents();
         }
 
         private void InitializeHUD()

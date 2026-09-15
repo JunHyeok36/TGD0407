@@ -25,5 +25,12 @@ namespace TDG0407._prototype
             );
             return clone;
         }
+
+        public override _prototype_EntityData CreateData(_prototype_EntityData source = null)
+        {
+            var data = CreateLaserProjectileData();
+            PopulateComponents(data);
+            return data;
+        }
     }
 }

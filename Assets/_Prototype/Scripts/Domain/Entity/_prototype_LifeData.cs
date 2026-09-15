@@ -136,6 +136,7 @@ namespace TDG0407._prototype
             }
 
             statusEffects.Add(effect);
+            _prototype_EventBus.Fire(new EntityStatusChangedEvent(this, effect, true));
         }
 
         public float GetCurseResist()

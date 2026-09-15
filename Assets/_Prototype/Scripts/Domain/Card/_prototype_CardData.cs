@@ -18,6 +18,11 @@ namespace TDG0407._prototype
         public _prototype_ITargetRangeSelector targetRange;
         public List<_prototype_EntityAction> actionList;
 
+        public List<_prototype_Condition> visibilityConditions = new();
+
+        [NonSerialized]
+        public _prototype_EntityData sourceProvider;
+
         public _prototype_CardData(
             string id,
             string description,
@@ -51,14 +56,21 @@ namespace TDG0407._prototype
             this.actionList = other.actionList;
         }
 
-        /// <summary>
-        /// 탐색 모드에서 사용 가능한 카드인지 여부를 반환합니다.
-        /// Utility, Communication, None 타입의 카드는 탐색 모드에서도 사용 가능합니다.
-        /// </summary>
-        public bool IsUsableInExploration =>
-            cardType == _prototype_CardType.Utility ||
-            cardType == _prototype_CardType.Communication ||
-            cardType == _prototype_CardType.None;
+
+
+        public bool IsVisible(_prototype_ConditionContext context)
+        {
+            if (visibilityConditions != null)
+            {
+                foreach (var cond in visibilityConditions)
+                {
+                    if (cond == null) continue;
+                    if (!cond.Evaluate(context).IsSatisfied)
+                        return false;
+                }
+            }
+            return true;
+        }
 
     }
 

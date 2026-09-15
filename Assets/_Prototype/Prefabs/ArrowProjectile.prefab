@@ -466,6 +466,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2272926476268860854}
   - component: {fileID: 1262987149259301256}
+  - component: {fileID: 466877550523792654}
   m_Layer: 0
   m_Name: ArrowProjectile
   m_TagString: Untagged
@@ -503,6 +504,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ProjectileView
   entityDataModel: {fileID: 0}
+--- !u!114 &466877550523792654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6189849110252678611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0740ea5f5b9e0404b92f04a0907723be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_EntityAnimationPlayer
 --- !u!1 &8198204512957579602
 GameObject:
   m_ObjectHideFlags: 0

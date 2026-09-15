@@ -21,16 +21,9 @@ namespace TDG0407._prototype
         [Tooltip("오버라이드할 실수 빈도 (0 = 실수 안 함, 1 = 항상 실수)")]
         [SerializeField] private float _customMistakeRate = 0.05f;
 
-        private void Awake()
-        {
-            if (TryGetComponent(out _prototype_EntityView entityView))
-                _entityView = entityView;
-            else
-                throw new Exception("EnemyAI requires an _prototype_EntityView component.");
-        }
-
         private void OnDestroy()
         {
+            _prototype_TickManager.UnregisterTick(DetermineNextAction);
             if (_entityView != null && _prototype_GridVisualManager.Instance != null)
             {
                 _prototype_GridVisualManager.Instance.ClearAllHazards(_entityView);
@@ -47,9 +40,11 @@ namespace TDG0407._prototype
             _prototype_TickManager.RegisterTick(DetermineNextAction);
         }
 
-        private void Start()
+        /// <summary>
+        /// BootStrapper에서 시스템 초기화 완료 후 첫 턴 전에 호출하여 초기 의도를 계산하고 위험 타일을 표시합니다.
+        /// </summary>
+        public void EvaluateInitialIntent()
         {
-            // 게임 시작 직후 (첫 플레이어 턴 전)에 최초의 의도를 계산하고 위험 타일을 표시합니다.
             if (_entityView != null && _entityView.EntityData is _prototype_LifeData lifeData)
             {
                 if (_overrideMistakeRate && lifeData.aiLogic != null)

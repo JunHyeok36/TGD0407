@@ -10,44 +10,7 @@ namespace TDG0407._prototype
     public static class _prototype_InteractionManager
     {
 
-        public static async UniTask<bool> Interact(
-            _prototype_EntityData source,
-            _prototype_InteractableData target)
-        {
-            if (source == null || target == null)
-                return false;
 
-            var playMode = _prototype_PlayModeManager.Instance != null
-                ? _prototype_PlayModeManager.Instance.CurrentMode
-                : _prototype_PlayMode.Exploration;
-            var context = new _prototype_InteractionContext(source, target, playMode);
-
-            if (!target.CanInteractWith(context, out var failureReason))
-            {
-                Debug.Log($"[Interactable] Interaction blocked: {failureReason}");
-                return false;
-            }
-
-            if (target.interactions == null)
-                return false;
-
-            bool executed = false;
-            foreach (var interaction in target.interactions)
-            {
-                if (interaction == null || !interaction.CanExecute(context, out _))
-                    continue;
-
-                await interaction.Execute(source, target);
-                executed = true;
-            }
-
-            if (!executed)
-                return false;
-
-            target.MarkInteracted();
-            _prototype_EventBus.Fire(new EntityInteractedEvent(source, target));
-            return true;
-        }
         
         public static async UniTask ApplyDamage(_prototype_DamageContext context)
         {
@@ -90,7 +53,7 @@ namespace TDG0407._prototype
                         if (sourceView is _prototype_LifeView lifeView)
                         {
                             Vector3 dir = (targetView.transform.position - sourceView.transform.position).normalized;
-                            await UniTask.WhenAll(lifeView.PlayAttackAnimation(dir), hitTask);
+                            await UniTask.WhenAll(lifeView.PlayUniqueAnimation(_prototype_EntityAnimationType.Attack, dir), hitTask);
                         }
                         else
                         {

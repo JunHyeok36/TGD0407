@@ -25,13 +25,14 @@ MonoBehaviour:
     x: 0
     y: 0
   movementType: 0
+  components: []
   side: 0
   lifeStat:
     redPower: 0
     bluePower: 0
     redResist: 0
     blueResist: 0
-    handCardSlotCount: 5
+    handCardSlotCount: 3
     drawQuickness: 0
     curseResist: 0
     bleedingResist: 0
@@ -49,7 +50,16 @@ MonoBehaviour:
     dodgeProb: 0
     criticalProb: 0.05
     criticalWeight: 50
-  cardDeck: {fileID: 11400000, guid: 9601b4e07fb8de541842bfc89fe65aab, type: 2}
+  cardDeck:
+    allCardDatas:
+    - {fileID: 11400000, guid: 9bb1b1f8b8cb11b479e09cef4cb63bb5, type: 2}
+    - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+    - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+    - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+    remainedCardDatas: []
+    handedCardDatas: []
+    discardedCardDatas: []
+    destroyedCardDatas: []
   aiLogic:
     rid: 2475498268826272100
   references:

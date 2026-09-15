@@ -108,7 +108,7 @@ namespace TDG0407._prototype
                 var view = go.GetComponent<_prototype_ProjectileView>() ?? go.AddComponent<_prototype_ProjectileView>();
 
                 // Add to GridManager pointView
-                view.InitializeProjectile(projectileData, spawnPointView);
+                view.Initialize(projectileData, spawnPointView);
                 await spawnPointView.PlaceEntity(view, false);
                 await view.ExecuteFirstTickMovement();
             }

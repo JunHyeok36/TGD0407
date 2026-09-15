@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8373906356821055708}
   - component: {fileID: 4147108077283942791}
   - component: {fileID: 6908637710902520355}
+  - component: {fileID: -8903539299697339829}
   m_Layer: 0
   m_Name: LaserProjectile
   m_TagString: Untagged
@@ -104,3 +105,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LaserProjectileView
   entityDataModel: {fileID: 0}
+--- !u!114 &-8903539299697339829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139673606083128319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0740ea5f5b9e0404b92f04a0907723be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_EntityAnimationPlayer

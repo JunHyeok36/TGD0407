@@ -77,7 +77,10 @@ namespace TDG0407._prototype
             if (lifeData != null && lifeData.cardDeck != null)
             {
                 _prototype_CardData cardToPlay = null;
-                foreach (var card in lifeData.cardDeck.handedCardDatas)
+                var lifeView = entityView as _prototype_LifeView;
+                var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
+                
+                foreach (var card in availableCards)
                 {
                     if (card.currentCoolTicks <= 0)
                     {
@@ -217,9 +220,12 @@ namespace TDG0407._prototype
                         else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= amount;
                     }
 
-                    lifeData.cardDeck.handedCardDatas.Remove(plannedCard);
-                    if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(plannedCard);
-                    else lifeData.cardDeck.discardedCardDatas.Add(plannedCard);
+                    if (plannedCard.sourceProvider == null)
+                    {
+                        lifeData.cardDeck.handedCardDatas.Remove(plannedCard);
+                        if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(plannedCard);
+                        else lifeData.cardDeck.discardedCardDatas.Add(plannedCard);
+                    }
 
                     if (!destroyed && plannedCard.actionList != null)
                     {
@@ -272,7 +278,9 @@ namespace TDG0407._prototype
                     if (lifeData.cardDeck != null)
                     {
                         int minSpNeeded = 999;
-                        foreach (var card in lifeData.cardDeck.handedCardDatas)
+                        var lifeView = entityView as _prototype_LifeView;
+                        var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
+                        foreach (var card in availableCards)
                         {
                             if (card.currentCoolTicks <= 0) // 쿨타임이 지난 카드만 고려
                             {

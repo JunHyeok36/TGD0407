@@ -172,12 +172,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454630
+    rid: 8244397920127025542
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454630
+    - rid: 8244397920127025542
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -262,12 +262,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454635
+    rid: 8244397920127025501
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454635
+    - rid: 8244397920127025501
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -440,12 +440,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454619
+    rid: 8244397920127025497
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454619
+    - rid: 8244397920127025497
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -504,12 +504,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454628
+    rid: 8244397920127025545
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454628
+    - rid: 8244397920127025545
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -792,7 +792,6 @@ Transform:
   - {fileID: 648350401}
   - {fileID: 757074130}
   - {fileID: 4325531499143746028}
-  - {fileID: 1939982423}
   - {fileID: 4325531500414609404}
   - {fileID: 4325531500611245970}
   - {fileID: 4325531499384728888}
@@ -808,6 +807,7 @@ Transform:
   - {fileID: 1993044994}
   - {fileID: 792325791}
   - {fileID: 1593816153}
+  - {fileID: 1939982423}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &101444838
@@ -910,6 +910,130 @@ MonoBehaviour:
   - {fileID: 1993044995}
   - {fileID: 792325792}
   - {fileID: 1593816154}
+--- !u!21 &109124797
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Obstacle (Instance)
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AddPrecomputedVelocity: 0
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _BumpScale: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _EnvironmentReflections: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.030726254
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 0.030726254
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
+    - _Surface: 0
+    - _UVSec: 0
+    - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 0.501, g: 0.493, b: 0.534, a: 1}
+    - _Color: {r: 0.501, g: 0.4929999, b: 0.534, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &147136289
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,12 +1085,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454591
+    rid: 8244397920127025560
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454591
+    - rid: 8244397920127025560
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -1747,12 +1871,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454634
+    rid: 8244397920127025513
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454634
+    - rid: 8244397920127025513
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -1784,96 +1908,6 @@ LODGroup:
     - renderer: {fileID: 1982045621}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!1 &281735903
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 281735904}
-  - component: {fileID: 281735906}
-  - component: {fileID: 281735905}
-  m_Layer: 0
-  m_Name: 1x1Obstacle1_High
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &281735904
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281735903}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1032198549}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &281735905
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281735903}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: -153932562505908826, guid: 3c79377fa17df494e88ba46419d10fd0, type: 3}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &281735906
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281735903}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &317818709
 GameObject:
   m_ObjectHideFlags: 0
@@ -2107,12 +2141,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454585
+    rid: 8244397920127025503
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454585
+    - rid: 8244397920127025503
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2557,12 +2591,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454566
+    rid: 8244397920127025534
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454566
+    - rid: 8244397920127025534
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2827,12 +2861,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454616
+    rid: 8244397920127025568
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454616
+    - rid: 8244397920127025568
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2917,12 +2951,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454631
+    rid: 8244397920127025527
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454631
+    - rid: 8244397920127025527
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3457,12 +3491,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454568
+    rid: 8244397920127025516
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454568
+    - rid: 8244397920127025516
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3635,12 +3669,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454625
+    rid: 8244397920127025510
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454625
+    - rid: 8244397920127025510
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3881,12 +3915,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454577
+    rid: 8244397920127025557
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454577
+    - rid: 8244397920127025557
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4061,12 +4095,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454586
+    rid: 8244397920127025552
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454586
+    - rid: 8244397920127025552
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4151,12 +4185,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454564
+    rid: 8244397920127025508
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454564
+    - rid: 8244397920127025508
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4548,12 +4582,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454602
+    rid: 8244397920127025500
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454602
+    - rid: 8244397920127025500
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4728,12 +4762,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454583
+    rid: 8244397920127025496
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454583
+    - rid: 8244397920127025496
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4818,12 +4852,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454603
+    rid: 8244397920127025536
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454603
+    - rid: 8244397920127025536
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5088,12 +5122,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454576
+    rid: 8244397920127025569
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454576
+    - rid: 8244397920127025569
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5268,12 +5302,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454633
+    rid: 8244397920127025565
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454633
+    - rid: 8244397920127025565
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5495,12 +5529,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454561
+    rid: 8244397920127025551
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454561
+    - rid: 8244397920127025551
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -6403,6 +6437,7 @@ GameObject:
   m_Component:
   - component: {fileID: 953291184}
   - component: {fileID: 953291185}
+  - component: {fileID: 953291186}
   m_Layer: 0
   m_Name: TESTENTITY_WoodenBox
   m_TagString: Untagged
@@ -6438,7 +6473,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7e3ae340e425be40b9ea68dd20a6f23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleView
-  entityDataModel: {fileID: 11400000, guid: 8e5ce81e32918454295f64629cc20fea, type: 2}
+  DEV_entityDataModel: {fileID: 11400000, guid: 8e5ce81e32918454295f64629cc20fea, type: 2}
+--- !u!114 &953291186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953291183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0740ea5f5b9e0404b92f04a0907723be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_EntityAnimationPlayer
 --- !u!1 &955353106
 GameObject:
   m_ObjectHideFlags: 0
@@ -6698,52 +6745,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1032198548
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1032198549}
-  - component: {fileID: 1032198550}
-  m_Layer: 0
-  m_Name: TESTENTITY_InteractableTest
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1032198549
+--- !u!4 &1032198549 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+  m_PrefabInstance: {fileID: 1217246133951029841}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032198548}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 281735904}
-  m_Father: {fileID: 4325531500414609404}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1032198550
+--- !u!114 &1032198552 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8345557701439984426, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+  m_PrefabInstance: {fileID: 1217246133951029841}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032198548}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6a08928fd020dc43ac8c7c28ebc7b00, type: 3}
+  m_Script: {fileID: 11500000, guid: c7e3ae340e425be40b9ea68dd20a6f23, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_InteractableView
-  entityDataModel: {fileID: 11400000, guid: a4f7c2e9d1b6385a0e7c4f2b9d6a183e, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleView
 --- !u!1 &1060536647
 GameObject:
   m_ObjectHideFlags: 0
@@ -6797,12 +6814,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454638
+    rid: 8244397920127025550
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454638
+    - rid: 8244397920127025550
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7247,12 +7264,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454595
+    rid: 8244397920127025499
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454595
+    - rid: 8244397920127025499
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7335,12 +7352,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454607
+    rid: 8244397920127025539
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454607
+    - rid: 8244397920127025539
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7445,12 +7462,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454563
+    rid: 8244397920127025559
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454563
+    - rid: 8244397920127025559
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7625,12 +7642,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454567
+    rid: 8244397920127025554
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454567
+    - rid: 8244397920127025554
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7715,12 +7732,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454565
+    rid: 8244397920127025509
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454565
+    - rid: 8244397920127025509
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7895,12 +7912,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454611
+    rid: 8244397920127025505
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454611
+    - rid: 8244397920127025505
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7985,12 +8002,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454592
+    rid: 8244397920127025543
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454592
+    - rid: 8244397920127025543
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -8435,12 +8452,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454569
+    rid: 8244397920127025492
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454569
+    - rid: 8244397920127025492
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -8976,13 +8993,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454560
+    rid: 8244397920127025563
   placedEntityViews:
   - {fileID: 1860073067}
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454560
+    - rid: 8244397920127025563
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9067,12 +9084,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454612
+    rid: 8244397920127025522
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454612
+    - rid: 8244397920127025522
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9247,12 +9264,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454636
+    rid: 8244397920127025520
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454636
+    - rid: 8244397920127025520
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9427,12 +9444,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454629
+    rid: 8244397920127025515
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454629
+    - rid: 8244397920127025515
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9695,12 +9712,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454624
+    rid: 8244397920127025547
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454624
+    - rid: 8244397920127025547
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9761,12 +9778,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454620
+    rid: 8244397920127025518
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454620
+    - rid: 8244397920127025518
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9941,12 +9958,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454559
+    rid: 8244397920127025512
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454559
+    - rid: 8244397920127025512
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10347,12 +10364,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454621
+    rid: 8244397920127025553
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454621
+    - rid: 8244397920127025553
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10647,12 +10664,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454637
+    rid: 8244397920127025494
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454637
+    - rid: 8244397920127025494
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10737,12 +10754,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454594
+    rid: 8244397920127025533
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454594
+    - rid: 8244397920127025533
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -11055,8 +11072,9 @@ GameObject:
   - component: {fileID: 1860073064}
   - component: {fileID: 1860073068}
   - component: {fileID: 1860073067}
-  - component: {fileID: 1860073066}
+  - component: {fileID: 1860073069}
   - component: {fileID: 1860073065}
+  - component: {fileID: 1860073066}
   m_Layer: 0
   m_Name: TESTENTITY_SkeletonArchor
   m_TagString: Untagged
@@ -11120,7 +11138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b24f15096247dc4987b7fdbe0b8f9da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeView
-  entityDataModel: {fileID: 11400000, guid: 10fe12dda828b704691f093442d3d548, type: 2}
+  DEV_entityDataModel: {fileID: 11400000, guid: 10fe12dda828b704691f093442d3d548, type: 2}
   side: 2
 --- !u!205 &1860073068
 LODGroup:
@@ -11146,6 +11164,18 @@ LODGroup:
     - renderer: {fileID: 587838135}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!114 &1860073069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860073063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f65d26325018b4ba7afaff399ee9ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeAnimationPlayer
 --- !u!1 &1881863617
 GameObject:
   m_ObjectHideFlags: 0
@@ -11693,12 +11723,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454574
+    rid: 8244397920127025540
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454574
+    - rid: 8244397920127025540
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -12053,12 +12083,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454562
+    rid: 8244397920127025532
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454562
+    - rid: 8244397920127025532
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -12413,12 +12443,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454632
+    rid: 8244397920127025526
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454632
+    - rid: 8244397920127025526
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -12540,6 +12570,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099708540}
   m_Mesh: {fileID: 5725235537216381791, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &2127978527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2127978529}
+  - component: {fileID: 2127978528}
+  m_Layer: 0
+  m_Name: '[_prototype_TickManagerService]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2127978528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127978527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eff38066be6e8ed44a1dd165296d3d15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_TickManagerService
+  currentTick: 0
+--- !u!4 &2127978529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127978527}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2139288438
 GameObject:
   m_ObjectHideFlags: 0
@@ -12681,12 +12756,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454584
+    rid: 8244397920127025562
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454584
+    - rid: 8244397920127025562
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -15844,6 +15919,67 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &1217246133951029841
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4325531500414609404}
+    m_Modifications:
+    - target: {fileID: 2590411579303231256, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_Name
+      value: TESTENTITY_InteractableTest
+      objectReference: {fileID: 0}
+    - target: {fileID: 6531531644055029522, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 109124797}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
 --- !u!1 &1334500208536850624
 GameObject:
   m_ObjectHideFlags: 0
@@ -17753,6 +17889,7 @@ GameObject:
   - component: {fileID: 1347256959547046219}
   - component: {fileID: 1766072970074548505}
   - component: {fileID: 3387502718430652424}
+  - component: {fileID: 3387502718430652426}
   - component: {fileID: 3387502718430652425}
   m_Layer: 0
   m_Name: TESTENTITY_Player
@@ -17773,7 +17910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b24f15096247dc4987b7fdbe0b8f9da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeView
-  entityDataModel: {fileID: 11400000, guid: 7ccbad358a7f03b488bf9d7a334a5152, type: 2}
+  DEV_entityDataModel: {fileID: 11400000, guid: 7ccbad358a7f03b488bf9d7a334a5152, type: 2}
   side: 1
 --- !u!114 &3387502718430652425
 MonoBehaviour:
@@ -17787,6 +17924,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc59096ed481c694caf64a0b7b0e63a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeHUD
+--- !u!114 &3387502718430652426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3387502718430652423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f65d26325018b4ba7afaff399ee9ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeAnimationPlayer
 --- !u!23 &3822739108962175691
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -19194,12 +19343,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454615
+    rid: 8244397920127025537
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454615
+    - rid: 8244397920127025537
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19243,12 +19392,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454579
+    rid: 8244397920127025517
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454579
+    - rid: 8244397920127025517
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19292,12 +19441,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454609
+    rid: 8244397920127025572
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454609
+    - rid: 8244397920127025572
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19341,12 +19490,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454605
+    rid: 8244397920127025555
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454605
+    - rid: 8244397920127025555
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19390,12 +19539,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454580
+    rid: 8244397920127025530
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454580
+    - rid: 8244397920127025530
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19439,12 +19588,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454617
+    rid: 8244397920127025511
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454617
+    - rid: 8244397920127025511
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19488,12 +19637,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454614
+    rid: 8244397920127025570
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454614
+    - rid: 8244397920127025570
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19537,12 +19686,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454600
+    rid: 8244397920127025548
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454600
+    - rid: 8244397920127025548
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19586,12 +19735,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454581
+    rid: 8244397920127025528
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454581
+    - rid: 8244397920127025528
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19635,13 +19784,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454639
+    rid: 8244397920127025506
   placedEntityViews:
   - {fileID: 3387502718430652424}
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454639
+    - rid: 8244397920127025506
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19685,12 +19834,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454582
+    rid: 8244397920127025566
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454582
+    - rid: 8244397920127025566
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19734,12 +19883,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454597
+    rid: 8244397920127025544
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454597
+    - rid: 8244397920127025544
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19783,12 +19932,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454588
+    rid: 8244397920127025524
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454588
+    - rid: 8244397920127025524
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19832,12 +19981,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454618
+    rid: 8244397920127025502
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454618
+    - rid: 8244397920127025502
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21402,12 +21551,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454596
+    rid: 8244397920127025519
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454596
+    - rid: 8244397920127025519
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21451,12 +21600,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454589
+    rid: 8244397920127025493
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454589
+    - rid: 8244397920127025493
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21500,12 +21649,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454570
+    rid: 8244397920127025556
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454570
+    - rid: 8244397920127025556
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21549,12 +21698,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454598
+    rid: 8244397920127025531
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454598
+    - rid: 8244397920127025531
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21598,13 +21747,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454623
+    rid: 8244397920127025514
   placedEntityViews:
   - {fileID: 953291185}
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454623
+    - rid: 8244397920127025514
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21648,12 +21797,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454608
+    rid: 8244397920127025571
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454608
+    - rid: 8244397920127025571
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21697,12 +21846,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454626
+    rid: 8244397920127025549
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454626
+    - rid: 8244397920127025549
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21745,12 +21894,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454622
+    rid: 8244397920127025529
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454622
+    - rid: 8244397920127025529
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21794,12 +21943,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454604
+    rid: 8244397920127025507
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454604
+    - rid: 8244397920127025507
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21842,12 +21991,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454587
+    rid: 8244397920127025567
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454587
+    - rid: 8244397920127025567
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21891,12 +22040,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454573
-  placedEntityViews: []
+    rid: 8244397920127025577
+  placedEntityViews:
+  - {fileID: 1032198552}
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454573
+    - rid: 8244397920127025577
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21940,12 +22090,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454572
+    rid: 8244397920127025525
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454572
+    - rid: 8244397920127025525
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21989,12 +22139,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454575
+    rid: 8244397920127025504
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454575
+    - rid: 8244397920127025504
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22038,12 +22188,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454593
+    rid: 8244397920127025564
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454593
+    - rid: 8244397920127025564
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22087,12 +22237,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454610
+    rid: 8244397920127025541
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454610
+    - rid: 8244397920127025541
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22136,12 +22286,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454590
+    rid: 8244397920127025523
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454590
+    - rid: 8244397920127025523
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22185,12 +22335,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454613
+    rid: 8244397920127025498
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454613
+    - rid: 8244397920127025498
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22234,12 +22384,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454606
+    rid: 8244397920127025561
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454606
+    - rid: 8244397920127025561
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22283,12 +22433,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454601
+    rid: 8244397920127025538
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454601
+    - rid: 8244397920127025538
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22332,12 +22482,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454627
+    rid: 8244397920127025521
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454627
+    - rid: 8244397920127025521
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22380,12 +22530,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454578
+    rid: 8244397920127025495
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454578
+    - rid: 8244397920127025495
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22429,12 +22579,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454599
+    rid: 8244397920127025558
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454599
+    - rid: 8244397920127025558
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22478,12 +22628,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244397786603454571
+    rid: 8244397920127025535
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244397786603454571
+    - rid: 8244397920127025535
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22503,3 +22653,4 @@ SceneRoots:
   - {fileID: 1903989873}
   - {fileID: 983392690}
   - {fileID: 1151099398}
+  - {fileID: 2127978529}

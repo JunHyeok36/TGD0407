@@ -12,13 +12,13 @@ namespace TDG0407._prototype
         private int _segmentIndex = 0;
         private HashSet<_prototype_EntityData> _damagedEntities;
 
+        protected override Vector3 LocalPositionOffset => Vector3.up * 0.05f;
+
         public void InitializeLaser(_prototype_LaserProjectileData data, _prototype_PointView pointView, int index = 0, HashSet<_prototype_EntityData> damagedEntities = null)
         {
             _segmentIndex = index;
             _entityData = data;
             _damagedEntities = damagedEntities;
-            
-            transform.position = pointView.transform.position + Vector3.up * 0.05f;
 
             var originalScale = transform.localScale;
             transform.localScale = Vector3.zero;
@@ -26,7 +26,7 @@ namespace TDG0407._prototype
             var pointPv = _prototype_GridManager.Instance.GetPointView(data.point);
             if (pointPv != null)
             {
-                pointPv.PlaceEntity(this).Forget();
+                pointPv.PlaceEntity(this, animate: false).Forget();
             }
 
             var mr = GetComponent<MeshRenderer>();
@@ -57,12 +57,13 @@ namespace TDG0407._prototype
             transform.DOScale(targetScale, 0.15f).SetEase(Ease.OutBack);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             _prototype_TickManager.UnregisterTick(ProcessTick);
         }
 
-        private async UniTask<_prototype_TickIntent> ProcessTick()
+        private UniTask<_prototype_TickIntent> ProcessTick()
         {
             var intent = new _prototype_TickIntent();
             intent.TargetsPlayer = false;
@@ -70,7 +71,7 @@ namespace TDG0407._prototype
             if (Data == null || _isDestroyed)
             {
                 intent.Execute = async () => { await UniTask.Yield(); };
-                return intent;
+                return UniTask.FromResult(intent);
             }
 
             var ptView = _prototype_GridManager.Instance.GetPointView(Data.point);
@@ -127,7 +128,7 @@ namespace TDG0407._prototype
                 }
             };
 
-            return intent;
+            return UniTask.FromResult(intent);
         }
 
         public async UniTask HitTarget(_prototype_EntityData target)

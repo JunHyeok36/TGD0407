@@ -56,9 +56,9 @@ namespace TDG0407._prototype
     public struct EntityInteractedEvent
     {
         public _prototype_EntityData Source { get; }
-        public _prototype_InteractableData Target { get; }
+        public _prototype_EntityData Target { get; }
 
-        public EntityInteractedEvent(_prototype_EntityData source, _prototype_InteractableData target)
+        public EntityInteractedEvent(_prototype_EntityData source, _prototype_EntityData target)
         {
             Source = source;
             Target = target;

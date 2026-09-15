@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 using UnityEngine;
-using DG.Tweening;
 
 namespace TDG0407._prototype
 { 
@@ -10,7 +10,9 @@ namespace TDG0407._prototype
     {
 
         [Header("Dev References")]
-        [SerializeField] private _prototype_EntityDataModel entityDataModel;
+        [SerializeField] private _prototype_EntityDataModel DEV_entityDataModel;
+
+        protected _prototype_EntityAnimationPlayer AnimationPlayer { get; set; }
         
         
         protected _prototype_EntityData _entityData;
@@ -20,47 +22,75 @@ namespace TDG0407._prototype
 
         protected virtual Vector3 LocalPositionOffset => Vector3.zero;
 
-        public virtual void Initialize(_prototype_PointView pointView)
+        public virtual void Initialize(
+            _prototype_EntityData entityData,
+            _prototype_PointView pointView)
         {
-            if (entityDataModel == null) throw new Exception("Entity Data Model is not assigned.");
+            if (pointView == null) throw new ArgumentNullException(nameof(pointView));
 
-            if (entityDataModel is _prototype_LifeDataModel lifeDataModel)
+            _entityData = DEV_entityDataModel != null
+                ? DEV_entityDataModel.CreateData(entityData)
+                : entityData ?? throw new Exception("An EntityDataModel or EntityData is required.");
+            _entityData.point = pointView.Point;
+            if (TryGetComponent(out _prototype_EntityAnimationPlayer animationPlayer))
             {
-                _entityData = lifeDataModel.CreateLifeData();
-            }
-            else if (entityDataModel is _prototype_InteractableDataModel interactableDataModel)
-            {
-                _entityData = interactableDataModel.CreateInteractableData();
-            }
-            else if (entityDataModel is _prototype_ObstacleDataModel obstacleDataModel)
-            {
-                _entityData = obstacleDataModel.CreateObstacleData();
+                AnimationPlayer = animationPlayer;
             }
             else
             {
-                throw new Exception("Unsupported Entity Data Model type.");
+                throw new Exception($"{name} requires an _prototype_EntityAnimationPlayer component.");
             }
-            _entityData.point = pointView.Point;
 
             if (TryGetComponent(out _prototype_EnemyAIController enemyAIController))
             {
                 enemyAIController.Initialize(this);
             }
+
+            if (_entityData.components != null)
+            {
+                foreach (var comp in _entityData.components)
+                {
+                    if (comp != null) comp.Initialize(this);
+                }
+            }
+
+            _prototype_TickManager.RegisterPostTick(OnPostTick);
         }
 
-        public virtual async Cysharp.Threading.Tasks.UniTask MoveTo(_prototype_PointView targetPointView)
+        protected virtual void OnDestroy()
+        {
+            _prototype_TickManager.UnregisterPostTick(OnPostTick);
+        }
+
+        private async UniTask OnPostTick()
+        {
+            if (this == null || gameObject == null || _entityData == null || _entityData.components == null) return;
+            foreach (var comp in _entityData.components)
+            {
+                if (comp != null) await comp.OnTick(this);
+            }
+        }
+
+        public virtual async UniTask MoveTo(_prototype_PointView targetPointView)
         {
             if (this == null || gameObject == null || targetPointView == null) return;
-            
+
             transform.SetParent(targetPointView.transform, true);
 
-            var moveTask = transform.DOLocalMove(LocalPositionOffset, 0.2f).SetEase(Ease.InOutSine).AsyncWaitForCompletion();
-            
             FaceTowards(targetPointView.Point, 0.2f);
+            if (AnimationPlayer != null)
+            {
+                await AnimationPlayer.PlayMoveAnimation(targetPointView, LocalPositionOffset);
+            }
+            else
+            {
+                transform.localPosition = LocalPositionOffset;
+            }
             
-            await moveTask;
-            
-            _entityData.point = targetPointView.Point;
+            if (_entityData != null)
+            {
+                _entityData.point = targetPointView.Point;
+            }
         }
 
         public virtual void SetPointImmediate(_prototype_PointView targetPointView)
@@ -75,13 +105,18 @@ namespace TDG0407._prototype
             }
         }
 
-        public virtual async UniTask PlayHitAnimation()
+        public UniTask PlayHitAnimation()
         {
-            if (this == null || gameObject == null)
-                return;
+            if (AnimationPlayer != null) return AnimationPlayer.PlayHitAnimation();
+            return UniTask.CompletedTask;
+        }
 
-            await transform.DOShakePosition(0.2f, 0.2f, 10, 90, false, true)
-                .AsyncWaitForCompletion();
+        public UniTask PlayUniqueAnimation(
+            _prototype_EntityAnimationType animationType,
+            Vector3 direction)
+        {
+            if (AnimationPlayer != null) return AnimationPlayer.PlayUniqueAnimation(animationType, direction);
+            return UniTask.CompletedTask;
         }
 
         public virtual void FaceTowards(_prototype_Point targetPoint, float duration = 0.2f)

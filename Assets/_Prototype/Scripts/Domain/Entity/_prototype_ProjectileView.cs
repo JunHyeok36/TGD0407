@@ -7,18 +7,23 @@ namespace TDG0407._prototype
 {
     public class _prototype_ProjectileView : _prototype_EntityView
     {
-        public new _prototype_ProjectileData Data => _entityData as _prototype_ProjectileData;
+        public _prototype_ProjectileData Data => _entityData as _prototype_ProjectileData;
 
         private LineRenderer _lineRenderer;
 
         private int _spawnTick = -1;
 
-        public void InitializeProjectile(_prototype_ProjectileData data, _prototype_PointView pointView)
+        public override void Initialize(
+            _prototype_EntityData entityData,
+            _prototype_PointView pointView)
         {
-            _entityData = data;
+            if (entityData is not _prototype_ProjectileData projectileData)
+                throw new System.ArgumentException("ProjectileView requires ProjectileData.", nameof(entityData));
+
+            base.Initialize(projectileData, pointView);
             _spawnTick = _prototype_TickManager.CurrentTick;
 
-            var nextPointView = _prototype_GridManager.Instance.GetPointView(data.point + data.direction);
+            var nextPointView = _prototype_GridManager.Instance.GetPointView(projectileData.point + projectileData.direction);
             if (nextPointView != null)
             {
                 Vector3 dir = nextPointView.transform.position - pointView.transform.position;
@@ -404,7 +409,7 @@ namespace TDG0407._prototype
             _lineRenderer.SetPositions(points.ToArray());
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             _prototype_TickManager.UnregisterPostTick(PreCalculatePath);
             _prototype_TickManager.UnregisterTick(ProcessTick);

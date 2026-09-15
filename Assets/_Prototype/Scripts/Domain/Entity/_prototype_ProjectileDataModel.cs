@@ -29,5 +29,41 @@ namespace TDG0407._prototype
                 maxTravelDistance
             );
         }
+
+        public _prototype_ProjectileData CreateProjectileData(_prototype_ProjectileData source)
+        {
+            var pd = new _prototype_ProjectileData(
+                ename,
+                health.Clone(),
+                stamina.Clone(),
+                source.point,
+                movementType,
+                source.direction,
+                source.speed,
+                source.side,
+                source.shooter,
+                source.onHitActions,
+                source.homingAnglePerStep,
+                source.homingTarget,
+                source.isTracking,
+                source.stopAtTargetPoint,
+                source.fixedTargetPoint,
+                source.maxTravelDistance)
+            {
+                currentFloatAngle = source.currentFloatAngle,
+                traveledDistance = source.traveledDistance,
+            };
+            return pd;
+        }
+
+        public override _prototype_EntityData CreateData(_prototype_EntityData source = null)
+        {
+            if (source is not _prototype_ProjectileData projectileData)
+                throw new System.ArgumentException("ProjectileData is required.", nameof(source));
+
+            var data = CreateProjectileData(projectileData);
+            PopulateComponents(data);
+            return data;
+        }
     }
 }

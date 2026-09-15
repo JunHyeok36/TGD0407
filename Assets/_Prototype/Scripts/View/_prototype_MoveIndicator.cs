@@ -11,7 +11,7 @@ namespace TDG0407._prototype
         
         [SerializeField] private float scrollSpeed = -1.0f;
         
-        private void Awake()
+        public void Initialize()
         {
             // Rotate this object so local Z is UP (World Y)
             transform.localRotation = Quaternion.Euler(-90, 0, 0);

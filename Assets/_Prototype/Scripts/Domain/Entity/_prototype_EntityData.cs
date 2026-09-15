@@ -13,6 +13,9 @@ namespace TDG0407._prototype
         public _prototype_Point point = _prototype_Point.zero;
         public _prototype_MovementType movementType = _prototype_MovementType.Ground;
 
+        [UnityEngine.SerializeReference, SubclassSelector]
+        public System.Collections.Generic.List<_prototype_EntityComponentData> components = new();
+
         public _prototype_EntityData() { }
         public _prototype_EntityData(
             string name,
@@ -34,6 +37,14 @@ namespace TDG0407._prototype
             this.stamina = other.stamina.Clone();
             this.point = other.point;
             this.movementType = other.movementType;
+            if (other.components != null)
+            {
+                this.components = new System.Collections.Generic.List<_prototype_EntityComponentData>();
+                foreach(var c in other.components)
+                {
+                    if (c != null) this.components.Add(c.Clone());
+                }
+            }
         }
 
         public virtual UniTask<int> TakeDamage(_prototype_DamageContext context)

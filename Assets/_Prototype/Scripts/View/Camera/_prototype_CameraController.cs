@@ -6,7 +6,19 @@ namespace TDG0407._prototype
     
     public class _prototype_CameraController : MonoBehaviour
     {
-        public static _prototype_CameraController Instance { get; private set; }
+        private static _prototype_CameraController _instance;
+        public static _prototype_CameraController Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindAnyObjectByType<_prototype_CameraController>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+            private set => _instance = value;
+        }
         
         [Header("References")]
         [SerializeField] private Camera mainCamera;
@@ -25,8 +37,8 @@ namespace TDG0407._prototype
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
         }
 
         private void LateUpdate()
@@ -50,13 +62,18 @@ namespace TDG0407._prototype
         private Vector3 rawPosition;
         private bool isInitialized = false;
 
+        public void Initialize()
+        {
+            rawPosition = transform.position;
+            targetYRotation = Mathf.Round(transform.eulerAngles.y / 45f) * 45f;
+            isInitialized = true;
+        }
+
         private void InitializeIfNeeded()
         {
             if (!isInitialized)
             {
-                rawPosition = transform.position;
-                targetYRotation = Mathf.Round(transform.eulerAngles.y / 45f) * 45f;
-                isInitialized = true;
+                Initialize();
             }
         }
 

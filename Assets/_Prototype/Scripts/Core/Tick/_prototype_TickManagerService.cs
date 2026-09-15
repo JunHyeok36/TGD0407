@@ -1,4 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,8 +45,6 @@ namespace TDG0407._prototype
                 Destroy(gameObject);
                 return;
             }
-
-            Reset();
         }
 
         private void OnDestroy()

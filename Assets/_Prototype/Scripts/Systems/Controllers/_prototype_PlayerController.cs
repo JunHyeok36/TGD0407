@@ -10,7 +10,19 @@ namespace TDG0407._prototype
 
     public class _prototype_PlayerController : MonoBehaviour
     {
-        public static _prototype_PlayerController Instance { get; private set; }
+        private static _prototype_PlayerController _instance;
+        public static _prototype_PlayerController Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindAnyObjectByType<_prototype_PlayerController>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+            private set => _instance = value;
+        }
 
         [Header("References")]
         [SerializeField] private _prototype_EntityView _controlledEntityView;
@@ -33,14 +45,20 @@ namespace TDG0407._prototype
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
         }
         private bool _initialDrawDone = false;
 
-        private void Start()
+        public void Initialize()
         {
             _prototype_TickManager.RegisterPostTick(OnPostTick);
+
+            if (!_initialDrawDone && _controlledEntityView != null && _controlledEntityView.EntityData != null)
+            {
+                _initialDrawDone = true;
+                OnPostTick().Forget();
+            }
         }
 
         private void OnDestroy()
@@ -215,7 +233,7 @@ namespace TDG0407._prototype
 
             if (CheckAndHandleStun()) return;
 
-            if (TryHandleInteraction(targetPoint)) return;
+
 
             var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
             if (lifeData != null)
@@ -251,31 +269,7 @@ namespace TDG0407._prototype
             }
         }
 
-        private bool TryHandleInteraction(_prototype_Point targetPoint)
-        {
-            if (_controlledEntityView?.EntityData == null)
-                return false;
 
-            var targetPointView = _prototype_GridManager.Instance.GetPointView(targetPoint);
-            if (targetPointView == null)
-                return false;
-
-            var interactableEntityView = targetPointView.PlacedEntityViews
-                .FirstOrDefault(view => view.EntityData is _prototype_InteractableData);
-            if (interactableEntityView?.EntityData is not _prototype_InteractableData interactableData)
-                return false;
-
-            _controlledEntityLastPoint = _controlledEntityView.Point;
-            _prototype_TickManager.AdvanceTick(async () =>
-            {
-                await _prototype_InteractionManager.Interact(
-                    _controlledEntityView.EntityData,
-                    interactableData);
-                _prototype_PlayerUIView.Instance?.UpdatePlayerInfo();
-            }).Forget();
-
-            return true;
-        }
 
         private void HandleRestInput()
         {
@@ -305,6 +299,7 @@ namespace TDG0407._prototype
         public void DiscardCard(_prototype_CardData cardToDiscard)
         {
             if (_prototype_TickManager.IsTickProcessing) return;
+            if (cardToDiscard.sourceProvider != null) return; // Cannot discard provided cards
 
             var playerLife = _controlledEntityView as _prototype_LifeView;
             if (playerLife?.Data?.cardDeck != null)
@@ -325,12 +320,14 @@ namespace TDG0407._prototype
 
         public void StartTargeting(_prototype_CardData cardData)
         {
-            // 탐색 모드에서는 Utility/Communication/None 카드만 사용 가능
-            if (_prototype_PlayModeManager.Instance != null &&
-                _prototype_PlayModeManager.Instance.IsExploration &&
-                !cardData.IsUsableInExploration)
+            if (cardData == null) return;
+
+            // 상호작용 카드(sourceProvider != null)는 별도의 범위/대상 선택(타겟팅) 과정 없이 즉시 발동
+            if (cardData.sourceProvider != null)
             {
-                _prototype_PlayerUIView.Instance?.ShowWarning("탐색 모드에서는 사용할 수 없는 카드입니다.", 1.5f);
+                _targetingCard = cardData;
+                List<_prototype_Point> instantTargets = new() { cardData.sourceProvider.point };
+                ExecuteCardCast(instantTargets);
                 return;
             }
 
@@ -420,26 +417,29 @@ namespace TDG0407._prototype
             // 1. Move card to discard pile and Deduct Cost
             if (playerLife?.Data?.cardDeck != null)
             {
-                playerLife.Data.cardDeck.handedCardDatas.Remove(cardToCast);
-
-                var burning = playerLife.Data.GetStatusEffect(_prototype_StatusType.Burning);
-                bool destroyed = false;
-                if (burning != null)
+                if (cardToCast.sourceProvider == null)
                 {
-                    float destroyProb = burning.value / (burning.value + 200f);
-                    if (UnityEngine.Random.value < destroyProb)
+                    playerLife.Data.cardDeck.handedCardDatas.Remove(cardToCast);
+
+                    var burning = playerLife.Data.GetStatusEffect(_prototype_StatusType.Burning);
+                    bool destroyed = false;
+                    if (burning != null)
                     {
-                        destroyed = true;
+                        float destroyProb = burning.value / (burning.value + 200f);
+                        if (UnityEngine.Random.value < destroyProb)
+                        {
+                            destroyed = true;
+                        }
                     }
-                }
 
-                if (destroyed)
-                {
-                    playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToCast);
-                }
-                else
-                {
-                    playerLife.Data.cardDeck.discardedCardDatas.Add(cardToCast);
+                    if (destroyed)
+                    {
+                        playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToCast);
+                    }
+                    else
+                    {
+                        playerLife.Data.cardDeck.discardedCardDatas.Add(cardToCast);
+                    }
                 }
 
                 var cost = cardToCast.costValue;
@@ -488,7 +488,8 @@ namespace TDG0407._prototype
                         {
                             filteredTargets = targets.Where(t => t != _controlledEntityView.EntityData).ToList();
                         }
-                        await action.ExecuteAction(_controlledEntityView.EntityData, filteredTargets, null);
+                        var actionParams = new _prototype_CardActionParams(cardToCast);
+                        await action.ExecuteAction(_controlledEntityView.EntityData, filteredTargets, actionParams);
                     }
                 }
 

@@ -8,7 +8,19 @@ namespace TDG0407._prototype
     [RequireComponent(typeof(PanelRenderer))]
     public class _prototype_PlayerUIView : MonoBehaviour
     {
-        public static _prototype_PlayerUIView Instance { get; private set; }
+        private static _prototype_PlayerUIView _instance;
+        public static _prototype_PlayerUIView Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindAnyObjectByType<_prototype_PlayerUIView>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+            private set => _instance = value;
+        }
 
         [SerializeField] private PanelRenderer _panelRenderer;
         [SerializeField] private VisualTreeAsset _cardViewTemplate;
@@ -43,13 +55,32 @@ namespace TDG0407._prototype
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
+        }
 
-            _panelRenderer = GetComponent<PanelRenderer>();
-            _panelRenderer.RegisterUIReloadCallback(OnUIReload);
+        public void Initialize()
+        {
+            if (_panelRenderer == null)
+            {
+                _panelRenderer = GetComponent<PanelRenderer>();
+            }
+            if (_panelRenderer != null)
+            {
+                _panelRenderer.RegisterUIReloadCallback(OnUIReload);
+            }
 
             // 모드 변경 이벤트 구독
+            EnsurePlayModeSubscription();
+
+            // 초기 UI 갱신
+            UpdatePlayerInfo();
+            UpdatePlayerCardDeck();
+        }
+
+        public void EnsurePlayModeSubscription()
+        {
+            _playModeSub?.Dispose();
             _playModeSub = _prototype_EventBus.Listen<PlayModeChangedEvent>(OnPlayModeChanged);
         }
 
@@ -88,8 +119,10 @@ namespace TDG0407._prototype
             UpdatePlayerCardDeck();
 
             // UI 리로드 후 현재 모드 표시 갱신
-            _prototype_PlayMode? currentMode = _prototype_PlayModeManager.Instance?.CurrentMode;
-            UpdateModeIndicator(currentMode.Value);
+            _prototype_PlayMode currentMode = _prototype_PlayModeManager.Instance != null
+                ? _prototype_PlayModeManager.Instance.CurrentMode
+                : _prototype_PlayMode.Battle;
+            UpdateModeIndicator(currentMode);
         }
 
         public void ShowWarning(string message, float duration = 2.0f)
@@ -127,8 +160,22 @@ namespace TDG0407._prototype
             UpdatePlayerCardDeck(); // 카드 딤 처리 갱신
         }
 
-        private void UpdateModeIndicator(_prototype_PlayMode mode)
+        /// <summary>
+        /// PlayModeManager 등 외부에서 직접 모드 UI를 강제 갱신할 때 호출합니다.
+        /// </summary>
+        public void UpdateModeIndicatorDirect(_prototype_PlayMode mode)
         {
+            UpdateModeIndicator(mode);
+            UpdatePlayerCardDeck();
+        }
+
+        public void UpdateModeIndicator(_prototype_PlayMode mode)
+        {
+            if (_modeIndicatorBanner != null)
+            {
+                _modeIndicatorBanner.style.display = DisplayStyle.Flex;
+            }
+
             if (_modeIndicatorText == null) return;
 
             if (mode == _prototype_PlayMode.Battle)
@@ -251,7 +298,8 @@ namespace TDG0407._prototype
                     if (_label_remainsCount != null) _label_remainsCount.text = lifeData.cardDeck.remainedCardDatas.Count.ToString();
                     if (_label_discardedCount != null) _label_discardedCount.text = lifeData.cardDeck.discardedCardDatas.Count.ToString();
 
-                    foreach (_prototype_CardData cardData in lifeData.cardDeck.handedCardDatas)
+                    var availableCards = lifeView.GetAvailableCards();
+                    foreach (_prototype_CardData cardData in availableCards)
                     {
                         VisualElement cardViewInstance = _cardViewTemplate.Instantiate();
 
@@ -284,26 +332,7 @@ namespace TDG0407._prototype
                             if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
                         }
 
-                        // 탐색 모드 사용 불가 카드 딤(dim) 처리
-                        bool isExploration = _prototype_PlayModeManager.Instance?.IsExploration ?? false;
-                        if (isExploration && !cardData.IsUsableInExploration)
-                        {
-                            cardViewInstance.style.opacity = 0.35f;
-                            // 딤 레이어가 없으면 CooldownOverlay 재활용 (있으면 텍스트 표기)
-                            if (cooldownOverlay != null && cardData.currentCoolTicks <= 0)
-                            {
-                                cooldownOverlay.style.display = DisplayStyle.Flex;
-                                if (cooldownText != null)
-                                {
-                                    cooldownText.text = "✕";
-                                    cooldownText.style.fontSize = 28;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            cardViewInstance.style.opacity = 1f;
-                        }
+                        cardViewInstance.style.opacity = 1f;
 
                         cardViewInstance.style.position = Position.Absolute;
                         // 드래그 기능 등록

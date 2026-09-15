@@ -12,25 +12,17 @@ namespace TDG0407._prototype
 
         public _prototype_LifeData Data => _entityData as _prototype_LifeData;
 
-        public async UniTask PlayAttackAnimation(Vector3 direction)
+        public override void Initialize(
+            _prototype_EntityData entityData,
+            _prototype_PointView pointView)
         {
-            if (this == null || gameObject == null)
-                return;
+            base.Initialize(entityData, pointView);
 
-            await transform.DOPunchPosition(direction * 0.3f, 0.2f, 1, 0)
-                .AsyncWaitForCompletion();
-        }
-
-        public override void Initialize(_prototype_PointView pointView)
-        {
-            base.Initialize(pointView);
-
-            _prototype_LifeHUD hud = GetComponent<_prototype_LifeHUD>();
-            if (hud == null)
+            if (!TryGetComponent<_prototype_LifeHUD>(out var hud))
             {
                 hud = gameObject.AddComponent<_prototype_LifeHUD>();
             }
-            hud.SetupEvents();
+            hud.Initialize();
 
             // 카드 덱 초기화 (플레이어 및 적 AI 공통)
             if (Data != null && Data.cardDeck != null)
@@ -53,7 +45,7 @@ namespace TDG0407._prototype
             _prototype_TickManager.RegisterTick(ProcessLifeTick);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             if (Data != null)
             {
@@ -76,6 +68,9 @@ namespace TDG0407._prototype
             if (Data.health.Current <= 0)
             {
                 Data.health.OnValueChanged -= CheckDeath;
+
+                // 사망 이벤트 발행 (어떤 데미지 경로든 사망 보장)
+                _prototype_EventBus.Fire(new EntityDiedEvent(Data, null));
 
                 // 1. Play death animation
                 await transform.DOScale(0, 0.5f).SetEase(Ease.InBack).AsyncWaitForCompletion();
@@ -113,11 +108,11 @@ namespace TDG0407._prototype
                                 int reduction = 1 + Data.lifeStat.drawQuickness;
                                 if (hasKnockdown)
                                 {
-                                    card.currentCoolTicks = UnityEngine.Mathf.Min(card.coolTicks.Max, card.currentCoolTicks + reduction);
+                                    card.currentCoolTicks = Mathf.Min(card.coolTicks.Max, card.currentCoolTicks + reduction);
                                 }
                                 else if (card.currentCoolTicks > 0)
                                 {
-                                    card.currentCoolTicks = UnityEngine.Mathf.Max(0, card.currentCoolTicks - reduction);
+                                    card.currentCoolTicks = Mathf.Max(0, card.currentCoolTicks - reduction);
                                 }
                             }
                         }
@@ -158,6 +153,73 @@ namespace TDG0407._prototype
             };
             return UniTask.FromResult(intent);
         }
+        public System.Collections.Generic.List<_prototype_CardData> GetAvailableCards()
+        {
+            var result = new System.Collections.Generic.List<_prototype_CardData>();
+            
+            var playMode = _prototype_PlayModeManager.Instance != null
+                ? _prototype_PlayModeManager.Instance.CurrentMode
+                : _prototype_PlayMode.Exploration;
+            var context = new _prototype_ConditionContext(Data, null, playMode);
+
+            if (Data != null && Data.cardDeck != null)
+            {
+                if (playMode == _prototype_PlayMode.Battle)
+                {
+                    foreach (var card in Data.cardDeck.handedCardDatas)
+                    {
+                        if (card != null && card.IsVisible(context))
+                        {
+                            card.sourceProvider = null;
+                            result.Add(card);
+                        }
+                    }
+                }
+            }
+
+            if (_prototype_GridManager.Instance != null && Data != null)
+            {
+                if (playMode == _prototype_PlayMode.Exploration)
+                {
+                    // search for CardProviderComponentData in nearby entities (e.g., radius 1)
+                    foreach (var pointView in _prototype_GridManager.Instance.PointViews)
+                    {
+                        if (pointView == null) continue;
+                        int dist = Mathf.Abs(pointView.Point.x - Data.point.x) + Mathf.Abs(pointView.Point.y - Data.point.y);
+                        if (dist > 1) continue; // Only adjacent or self
+
+                        foreach (var entityView in pointView.PlacedEntityViews)
+                        {
+                            if (entityView == null || entityView.EntityData == null || entityView.EntityData.components == null) continue;
+                            
+                            // we provide a specific context where Target is the providing entity
+                            var targetContext = new _prototype_ConditionContext(Data, entityView.EntityData, playMode);
+
+                            foreach (var comp in entityView.EntityData.components)
+                            {
+                                if (comp is _prototype_CardProviderComponentData provider)
+                                {
+                                    if (provider.providedCards != null)
+                                    {
+                                        foreach (var c in provider.providedCards)
+                                        {
+                                            if (c != null && c.IsVisible(targetContext))
+                                            {
+                                                c.sourceProvider = entityView.EntityData;
+                                                result.Add(c);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 
 }

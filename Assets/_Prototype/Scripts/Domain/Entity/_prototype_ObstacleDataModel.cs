@@ -14,8 +14,16 @@ namespace TDG0407._prototype
                 ename = ename,
                 health = health.Clone(),
                 stamina = stamina.Clone(),
-                point = point
+                point = point,
+                movementType = movementType,
             };
+        }
+
+        public override _prototype_EntityData CreateData(_prototype_EntityData source = null)
+        {
+            var data = CreateObstacleData();
+            PopulateComponents(data);
+            return data;
         }
 
     }

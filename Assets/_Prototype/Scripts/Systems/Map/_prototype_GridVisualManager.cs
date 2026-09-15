@@ -7,7 +7,19 @@ namespace TDG0407._prototype
     public class _prototype_GridVisualManager : MonoBehaviour
     {
         
-        public static _prototype_GridVisualManager Instance { get; private set; }
+        private static _prototype_GridVisualManager _instance;
+        public static _prototype_GridVisualManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindAnyObjectByType<_prototype_GridVisualManager>(FindObjectsInactive.Include);
+                }
+                return _instance;
+            }
+            private set => _instance = value;
+        }
 
         [Header("References")]
         [SerializeField] private Transform _pointHoverIndicator;
@@ -17,12 +29,14 @@ namespace TDG0407._prototype
         private _prototype_PointView _lastHighlightedPointView;
         private _prototype_MoveIndicator _moveIndicator;
 
-        
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
+            if (_instance == null) _instance = this;
+            else if (_instance != this) Destroy(gameObject);
+        }
 
+        public void Initialize()
+        {
             if (_pointHoverIndicator != null)
             {
                 var colliders = _pointHoverIndicator.GetComponentsInChildren<Collider>(true);
@@ -32,9 +46,13 @@ namespace TDG0407._prototype
                 }
             }
             
-            GameObject moveIndObj = new GameObject("MoveIndicator");
-            moveIndObj.transform.SetParent(transform);
-            _moveIndicator = moveIndObj.AddComponent<_prototype_MoveIndicator>();
+            if (_moveIndicator == null)
+            {
+                GameObject moveIndObj = new GameObject("MoveIndicator");
+                moveIndObj.transform.SetParent(transform);
+                _moveIndicator = moveIndObj.AddComponent<_prototype_MoveIndicator>();
+            }
+            _moveIndicator.Initialize();
         }
 
         public void HighlightPoint(_prototype_Point? point)
