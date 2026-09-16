@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using TDG0407._prototype;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ public class SetupLaserCard
         laserDataModel.ename = "LaserProjectile";
         laserDataModel.durationTicks = 2;
         laserDataModel.damage = 10;
-        AssetDatabase.CreateAsset(laserDataModel, "Assets/_Prototype/DataModel/Entity/LaserProjectileDataModel.asset");
+        AssetDatabase.CreateAsset(laserDataModel, "Assets/_Prototype/Entities/Projectile/Laser/LaserProjectile.asset");
 
         var laserCard = ScriptableObject.CreateInstance<_prototype_CardDataModel>();
         laserCard.id = "Shoot Laser";
@@ -27,10 +27,10 @@ public class SetupLaserCard
 
         var action = new _prototype_ShootLaserEntityAction();
         action.laserProjectileDataModel = laserDataModel;
-        action.laserProjectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Prototype/Resources/Prefabs/LaserProjectile.prefab");
+        action.laserProjectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Prototype/Entities/Projectile/Laser/LaserProjectile.prefab");
         laserCard.actionList = new List<_prototype_EntityAction> { action };
 
-        AssetDatabase.CreateAsset(laserCard, "Assets/_Prototype/DataModel/Card/ShootLaserCard.asset");
+        AssetDatabase.CreateAsset(laserCard, "Assets/_Prototype/Cards/Battle/ShootLaserCard.asset");
         
         AssetDatabase.SaveAssets();
     }

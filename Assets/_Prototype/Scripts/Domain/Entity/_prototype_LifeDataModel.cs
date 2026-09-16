@@ -10,6 +10,7 @@ namespace TDG0407._prototype
 
         public _prototype_LifeStat lifeStat = new();
         public _prototype_CardDeckModel cardDeck = null;
+        public _prototype_InventoryDataModel inventoryModel = null;
         [SerializeReference, SubclassSelector] public _prototype_EnemyAILogic aiLogic = new _prototype_MeleeChaseAI();
         
         public _prototype_LifeData CreateLifeData()
@@ -23,6 +24,7 @@ namespace TDG0407._prototype
                 side = _prototype_Side.None,
                 lifeStat = new _prototype_LifeStat(lifeStat),
                 cardDeck = cardDeck != null ? cardDeck.CreateCardDeck() : new(),
+                inventory = inventoryModel != null ? inventoryModel.CreateInventoryData() : null,
                 aiLogic = aiLogic?.Clone(),
                 statusEffects = new(),
                 movementType = movementType,

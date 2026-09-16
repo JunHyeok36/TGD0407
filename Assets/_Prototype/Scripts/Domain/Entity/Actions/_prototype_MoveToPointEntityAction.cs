@@ -22,48 +22,66 @@ namespace TDG0407._prototype
             var sourceView = _prototype_GridManager.Instance.GetPointView(source.point)?.PlacedEntityViews.Find(v => v.EntityData == source);
             if (sourceView == null) return;
 
-            foreach (var target in targets)
+            _prototype_Point destination = _prototype_Point.zero;
+            bool hasDestination = false;
+
+            if (@params is _prototype_CardActionParams cardParams && cardParams.TargetedPoint != default)
             {
-                var targetPointView = _prototype_GridManager.Instance.GetPointView(target.point);
-                if (targetPointView == null) continue;
-                
-                if (isTeleport)
+                destination = cardParams.TargetedPoint;
+                hasDestination = true;
+            }
+            else if (targets != null)
+            {
+                foreach (var target in targets)
                 {
-                    if (targetPointView.CanPlaceEntity(source))
+                    if (target != null)
                     {
-                        var currentPointView = _prototype_GridManager.Instance.GetPointView(source.point);
-                        await _prototype_InteractionManager.MoveEntity(sourceView, currentPointView, targetPointView);
+                        destination = target.point;
+                        hasDestination = true;
+                        break;
                     }
                 }
-                else
+            }
+
+            if (!hasDestination) return;
+
+            var targetPointView = _prototype_GridManager.Instance.GetPointView(destination);
+            if (targetPointView == null) return;
+
+            if (isTeleport)
+            {
+                if (targetPointView.CanPlaceEntity(source))
                 {
-                    // Pathfind to target
-                    var path = _prototype_GridManager.Instance.FindPath(source.point, target.point, source, false, true);
-                    if (path != null && path.Count > 0)
+                    var currentPointView = _prototype_GridManager.Instance.GetPointView(source.point);
+                    await _prototype_InteractionManager.MoveEntity(sourceView, currentPointView, targetPointView);
+                }
+            }
+            else
+            {
+                // Pathfind to target
+                var path = _prototype_GridManager.Instance.FindPath(source.point, destination, source, false, true);
+                if (path != null && path.Count > 0)
+                {
+                    var currentPointView = _prototype_GridManager.Instance.GetPointView(source.point);
+                    _prototype_PointView furthestValidPoint = null;
+
+                    foreach (var nextStep in path)
                     {
-                        var currentPointView = _prototype_GridManager.Instance.GetPointView(source.point);
-                        _prototype_PointView furthestValidPoint = null;
-
-                        foreach (var nextStep in path)
+                        if (nextStep.CanPlaceEntity(source))
                         {
-                            if (nextStep.CanPlaceEntity(source))
-                            {
-                                furthestValidPoint = nextStep;
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            furthestValidPoint = nextStep;
                         }
-
-                        if (furthestValidPoint != null)
+                        else
                         {
-                            await _prototype_InteractionManager.MoveEntity(sourceView, currentPointView, furthestValidPoint);
+                            break;
                         }
                     }
-                }
 
-                break; // Only move to the first target
+                    if (furthestValidPoint != null)
+                    {
+                        await _prototype_InteractionManager.MoveEntity(sourceView, currentPointView, furthestValidPoint);
+                    }
+                }
             }
         }
     }

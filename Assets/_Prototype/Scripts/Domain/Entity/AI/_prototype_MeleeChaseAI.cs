@@ -239,22 +239,29 @@ namespace TDG0407._prototype
                             var pointView = _prototype_GridManager.Instance.GetPointView(pt);
                             if (pointView != null)
                             {
-                                bool found = false;
                                 foreach (var ev in pointView.PlacedEntityViews)
                                 {
                                     targets.Add(ev.EntityData);
-                                    found = true;
                                 }
-                                if (!found && plannedCard.targetRange != null && plannedCard.targetRange.IncludeEmptyPoints)
-                                    targets.Add(new _prototype_EmptyPointData(pt));
                             }
                         }
+
+                        _prototype_Point attackDir = _prototype_Point.zero;
+                        if (plannedTarget != default)
+                        {
+                            int dx = plannedTarget.x - entityView.Point.x;
+                            int dy = plannedTarget.y - entityView.Point.y;
+                            int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
+                            int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
+                            attackDir = new _prototype_Point(normX, normY);
+                        }
+                        var cardParams = new _prototype_CardActionParams(plannedCard, plannedTarget, attackDir, targetRange);
 
                         foreach (var action in plannedCard.actionList)
                         {
                             var filteredTargets = targets;
                             if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
-                            await action.ExecuteAction(entityView.EntityData, filteredTargets, null);
+                            await action.ExecuteAction(entityView.EntityData, filteredTargets, cardParams);
                         }
                     }
                 }

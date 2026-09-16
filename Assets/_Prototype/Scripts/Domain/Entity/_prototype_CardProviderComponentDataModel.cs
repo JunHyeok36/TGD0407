@@ -25,9 +25,9 @@ namespace TDG0407._prototype
                 if (wrapper != null && wrapper.cardModel != null)
                 {
                     var cardData = wrapper.cardModel.CreateCardData();
-                    if (wrapper.visibilityConditions != null)
+                    if (wrapper.visibilityConditions != null && wrapper.visibilityConditions.Count > 0)
                     {
-                        cardData.visibilityConditions = new List<_prototype_Condition>(wrapper.visibilityConditions);
+                        cardData.visibilityConditions.AddRange(wrapper.visibilityConditions);
                     }
                     component.providedCards.Add(cardData);
                 }

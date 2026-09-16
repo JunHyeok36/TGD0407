@@ -90,7 +90,7 @@ namespace TDG0407._prototype
             }
         }
 
-        public async UniTask PlaceEntity(_prototype_EntityView entityView, bool animate = true)
+        public async UniTask PlaceEntity(_prototype_EntityView entityView, bool animate = true, bool rotateTowardsDestination = true)
         {
             if (!IsTraversable(entityView.EntityData.movementType)) throw new Exception($"Cannot place entity at point {point}. Point is blocked by terrain.");
             if (placedEntityViews.Contains(entityView)) throw new Exception($"Entity {entityView.name} is already placed at point {point}.");
@@ -99,7 +99,7 @@ namespace TDG0407._prototype
             _pointData.placedEntityDatas.Add(entityView.EntityData);
             if (animate)
             {
-                await entityView.MoveTo(this);
+                await entityView.MoveTo(this, rotateTowardsDestination);
             }
             else
             {

@@ -54,7 +54,7 @@ namespace TDG0407._prototype
 
         public static void OnEntityDamaged(EntityDamagedEvent evt)
         {
-            if (evt.Damage <= 0 || evt.Target is _prototype_ObstacleData) return;
+            if (evt.Damage <= 0 || evt.Target is not _prototype_LifeData) return;
 
             var pointView = _prototype_GridManager.Instance.GetPointView(evt.Point);
             if (pointView != null)
@@ -104,7 +104,7 @@ namespace TDG0407._prototype
         public static void OnEntityStatusChanged(EntityStatusChangedEvent evt)
         {
             if (!evt.IsAdded || evt.Effect == null || evt.Effect.type == _prototype_StatusType.None) return;
-            if (evt.Target == null) return;
+            if (evt.Target is not _prototype_LifeData) return;
 
             var pointView = _prototype_GridManager.Instance.GetPointView(evt.Target.point);
             if (pointView != null)
@@ -145,9 +145,18 @@ namespace TDG0407._prototype
                     return new Color(0.3f, 0.85f, 1f); // Ice cyan
                 case _prototype_StatusType.Poisoning:
                     return new Color(0.3f, 0.9f, 0.3f); // Toxic green
+                case _prototype_StatusType.SuperArmor:
+                    return new Color(0.9f, 0.85f, 0.4f); // Golden amber
                 default:
                     return Color.white;
             }
+        }
+
+        private static GameObject s_prefab;
+
+        public static void SetPrefab(GameObject prefab)
+        {
+            s_prefab = prefab;
         }
 
         /// <summary>
@@ -155,7 +164,7 @@ namespace TDG0407._prototype
         /// </summary>
         public static _prototype_FloatingText SpawnAtPosition(Vector3 exactWorldPosition, string text, Color color, float fontSizeMultiplier = 1f, float lifetime = 1.0f, float distance = .5f)
         {
-            GameObject prefab = Resources.Load<GameObject>("FloatingTextPrefab");
+            GameObject prefab = s_prefab;
             if (prefab != null)
             {
                 GameObject obj = Instantiate(prefab);
@@ -174,7 +183,7 @@ namespace TDG0407._prototype
             }
             else
             {
-                Debug.LogError("FloatingTextPrefab (or DamageTextPrefab) not found in Resources!");
+                Debug.LogError("FloatingTextPrefab is not assigned! Please assign it to BootStrapper.");
                 return null;
             }
         }
@@ -186,6 +195,8 @@ namespace TDG0407._prototype
         public static _prototype_FloatingText SpawnOnEntity(_prototype_EntityView entityView, string text, Color color, float fontSizeMultiplier = 1f, float lifetime = 1.0f, float distance = .5f)
         {
             if (entityView == null) return null;
+            // FloatingText는 Life 엔티티에서만 발생하도록 제한 (Projectile, Obstacle 등 제외)
+            if (entityView.EntityData != null && entityView.EntityData is not _prototype_LifeData) return null;
 
             Vector3 spawnPos = entityView.transform.position;
             var renderers = entityView.GetComponentsInChildren<Renderer>();
@@ -233,6 +244,15 @@ namespace TDG0407._prototype
             float distance = isCritical ? 2.5f : 2.0f;
 
             return Spawn(worldPosition, displayText, color, fontSizeMul, lifetime, distance);
+        }
+
+        /// <summary>
+        /// 넉백 등의 저항 발생 시 대상 엔티티 머리 위에 "Resist!" 텍스트를 스폰합니다.
+        /// </summary>
+        public static _prototype_FloatingText SpawnResistText(_prototype_EntityView targetView)
+        {
+            if (targetView == null || targetView.EntityData is not _prototype_LifeData) return null;
+            return SpawnOnEntity(targetView, "Resist!", new Color(0.85f, 0.85f, 0.95f), 1.1f, 1.0f, 1.8f);
         }
     }
 }

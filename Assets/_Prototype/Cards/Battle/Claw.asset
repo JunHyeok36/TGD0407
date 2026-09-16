@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Name: Claw
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  id: "\uD560\uD034\uAE30 (Claw)"
+  description: "\uC804\uBC29 \uD638 \uC601\uC5ED\uC744 \uD560\uD034\uC5B4 \uD53C\uD574\uB97C
+    \uC785\uD788\uACE0 \uC801\uB4E4\uC744 \uB4A4\uB85C 1\uCE78 \uBC00\uCCD0\uB0C5\uB2C8\uB2E4."
+  cardType: 1
+  costValue:
+    costType: 5
+    value: 2
+  coolTicks:
+    _min: 0
+    _max: 1
+    _cur: 0
+  castRange:
+    rid: 8244398012911059135
+  targetRange:
+    rid: 8244398012911059136
+  actionList:
+  - rid: 8244398012911059137
+  - rid: 8244398012911059138
+  visibilityConditions: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398012911059135
+      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _range: 2
+    - rid: 8244398012911059136
+      type: {class: _prototype_ArcTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        innerRadius: 0
+        outerRadius: 2
+        arcWidth: 3
+        allowDiagonals: 1
+        expandWidthPerLayer: 1
+        includeEmptyPoints: 1
+        radius: 1
+    - rid: 8244398012911059137
+      type: {class: _prototype_DamageEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        damageType: 0
+        damageCoefficients:
+        - stat: 0
+          coefficient: 8
+        - stat: 4
+          coefficient: 1.2
+    - rid: 8244398012911059138
+      type: {class: _prototype_PushEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        distance: 1
+        useAttackDirection: 1
+        fixedDirection:
+          x: 0
+          y: 1
+        onCollisionActions:
+        - rid: 8244398022605144163
+    - rid: 8244398022605144163
+      type: {class: _prototype_ApplyStatusEffectEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        statusType: 1
+        durationTicks: 3
+        value: 0

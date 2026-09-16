@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98e8846381741a0469fe1ba293fef8bf, type: 3}
+  m_Name: Inventory_PlayerDefault
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_PlayerInventoryDataModel
+  bagSlotCount: 16
+  initialItems:
+  - item: {fileID: 11400000, guid: d93fecdae25219a4f853bc6d2dcf9039, type: 2}
+    quantity: 3
+  - item: {fileID: 11400000, guid: c0f5cc15fcda3f84780442bb491422c3, type: 2}
+    quantity: 2
+  initialKeyItems:
+  - item: {fileID: 11400000, guid: 65a3ae9b4f330404782d2a28b065c3c5, type: 2}
+    quantity: 1

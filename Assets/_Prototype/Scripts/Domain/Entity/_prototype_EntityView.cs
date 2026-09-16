@@ -71,13 +71,27 @@ namespace TDG0407._prototype
             }
         }
 
-        public virtual async UniTask MoveTo(_prototype_PointView targetPointView)
+        public virtual async UniTask MoveTo(_prototype_PointView targetPointView, bool rotateTowardsDestination = true)
         {
             if (this == null || gameObject == null || targetPointView == null) return;
 
+            if (_entityData != null)
+            {
+                _entityData.point = targetPointView.Point;
+            }
+
+            Quaternion initialRotation = transform.rotation;
             transform.SetParent(targetPointView.transform, true);
 
-            FaceTowards(targetPointView.Point, 0.2f);
+            if (rotateTowardsDestination)
+            {
+                FaceTowards(targetPointView.Point, 0.2f);
+            }
+            else
+            {
+                transform.rotation = initialRotation;
+            }
+
             if (AnimationPlayer != null)
             {
                 await AnimationPlayer.PlayMoveAnimation(targetPointView, LocalPositionOffset);
@@ -86,10 +100,10 @@ namespace TDG0407._prototype
             {
                 transform.localPosition = LocalPositionOffset;
             }
-            
-            if (_entityData != null)
+
+            if (!rotateTowardsDestination)
             {
-                _entityData.point = targetPointView.Point;
+                transform.rotation = initialRotation;
             }
         }
 

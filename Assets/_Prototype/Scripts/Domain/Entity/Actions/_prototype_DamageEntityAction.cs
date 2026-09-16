@@ -52,21 +52,21 @@ namespace TDG0407._prototype
 
             foreach (var target in targets)
             {
-                if (!hasFaced && sourceView != null && target != source)
+                if (target == null || target == source) continue;
+
+                // 팀킬 및 아군 투사체 피격 방지 (같은 side를 갖는 엔티티/투사체는 공격 대상에서 제외)
+                if (source != null && source.IsSameSide(target))
+                {
+                    continue;
+                }
+
+                if (!hasFaced && sourceView != null)
                 {
                     sourceView.FaceTowards(target.point, 0.2f);
                     hasFaced = true;
                 }
 
                 var targetLife = target as _prototype_LifeData;
-                // 팀킬 방지 (같은 팀끼리는 공격 불가, 단 None은 제외)
-                if (sourceLife != null && targetLife != null)
-                {
-                    if (sourceLife.side != _prototype_Side.None && sourceLife.side == targetLife.side)
-                    {
-                        continue;
-                    }
-                }
 
                 // 크리티컬 판정 및 데미지 계산
                 bool isCritical = false;

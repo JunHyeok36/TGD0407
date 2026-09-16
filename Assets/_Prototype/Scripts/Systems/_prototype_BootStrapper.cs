@@ -9,6 +9,10 @@ namespace TDG0407._prototype
     [DefaultExecutionOrder(-100)]
     public class _prototype_BootStrapper : MonoBehaviour
     {
+        [Header("UI & Effect Prefabs")]
+        [SerializeField] private GameObject _floatingTextPrefab;
+        [SerializeField] private GameObject _lifeHudPrefab;
+
         private void Awake()
         {
             InitializeGame();
@@ -17,6 +21,16 @@ namespace TDG0407._prototype
         public void InitializeGame()
         {
             Debug.Log("[BootStrapper] 게임 시스템 초기화 시작...");
+
+            // 0. 프리팹 및 공용 에셋 사전 등록
+            if (_floatingTextPrefab != null)
+            {
+                _prototype_FloatingText.SetPrefab(_floatingTextPrefab);
+            }
+            if (_lifeHudPrefab != null)
+            {
+                _prototype_LifeHUD.SetDefaultPrefab(_lifeHudPrefab);
+            }
 
             // 1. 이벤트 버스 초기화 및 글로벌 리스너 등록
             _prototype_EventBus.Reset();

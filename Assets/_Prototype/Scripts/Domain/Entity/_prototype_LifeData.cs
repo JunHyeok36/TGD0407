@@ -14,6 +14,7 @@ namespace TDG0407._prototype
         public _prototype_CardDeck cardDeck = new();
         public _prototype_LifeStat lifeStat = new();
         public List<_prototype_StatusEffect> statusEffects = new();
+        public _prototype_IInventoryData inventory = null;
 
         [SerializeReference, SubclassSelector] public _prototype_EnemyAILogic aiLogic;
 
@@ -24,13 +25,15 @@ namespace TDG0407._prototype
             _prototype_BoundedValue<int> stamina,
             _prototype_Point point,
             _prototype_CardDeck cardDeck,
-            _prototype_Side side = _prototype_Side.None)
+            _prototype_Side side = _prototype_Side.None,
+            _prototype_IInventoryData inventory = null)
             : base(name, health, stamina, point)
         {
             this.cardDeck = cardDeck;
             this.side = side;
             this.lifeStat = new _prototype_LifeStat();
             this.statusEffects = new List<_prototype_StatusEffect>();
+            this.inventory = inventory;
         }
         public _prototype_LifeData(_prototype_LifeData other)
             : base(other)
@@ -39,6 +42,7 @@ namespace TDG0407._prototype
             this.side = other.side;
             this.lifeStat = new _prototype_LifeStat(other.lifeStat);
             this.statusEffects = new List<_prototype_StatusEffect>(other.statusEffects);
+            this.inventory = other.inventory?.Clone();
         }
 
         public override UniTask<int> TakeDamage(_prototype_DamageContext context)
@@ -158,6 +162,25 @@ namespace TDG0407._prototype
         {
             return statusEffects.Find(s => s.type == type);
         }
+
+        #region Inventory Helpers
+
+        public bool HasItem(string itemId, int quantity = 1)
+        {
+            return inventory != null && inventory.HasItem(itemId, quantity);
+        }
+
+        public int AddItem(_prototype_ItemDataModel itemModel, int quantity)
+        {
+            return inventory != null ? inventory.AddItem(itemModel, quantity) : 0;
+        }
+
+        public bool ConsumeItem(string itemId, int quantity)
+        {
+            return inventory != null && inventory.ConsumeItem(itemId, quantity);
+        }
+
+        #endregion
     }
 
 }

@@ -13,6 +13,7 @@ namespace TDG0407._prototype
         Bleeding = 6,
         Burning = 7,
         Freeze = 8,
-        Poisoning = 9
+        Poisoning = 9,
+        SuperArmor = 10
     }
 }

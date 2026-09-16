@@ -16,12 +16,32 @@ namespace TDG0407._prototype
             IEnumerable<_prototype_EntityData> targets,
             _prototype_IActionParams @params)
         {
-            var targetList = targets.ToList();
-            if (source == null || targetList == null || targetList.Count == 0) return;
+            if (source == null) return;
 
-            var target = targetList[0];
             var startPoint = source.point;
-            var targetPoint = target.point;
+            _prototype_Point targetPoint = _prototype_Point.zero;
+            bool hasTargetPoint = false;
+
+            if (targets != null)
+            {
+                var first = targets.FirstOrDefault(t => t != null);
+                if (first != null)
+                {
+                    targetPoint = first.point;
+                    hasTargetPoint = true;
+                }
+            }
+
+            if (!hasTargetPoint && @params is _prototype_CardActionParams cardParams)
+            {
+                if (cardParams.TargetedPoint != default)
+                {
+                    targetPoint = cardParams.TargetedPoint;
+                    hasTargetPoint = true;
+                }
+            }
+
+            if (!hasTargetPoint) return;
 
             var sourceView = _prototype_GridManager.Instance.GetPointView(startPoint)?.PlacedEntityViews.Find(v => v.EntityData == source);
             if (sourceView != null && targetPoint != startPoint)

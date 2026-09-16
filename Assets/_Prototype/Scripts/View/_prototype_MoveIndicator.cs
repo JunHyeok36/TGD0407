@@ -10,9 +10,16 @@ namespace TDG0407._prototype
         private MeshRenderer _endMarkerRenderer;
         
         [SerializeField] private float scrollSpeed = -1.0f;
+
+        [Header("Textures")]
+        [SerializeField] private Texture2D _dashPatternTexture;
+        [SerializeField] private Texture2D _targetCircleTexture;
         
-        public void Initialize()
+        public void Initialize(Texture2D dashTex = null, Texture2D circleTex = null)
         {
+            if (dashTex != null) _dashPatternTexture = dashTex;
+            if (circleTex != null) _targetCircleTexture = circleTex;
+
             // Rotate this object so local Z is UP (World Y)
             transform.localRotation = Quaternion.Euler(-90, 0, 0);
 
@@ -28,8 +35,7 @@ namespace TDG0407._prototype
             
             // Material for Line
             Material lineMat = new Material(Shader.Find("Mobile/Particles/Alpha Blended"));
-            Texture2D dashTex = Resources.Load<Texture2D>("Textures/DashPattern");
-            lineMat.mainTexture = dashTex;
+            lineMat.mainTexture = _dashPatternTexture;
             // LineRenderer uses vertex colors. Alpha Blended shader multiplies by _TintColor * 2. 
             // So setting _TintColor to 0.5 makes it 1.0 (exact match).
             lineMat.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f, 0.5f));
@@ -58,8 +64,7 @@ namespace TDG0407._prototype
             
             _endMarkerRenderer = _endMarker.GetComponent<MeshRenderer>();
             Material markerMat = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended"));
-            Texture2D circleTex = Resources.Load<Texture2D>("Textures/TargetCircle");
-            markerMat.mainTexture = circleTex;
+            markerMat.mainTexture = _targetCircleTexture;
             // Legacy Shaders/Particles/Alpha Blended supports _TintColor and multiplies by 2.
             markerMat.SetColor("_TintColor", new Color(cyanColor.r * 0.5f, cyanColor.g * 0.5f, cyanColor.b * 0.5f, cyanColor.a * 0.5f));
             _endMarkerRenderer.material = markerMat;

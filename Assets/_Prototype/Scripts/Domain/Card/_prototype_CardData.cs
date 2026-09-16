@@ -54,6 +54,10 @@ namespace TDG0407._prototype
             this.castRange = other.castRange;
             this.targetRange = other.targetRange;
             this.actionList = other.actionList;
+            if (other.visibilityConditions != null)
+            {
+                this.visibilityConditions = new List<_prototype_Condition>(other.visibilityConditions);
+            }
         }
 
 

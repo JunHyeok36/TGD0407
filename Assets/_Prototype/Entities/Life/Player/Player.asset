@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef97ce57c1968b44a72198f2b9ec150, type: 3}
+  m_Name: Player
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeDataModel
+  ename: Player
+  health:
+    _min: 0
+    _max: 500
+    _cur: 500
+  stamina:
+    _min: 0
+    _max: 15
+    _cur: 15
+  point:
+    x: 0
+    y: 0
+  movementType: 0
+  components: []
+  lifeStat:
+    redPower: 10
+    bluePower: 0
+    redResist: 12
+    blueResist: 0
+    handCardSlotCount: 5
+    drawQuickness: 0
+    curseResist: 0
+    bleedingResist: 0
+    burningResist: 0
+    poisoningResist: 0
+    stunResist: 0
+    freezeResist: 0
+    silenceResist: 0
+    fearResist: 0
+    knockdownResist: 0
+    healthRecoverAmount: 0
+    staminaRecoverAmount: 0
+    knockbackResist: 0
+    deathResist: 0
+    dodgeProb: 0
+    criticalProb: 50.34
+    criticalWeight: 50
+  cardDeck:
+    allCardDatas:
+    - {fileID: 11400000, guid: 7ae1ac854d50e674a86d3867261c4478, type: 2}
+    - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
+    - {fileID: 11400000, guid: 0e40d90891df1bc4cae765edcc9be143, type: 2}
+    - {fileID: 11400000, guid: 85e6330b9719fba47bf2a8fa9e5134b3, type: 2}
+    - {fileID: 11400000, guid: 9bb1b1f8b8cb11b479e09cef4cb63bb5, type: 2}
+    - {fileID: 11400000, guid: 11c1eaa21cc5da44f938925d0e4d1c49, type: 2}
+    - {fileID: 11400000, guid: 23c85482a6fd6f74c9b3f2920a9caf3f, type: 2}
+    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
+    - {fileID: 11400000, guid: b6d8a9fcc14ec6944895c2f66a5c0e45, type: 2}
+    remainedCardDatas: []
+    handedCardDatas: []
+    discardedCardDatas: []
+    destroyedCardDatas: []
+  inventoryModel: {fileID: 11400000, guid: 07d5e412e05b9a8438cb807c18f7c7dc, type: 2}
+  aiLogic:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

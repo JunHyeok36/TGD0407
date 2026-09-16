@@ -1,4 +1,4 @@
-﻿# 02. 도메인 모델
+# 02. 도메인 모델
 
 ## 계층 구조 개요
 
@@ -15,6 +15,12 @@ World (세이브 데이터 최상위)
 
 Card (행동 단위 매개체)
 └── CardDeck / Deck (여러 Card의 위치를 정의한 집합)
+
+InventoryState (플레이어 소지품)
+├── Bag        (슬롯 기반 일반 가방)
+│   └── ItemSlot[] → ItemStack (itemId + quantity)
+└── KeyItems   (중요 아이템 — 슬롯 제한 없음)
+    └── List<ItemStack>
 ```
 
 ---
@@ -160,6 +166,7 @@ EntityData 의 모든 필드를 포함하며 추가로:
 | stat | Stat | 능력치 |
 | deck | CardDeck | 덱 |
 | statusEffects | List<StatusEffect> | 지속효과 목록 |
+| inventory | InventoryState | 인벤토리 (가방 + 중요 아이템) |
 
 #### Side (세력)
 | 값 | 설명 |
@@ -303,3 +310,146 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 
 > 처음 드로우된 카드는 해당 카드의 coolTicks 동안 사용 불가.  
 > 사용하지 않을 카드는 즉시 버려 다음 카드의 드로우 슬롯을 확보할 수 있다.
+
+---
+
+## 인벤토리 시스템
+
+### 구조 개요
+
+InventoryState는 LifeState.inventory에 포함되어 세이브 데이터의 일부로 저장된다.
+
+```
+InventoryState
+├── Bag               <- 일반 인벤토리 (슬롯 한계 있음)
+│   └── ItemSlot[]
+│       └── ItemStack (itemId, quantity)
+└── KeyItems          <- 중요 아이템 (한계 없음)
+    └── List<ItemStack>
+```
+
+---
+
+### ItemStack
+아이템 한 묶음 (ID + 수량). 모든 아이템 단위의 최소 표현.
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `itemId` | `string` | 아이템 ID (Archive ItemDocument.id와 매칭) |
+| `quantity` | `int` | 수량 |
+
+---
+
+### ItemSlot
+가방의 슬롯 하나. 비어 있거나 ItemStack 하나를 보관한다.
+
+| 필드/프로퍼티 | 설명 |
+|---------------|------|
+| `slotIndex` | 슬롯 인덱스 (UI 슬롯과 1:1 매핑) |
+| `Item` | 현재 보관 중인 ItemStack (없으면 null) |
+| `IsEmpty` | 슬롯이 비어 있는지 여부 |
+
+주요 메서드:
+- `Set(item)` - 슬롯에 아이템 설정 (null 전달 시 비움)
+- `Pop()` - 슬롯을 비우고 아이템 반환
+
+---
+
+### Bag (일반 가방)
+슬롯 배열로 구성된 일반 인벤토리.
+
+| 프로퍼티 | 설명 |
+|----------|------|
+| `SlotCount` | 전체 슬롯 수 |
+| `Slots` | 슬롯 목록 (읽기 전용) |
+| `UsedSlotCount` | 사용 중인 슬롯 수 |
+| `IsFull` | 가방이 꽉 찬 상태인지 |
+
+주요 메서드:
+- `Add(stack, maxStack)` - 아이템 추가. 같은 ID 슬롯에 먼저 스택, 없으면 빈 슬롯에 배치. 실제 추가된 수량 반환
+- `RemoveAt(slotIndex, quantity)` - 특정 슬롯에서 수량만큼 제거
+- `Swap(slotA, slotB)` - 슬롯 위치 교환 (UI 드래그 지원)
+- `CountOf(itemId)` - 특정 아이템의 가방 내 총 수량 반환
+
+> maxStack은 ItemDocument(Archive)에서 조회하여 호출 시 전달한다. Domain 객체는 직접 Archive를 참조하지 않는다.
+
+---
+
+### InventoryState (인벤토리 통합 상태)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `bag` | `Bag` | 슬롯 기반 일반 가방 |
+| `KeyItems` | `IReadOnlyList<ItemStack>` | 중요 아이템 목록 (읽기 전용 노출) |
+
+주요 메서드 (중요 아이템):
+- `AddKeyItem(stack)` - 중요 아이템 추가. 같은 ID면 수량 합산
+- `RemoveKeyItem(itemId, quantity)` - 중요 아이템 제거. 실제 제거된 수량 반환
+- `HasKeyItem(itemId, quantity)` - 보유 여부 확인
+
+---
+
+### ItemType (아이템 유형)
+| 값 | 설명 |
+|----|------|
+| `Consumable` | 소모품 (포션 등) |
+| `Material` | 조합 재료 |
+| `KeyItem` | 중요 아이템 (열쇠, 퀘스트 아이템) |
+| `Misc` | 기타 |
+
+---
+
+### ItemDocument (Archive 정적 데이터)
+아이템의 정적 데이터를 ScriptableObject로 관리한다.
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `id` | `string` | 아이템 고유 ID |
+| `displayName` | `string` | 표시 이름 |
+| `description` | `string` | 설명 |
+| `itemType` | `ItemType` | 아이템 유형 |
+| `maxStack` | `int` | 슬롯당 최대 스택 수 (KeyItem은 99 등 충분히 큰 값) |
+| `icon` | `Sprite` | 아이콘 |
+
+---
+
+### 신규 파일 목록
+
+#### 1) _Prototype 구현 (완료)
+```
+Assets/_Prototype/Scripts/Domain/Inventory/
+├── _prototype_ItemType.cs                  <- 아이템 유형 열거형 (Consumable, Material, KeyItem, Misc)
+├── _prototype_ItemStack.cs                 <- 아이템 단위 (ID + 수량)
+├── _prototype_ItemSlot.cs                  <- 가방 슬롯
+├── _prototype_Bag.cs                       <- 슬롯 기반 일반 가방
+├── _prototype_IInventoryData.cs            <- 인벤토리 공통 인터페이스
+├── _prototype_PlayerInventoryData.cs       <- 플레이어 풀 인벤토리 (Bag + KeyItems + UseItem)
+├── _prototype_LootInventoryData.cs         <- 몬스터 경량 전리품 인벤토리 (1~2칸 전리품 전용, 메모리 최적화)
+├── _prototype_InventoryDataModel.cs        <- 인벤토리 모델 추상 SO 기본 클래스
+├── _prototype_PlayerInventoryDataModel.cs  <- 플레이어 인벤토리 SO 모델
+├── _prototype_LootInventoryDataModel.cs    <- 몬스터 전리품 인벤토리 SO 모델 (드랍 확률 지원)
+└── _prototype_EntityLootDroppedEvent.cs    <- 사망 시 전리품 드랍 도메인 이벤트
+
+Assets/_Prototype/Scripts/Domain/Item/
+└── _prototype_ItemDataModel.cs             <- 아이템 SO 모델 (EntityAction 사용 효과 지원)
+
+Assets/_Prototype/Scripts/Domain/Interaction/
+└── _prototype_HasItemCondition.cs          <- 아이템 보유/소모 상호작용 조건
+
+Assets/_Prototype/Scripts/Domain/Entity/Actions/
+└── _prototype_HealEntityAction.cs          <- 포션 등 회복용 엔티티 액션
+```
+
+#### 2) _Game 정식 도메인 (예정)
+```
+Assets/_Game/Scripts/Domain/Inventory/
+├── ItemType.cs         <- 아이템 유형 열거형
+├── ItemStack.cs        <- 아이템 단위 (ID + 수량)
+├── ItemSlot.cs         <- 가방 슬롯
+├── Bag.cs              <- 슬롯 기반 일반 가방
+└── InventoryState.cs   <- Bag + KeyItems 통합 상태
+
+Assets/_Game/Scripts/Domain/Archive/
+└── ItemDocument.cs     <- 아이템 정적 데이터 (ScriptableObject)
+```
+

@@ -72,6 +72,13 @@ namespace TDG0407._prototype
                 // 사망 이벤트 발행 (어떤 데미지 경로든 사망 보장)
                 _prototype_EventBus.Fire(new EntityDiedEvent(Data, null));
 
+                // 전리품 드랍 이벤트 발행 (보유한 아이템이 있을 경우)
+                if (Data.inventory != null && Data.inventory.TotalItemCount > 0)
+                {
+                    var droppedItems = Data.inventory.GetAllItems();
+                    _prototype_EventBus.Fire(new _prototype_EntityLootDroppedEvent(Data, Data.point, droppedItems));
+                }
+
                 // 1. Play death animation
                 await transform.DOScale(0, 0.5f).SetEase(Ease.InBack).AsyncWaitForCompletion();
 

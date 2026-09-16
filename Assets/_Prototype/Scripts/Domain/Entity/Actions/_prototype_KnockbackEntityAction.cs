@@ -36,6 +36,7 @@ namespace TDG0407._prototype
             {
                 if (target == null) continue;
                 if (!includeSelf && target == source) continue;
+                if (source != null && source.IsSameSide(target)) continue;
 
                 knockbackTasks.Add(ApplyKnockback(source, target, @params));
             }
@@ -56,6 +57,16 @@ namespace TDG0407._prototype
 
             var targetView = targetPointView.PlacedEntityViews.Find(v => v.EntityData == target);
             if (targetView == null) return;
+
+            // 넉백 저항 검사
+            if (_prototype_PushEntityAction.CheckKnockbackResist(target))
+            {
+                if (target is _prototype_LifeData life)
+                {
+                    _prototype_FloatingText.SpawnResistText(targetView);
+                }
+                return;
+            }
 
             _prototype_Point dir = GetDirection(source, target);
             if (dir == _prototype_Point.zero) return;
@@ -92,10 +103,10 @@ namespace TDG0407._prototype
                 currentPointView = nextPointView;
             }
 
-            // 실제 위치 이동이 발생한 경우 이동 애니메이션 적용
+            // 실제 위치 이동이 발생한 경우 이동 애니메이션 적용 (바라보는 방향 유지)
             if (currentPointView != targetPointView)
             {
-                await _prototype_InteractionManager.MoveEntity(targetView, targetPointView, currentPointView);
+                await _prototype_InteractionManager.MoveEntity(targetView, targetPointView, currentPointView, rotateTowardsDestination: false);
             }
 
             // 충돌이 발생한 경우 연출 및 onCollisionActions 실행

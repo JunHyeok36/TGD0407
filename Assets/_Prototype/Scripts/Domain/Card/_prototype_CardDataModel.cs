@@ -16,10 +16,11 @@ namespace TDG0407._prototype
         [SerializeReference, SubclassSelector] public _prototype_ICastRangeSelector castRange;
         [SerializeReference, SubclassSelector] public _prototype_ITargetRangeSelector targetRange;
         [SerializeReference, SubclassSelector] public List<_prototype_EntityAction> actionList;
+        [SerializeReference, SubclassSelector] public List<_prototype_Condition> visibilityConditions = new();
 
         public _prototype_CardData CreateCardData()
         {
-            return new _prototype_CardData(
+            var cardData = new _prototype_CardData(
                 id,
                 description,
                 cardType, 
@@ -29,6 +30,11 @@ namespace TDG0407._prototype
                 targetRange, 
                 actionList
             );
+            if (visibilityConditions != null)
+            {
+                cardData.visibilityConditions.AddRange(visibilityConditions);
+            }
+            return cardData;
         }
 
     }

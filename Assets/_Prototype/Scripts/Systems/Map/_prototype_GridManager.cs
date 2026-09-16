@@ -119,7 +119,7 @@ namespace TDG0407._prototype
 
         public _prototype_PointView GetPointView(_prototype_Point point)
         {
-            if (pointViewMap.TryGetValue(point, out var pointView)) return pointView;
+            if (pointViewMap != null && pointViewMap.TryGetValue(point, out var pointView)) return pointView;
             return null;
         }
 

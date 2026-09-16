@@ -19,6 +19,15 @@ namespace TDG0407._prototype
 
         private static Sprite _squareSprite;
 
+        [Header("Prefab")]
+        [SerializeField] private GameObject _hudPrefab;
+        private static GameObject s_defaultHudPrefab;
+
+        public static void SetDefaultPrefab(GameObject prefab)
+        {
+            s_defaultHudPrefab = prefab;
+        }
+
         private bool _isInitialized = false;
 
         public void Initialize()
@@ -33,10 +42,10 @@ namespace TDG0407._prototype
 
         private void InitializeHUD()
         {
-            GameObject prefab = Resources.Load<GameObject>("LifeHUD");
+            GameObject prefab = _hudPrefab != null ? _hudPrefab : s_defaultHudPrefab;
             if (prefab == null)
             {
-                Debug.LogError("LifeHUD prefab not found in Resources folder.");
+                Debug.LogError($"LifeHUD prefab is not assigned for {gameObject.name}! Please assign it on the component or BootStrapper.");
                 return;
             }
 

@@ -327,7 +327,7 @@ namespace TDG0407._prototype
             {
                 _targetingCard = cardData;
                 List<_prototype_Point> instantTargets = new() { cardData.sourceProvider.point };
-                ExecuteCardCast(instantTargets);
+                ExecuteCardCast(instantTargets, cardData.sourceProvider.point);
                 return;
             }
 
@@ -337,7 +337,7 @@ namespace TDG0407._prototype
             if (_targetingCard.castRange != null)
             {
                 _currentCastRange = _targetingCard.castRange.GetValidCastPoints(_controlledEntityView.Point);
-                _prototype_GridVisualManager.Instance?.ShowCastRange(_currentCastRange);
+                _prototype_GridVisualManager.Instance?.ShowCastRange(_currentCastRange, _controlledEntityView.Point);
             }
             _prototype_PlayerUIView.Instance.ShowTargetingUI(_targetingCard);
         }
@@ -383,12 +383,12 @@ namespace TDG0407._prototype
 
                 // Show Target Range
                 List<_prototype_Point> targetRange = _targetingCard.targetRange?.GetValidTargetPoints(_controlledEntityView.Point, mousePoint.Value) ?? new List<_prototype_Point> { mousePoint.Value };
-                _prototype_GridVisualManager.Instance?.ShowTargetRange(targetRange);
+                _prototype_GridVisualManager.Instance?.ShowTargetRange(targetRange, mousePoint.Value);
 
                 // Execute on Left Click
                 if (Mouse.current.leftButton.wasPressedThisFrame)
                 {
-                    ExecuteCardCast(targetRange);
+                    ExecuteCardCast(targetRange, mousePoint.Value);
                 }
             }
             else
@@ -403,7 +403,7 @@ namespace TDG0407._prototype
             }
         }
 
-        private void ExecuteCardCast(List<_prototype_Point> targetRange)
+        private void ExecuteCardCast(List<_prototype_Point> targetRange, _prototype_Point targetedPoint = default)
         {
             if (CheckAndHandleStun())
             {
@@ -472,10 +472,6 @@ namespace TDG0407._prototype
                             targets.Add(entityView.EntityData);
                             found = true;
                         }
-                        if (!found && cardToCast.targetRange != null && cardToCast.targetRange.IncludeEmptyPoints)
-                        {
-                            targets.Add(new _prototype_EmptyPointData(pt));
-                        }
                     }
                 }
 
@@ -488,7 +484,16 @@ namespace TDG0407._prototype
                         {
                             filteredTargets = targets.Where(t => t != _controlledEntityView.EntityData).ToList();
                         }
-                        var actionParams = new _prototype_CardActionParams(cardToCast);
+                        _prototype_Point attackDir = _prototype_Point.zero;
+                        if (targetedPoint != default)
+                        {
+                            int dx = targetedPoint.x - _controlledEntityView.Point.x;
+                            int dy = targetedPoint.y - _controlledEntityView.Point.y;
+                            int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
+                            int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
+                            attackDir = new _prototype_Point(normX, normY);
+                        }
+                        var actionParams = new _prototype_CardActionParams(cardToCast, targetedPoint, attackDir, targetRange);
                         await action.ExecuteAction(_controlledEntityView.EntityData, filteredTargets, actionParams);
                     }
                 }

@@ -16,6 +16,7 @@ namespace TDG0407._prototype
         {
             if (context == null || context.target == null) return;
             if (context.target.health.Current <= 0) return;
+            if (context.source != null && context.source != context.target && context.source.IsSameSide(context.target)) return;
 
             List<(_prototype_EntityData, _prototype_IDamageModifier)> modifiers = new();
             //if (context.source != null) modifiers.AddRange((context.source, context.source.GetDamageModifiers()));
@@ -81,7 +82,11 @@ namespace TDG0407._prototype
             }
         }
 
-        public static async UniTask MoveEntity(_prototype_EntityView entityView, _prototype_PointView fromPointView, _prototype_PointView toPointView)
+        public static async UniTask MoveEntity(
+            _prototype_EntityView entityView, 
+            _prototype_PointView fromPointView, 
+            _prototype_PointView toPointView, 
+            bool rotateTowardsDestination = true)
         {
             if (entityView == null) throw new Exception("entityView is null.");
             if (fromPointView == null) throw new Exception("fromPointView is null.");
@@ -92,7 +97,7 @@ namespace TDG0407._prototype
                 throw new Exception($"Cannot move entity to point {toPointView.Point}. Point is occupied.");
 
             fromPointView.RemoveEntity(entityView);
-            await toPointView.PlaceEntity(entityView);
+            await toPointView.PlaceEntity(entityView, animate: true, rotateTowardsDestination: rotateTowardsDestination);
 
             _prototype_EventBus.Fire(new EntityMovedEvent(entityView.EntityData, fromPointView.Point, toPointView.Point));
 

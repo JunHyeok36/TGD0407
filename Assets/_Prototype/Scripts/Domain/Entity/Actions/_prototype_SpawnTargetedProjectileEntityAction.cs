@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace TDG0407._prototype
 {
@@ -51,43 +52,38 @@ namespace TDG0407._prototype
             var sourceView = _prototype_GridManager.Instance.GetPointView(source.point)?.PlacedEntityViews.Find(v => v.EntityData == source);
             bool hasFaced = false;
 
-            foreach (var target in targets)
+            async UniTask SpawnProjectileAtPoint(_prototype_Point targetPoint, _prototype_EntityData homingTarget)
             {
-                if (!hasFaced && sourceView != null && target != source)
+                if (!hasFaced && sourceView != null && targetPoint != source.point)
                 {
-                    sourceView.FaceTowards(target.point, 0.2f);
+                    sourceView.FaceTowards(targetPoint, 0.2f);
                     hasFaced = true;
                 }
+
                 // Calculate initial direction towards target
-                int dx = target.point.x - source.point.x;
-                int dy = target.point.y - source.point.y;
+                int dx = targetPoint.x - source.point.x;
+                int dy = targetPoint.y - source.point.y;
 
                 // Normalize direction
                 int dirX = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
                 int dirY = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
 
                 _prototype_Point direction = new(dirX, dirY);
-                if (direction == _prototype_Point.zero) continue;
+                if (direction == _prototype_Point.zero) return;
 
-                _prototype_EntityData homingTarget = null;
-                bool isTracking = (targetingType == _prototype_ProjectileTargetingType.Tracking);
-                if (isTracking && !(target is _prototype_EmptyPointData))
-                {
-                    homingTarget = target;
-                }
-
+                bool isTracking = (targetingType == _prototype_ProjectileTargetingType.Tracking) && (homingTarget != null);
                 bool stopAtTargetPoint = (endCondition == _prototype_ProjectileEndCondition.StopAtTargetPoint);
                 int travelDist = (endCondition == _prototype_ProjectileEndCondition.MaxDistance) ? maxDistance : -1;
 
                 var projectileData = projectileModel.CreateProjectileData(
                     mySide, direction, speed, source, onHitActions, 
                     homingAnglePerStep, homingTarget,
-                    isTracking, stopAtTargetPoint, target.point, travelDist
+                    isTracking, stopAtTargetPoint, targetPoint, travelDist
                 );
                 projectileData.point = source.point;
 
                 var spawnPointView = _prototype_GridManager.Instance.GetPointView(source.point);
-                if (spawnPointView == null) continue;
+                if (spawnPointView == null) return;
 
                 // Calculate spawn rotation and position BEFORE instantiate
                 Quaternion spawnRotation = Quaternion.identity;
@@ -111,6 +107,20 @@ namespace TDG0407._prototype
                 view.Initialize(projectileData, spawnPointView);
                 await spawnPointView.PlaceEntity(view, false);
                 await view.ExecuteFirstTickMovement();
+            }
+
+            var targetList = targets != null ? targets.Where(t => t != null).ToList() : new List<_prototype_EntityData>();
+            if (targetList.Count > 0)
+            {
+                foreach (var target in targetList)
+                {
+                    _prototype_EntityData homing = (targetingType == _prototype_ProjectileTargetingType.Tracking) ? target : null;
+                    await SpawnProjectileAtPoint(target.point, homing);
+                }
+            }
+            else if (@params is _prototype_CardActionParams cardParams && cardParams.TargetedPoint != default)
+            {
+                await SpawnProjectileAtPoint(cardParams.TargetedPoint, null);
             }
 
             await UniTask.Yield();

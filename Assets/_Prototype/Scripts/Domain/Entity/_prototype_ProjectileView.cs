@@ -9,6 +9,9 @@ namespace TDG0407._prototype
     {
         public _prototype_ProjectileData Data => _entityData as _prototype_ProjectileData;
 
+        [Header("Visual Resources")]
+        [SerializeField] private Material _lineMaterial;
+
         private LineRenderer _lineRenderer;
 
         private int _spawnTick = -1;
@@ -197,10 +200,9 @@ namespace TDG0407._prototype
                 _lineRenderer.useWorldSpace = true;
                 _lineRenderer.alignment = LineAlignment.TransformZ;
 
-                Material arrowMat = Resources.Load<Material>("Materials/ArrowMaterial");
-                if (arrowMat != null)
+                if (_lineMaterial != null)
                 {
-                    _lineRenderer.material = arrowMat;
+                    _lineRenderer.material = _lineMaterial;
                 }
                 else
                 {

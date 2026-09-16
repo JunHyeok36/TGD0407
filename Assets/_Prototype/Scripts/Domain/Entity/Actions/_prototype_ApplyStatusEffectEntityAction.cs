@@ -24,7 +24,10 @@ namespace TDG0407._prototype
 
             foreach (var target in targets)
             {
-                if (!hasFaced && sourceView != null && target != source)
+                if (target == null || target == source) continue;
+                if (source != null && source.IsSameSide(target)) continue;
+
+                if (!hasFaced && sourceView != null)
                 {
                     sourceView.FaceTowards(target.point, 0.2f);
                     hasFaced = true;
