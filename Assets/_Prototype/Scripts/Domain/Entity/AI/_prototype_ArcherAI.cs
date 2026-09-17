@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using System;
@@ -29,6 +30,15 @@ namespace TDG0407._prototype
                 TargetsPlayer = false,
                 Execute = async () => { await ExecuteAction(entityView); }
             };
+
+            var lifeData = entityView.EntityData as _prototype_LifeData;
+            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence)))
+            {
+                hasPlannedIntent = false;
+                plannedCard = null;
+                _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+            }
+
             return intent; // Archer never targets the player directly (it spawns projectiles)
         }
 
@@ -37,9 +47,16 @@ namespace TDG0407._prototype
             hasPlannedIntent = false;
             plannedCard = null;
             plannedTarget = entityView.Point;
+
+            _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
             
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
+
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            {
+                return;
+            }
 
             _prototype_Point myPoint = entityView.EntityData.point;
             _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
@@ -52,7 +69,7 @@ namespace TDG0407._prototype
                 for (int i = lifeData.cardDeck.handedCardDatas.Count - 1; i >= 0; i--)
                 {
                     var card = lifeData.cardDeck.handedCardDatas[i];
-                    bool isDash = card.actionList != null && card.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null;
+                    bool isDash = card is _prototype_BattleCardData bCard && bCard.actionList != null && bCard.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null;
                     if (isDash)
                     {
                         dashCount++;
@@ -67,7 +84,7 @@ namespace TDG0407._prototype
                 // 2. 플레이어와 거리가 있어 대시를 쓸 수 없는데 손패에 공격 카드가 없다면, 대시 카드를 버려 공격 카드를 뽑을 슬롯 확보
                 if (distToPlayer > optimalRangeMin - 1)
                 {
-                    bool hasAttackCard = lifeData.cardDeck.handedCardDatas.Exists(c => c.actionList == null || c.actionList.Find(a => a is _prototype_MoveToPointEntityAction) == null);
+                    bool hasAttackCard = lifeData.cardDeck.handedCardDatas.Exists(c => c is _prototype_BattleCardData bCard && (bCard.actionList == null || bCard.actionList.Find(a => a is _prototype_MoveToPointEntityAction) == null));
                     if (!hasAttackCard && lifeData.cardDeck.handedCardDatas.Count > 0)
                     {
                         var discardCard = lifeData.cardDeck.handedCardDatas[0];
@@ -85,8 +102,8 @@ namespace TDG0407._prototype
                 }
             }
 
-            _prototype_CardData dashCard = null;
-            _prototype_CardData attackCard = null;
+            _prototype_BattleCardData dashCard = null;
+            _prototype_BattleCardData attackCard = null;
 
             if (lifeData.cardDeck != null)
             {
@@ -94,24 +111,24 @@ namespace TDG0407._prototype
                 var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
                 foreach (var card in availableCards)
                 {
-                    if (card.currentCoolTicks <= 0)
+                    if (card is _prototype_BattleCardData battleCard && battleCard.currentCoolTicks <= 0)
                     {
-                        if (CanAffordCard(lifeData, card, allowMistake: true))
+                        if (CanAffordCard(lifeData, battleCard, allowMistake: true))
                         {
                             bool isDash = false;
-                            if (card.actionList != null && card.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null) isDash = true;
+                            if (battleCard.actionList != null && battleCard.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null) isDash = true;
 
                             if (isDash && distToPlayer <= optimalRangeMin - 1)
                             {
-                                dashCard = card;
+                                dashCard = battleCard;
                             }
                             else if (!isDash)
                             {
-                                if (card.castRange != null && card.castRange.GetValidCastPoints(myPoint).Contains(playerPoint))
+                                if (battleCard.castRange != null && battleCard.castRange.GetValidCastPoints(myPoint).Contains(playerPoint))
                                 {
                                     if (HasClearLineOfSight(myPoint, playerPoint))
                                     {
-                                        attackCard = card;
+                                        attackCard = battleCard;
                                     }
                                 }
                             }
@@ -164,7 +181,7 @@ namespace TDG0407._prototype
                 }
             }
 
-            _prototype_CardData cardToPlay = dashCard != null ? dashCard : attackCard;
+            _prototype_BattleCardData cardToPlay = dashCard != null ? dashCard : attackCard;
             if (cardToPlay != null)
             {
                 plannedCard = cardToPlay;
@@ -181,23 +198,25 @@ namespace TDG0407._prototype
                 // Show hazard markers visually on the target range
                 _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
                 bool showsHazard = false;
-                foreach (var action in plannedCard.actionList)
+                if (cardToPlay.actionList != null)
                 {
-                    if (action is _prototype_DamageEntityAction) showsHazard = true;
-                    if (action is _prototype_SpawnTargetedProjectileEntityAction || 
-                        action is _prototype_SpawnDirectionalProjectileEntityAction || 
-                        action is _prototype_ShootLaserEntityAction)
+                    foreach (var action in cardToPlay.actionList)
                     {
-                        showsHazard = false;
-                        break;
+                        if (action is _prototype_DamageEntityAction) showsHazard = true;
+                        if (action is _prototype_SpawnTargetedProjectileEntityAction || 
+                            action is _prototype_SpawnDirectionalProjectileEntityAction)
+                        {
+                            showsHazard = false;
+                            break;
+                        }
                     }
                 }
                 
                 if (showsHazard)
                 {
-                    if (plannedCard.targetRange != null)
+                    if (cardToPlay.targetRange != null)
                     {
-                        var targetPoints = plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget);
+                        var targetPoints = cardToPlay.targetRange.GetValidTargetPoints(myPoint, plannedTarget);
                         foreach (var pt in targetPoints)
                         {
                             _prototype_GridVisualManager.Instance.ShowHazard(pt, entityView);
@@ -223,6 +242,19 @@ namespace TDG0407._prototype
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
 
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+            {
+                hasPlannedIntent = false;
+                plannedCard = null;
+                return;
+            }
+
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            {
+                hasPlannedIntent = false;
+                plannedCard = null;
+            }
+
             if (await HandleStatusEffectsOverride(entityView))
             {
                 hasPlannedIntent = false;
@@ -237,13 +269,9 @@ namespace TDG0407._prototype
             bool hasActed = false;
             bool cardPlayed = false;
 
-            if (hasPlannedIntent && plannedCard != null)
+            if (hasPlannedIntent && plannedCard is _prototype_BattleCardData battleCard)
             {
-                if (lifeData.HasStatusEffect(_prototype_StatusType.Silence))
-                {
-                    // Can't cast card
-                }
-                else if (!CanAffordCard(lifeData, plannedCard, allowMistake: true))
+                if (!CanAffordCard(lifeData, battleCard, allowMistake: true))
                 {
                     // 녹다운 방지 또는 자원 부족으로 시전 취소 -> 휴식/이동으로 전환
                     hasPlannedIntent = false;
@@ -259,56 +287,53 @@ namespace TDG0407._prototype
                         if (UnityEngine.Random.value < destroyProb) destroyed = true;
                     }
 
-                    if (plannedCard.sourceProvider == null)
+                    if (battleCard.sourceProvider == null)
                     {
-                        lifeData.cardDeck.handedCardDatas.Remove(plannedCard);
-                        if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(plannedCard);
-                        else lifeData.cardDeck.discardedCardDatas.Add(plannedCard);
+                        lifeData.cardDeck.handedCardDatas.Remove(battleCard);
+                        if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(battleCard);
+                        else lifeData.cardDeck.discardedCardDatas.Add(battleCard);
                     }
 
-                    var cost = plannedCard.costValue;
+                    var cost = battleCard.costValue;
                     if (cost != null)
                     {
                         if (cost.costType == _prototype_CostType.FixedStamina) lifeData.stamina.Current -= (int)cost.value;
                         else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= (int)cost.value;
                     }
 
-                    if (!destroyed && plannedCard.actionList != null)
-                {
-                    List<_prototype_Point> targetRange = plannedCard.targetRange != null 
-                        ? plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
-                        : new List<_prototype_Point> { plannedTarget };
-
-                    List<_prototype_EntityData> targets = new();
-                    foreach (var pt in targetRange)
+                    if (!destroyed && battleCard.actionList != null)
                     {
-                        var pointView = _prototype_GridManager.Instance.GetPointView(pt);
-                        if (pointView != null)
+                        List<_prototype_Point> targetRange = battleCard.targetRange != null 
+                            ? battleCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
+                            : new List<_prototype_Point> { plannedTarget };
+
+                        List<_prototype_EntityData> targets = new();
+                        foreach (var pt in targetRange)
                         {
-                            foreach (var ev in pointView.PlacedEntityViews)
+                            var pointView = _prototype_GridManager.Instance.GetPointView(pt);
+                            if (pointView != null)
                             {
-                                targets.Add(ev.EntityData);
+                                foreach (var ev in pointView.PlacedEntityViews)
+                                {
+                                    targets.Add(ev.EntityData);
+                                }
                             }
                         }
-                    }
+                        targets = targets.Distinct().ToList();
 
-                    _prototype_Point attackDir = _prototype_Point.zero;
-                    if (plannedTarget != default)
-                    {
                         int dx = plannedTarget.x - entityView.Point.x;
                         int dy = plannedTarget.y - entityView.Point.y;
                         int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
                         int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
-                        attackDir = new _prototype_Point(normX, normY);
-                    }
-                    var cardParams = new _prototype_CardActionParams(plannedCard, plannedTarget, attackDir, targetRange);
+                        _prototype_Point attackDir = new _prototype_Point(normX, normY);
+                        var cardParams = new _prototype_CardActionParams(battleCard, plannedTarget, attackDir, targetRange);
 
-                    foreach (var action in plannedCard.actionList)
-                    {
-                        var filteredTargets = targets;
-                        if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
-                        await action.ExecuteAction(entityView.EntityData, filteredTargets, cardParams);
-                    }
+                        foreach (var action in battleCard.actionList)
+                        {
+                            var filteredTargets = targets;
+                            if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
+                            await action.ExecuteAction(entityView.EntityData, filteredTargets, cardParams);
+                        }
                     }
                     hasActed = true;
                     cardPlayed = true;
@@ -331,9 +356,9 @@ namespace TDG0407._prototype
                         var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
                         foreach (var card in availableCards)
                         {
-                            if (card.currentCoolTicks <= 0)
+                            if (card is _prototype_BattleCardData bc && bc.currentCoolTicks <= 0)
                             {
-                                int sp = GetCardStaminaCost(lifeData, card);
+                                int sp = GetCardStaminaCost(lifeData, bc);
                                 if (sp > 0) minSpNeeded = Math.Min(minSpNeeded, sp);
                                 else minSpNeeded = 0;
                             }
@@ -412,8 +437,7 @@ namespace TDG0407._prototype
 
                 if (!hasActed)
                 {
-                    lifeData.stamina.Current = Mathf.Min(lifeData.stamina.Max, lifeData.stamina.Current + lifeData.lifeStat.staminaRecoverAmount);
-                    entityView.transform.DOPunchScale(new Vector3(0.1f, -0.1f, 0), 0.2f, 1, 0f);
+                    ExecuteEnemyRest(entityView);
                 }
 
                 // 카드를 사용하지 못했다면 (이동만 했거나 휴식했을 때), 손패 순환을 위해 가장 쓸모없는 카드 1장 버리기
@@ -422,23 +446,17 @@ namespace TDG0407._prototype
                     _prototype_CardData cardToDiscard = null;
                     if (distToPlayer > optimalRangeMin - 1)
                     {
-                        cardToDiscard = lifeData.cardDeck.handedCardDatas.Find(c => c.actionList != null && c.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null);
-                    }
-
-                    if (cardToDiscard == null)
-                    {
-                        cardToDiscard = lifeData.cardDeck.handedCardDatas[0];
-                        foreach (var c in lifeData.cardDeck.handedCardDatas)
-                        {
-                            if (c.currentCoolTicks > cardToDiscard.currentCoolTicks)
-                                cardToDiscard = c;
-                        }
+                        cardToDiscard = lifeData.cardDeck.handedCardDatas.Find(c => c is _prototype_BattleCardData bc && bc.actionList != null && bc.actionList.Find(a => a is _prototype_MoveToPointEntityAction) != null);
                     }
 
                     if (cardToDiscard != null)
                     {
                         lifeData.cardDeck.handedCardDatas.Remove(cardToDiscard);
                         lifeData.cardDeck.discardedCardDatas.Add(cardToDiscard);
+                    }
+                    else
+                    {
+                        lifeData.cardDeck.DiscardHighestCooldownCard();
                     }
                 }
             }

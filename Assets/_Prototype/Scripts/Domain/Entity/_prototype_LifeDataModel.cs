@@ -21,6 +21,7 @@ namespace TDG0407._prototype
                 health = health.Clone(),
                 stamina = stamina.Clone(),
                 point = point,
+                size = size,
                 side = _prototype_Side.None,
                 lifeStat = new _prototype_LifeStat(lifeStat),
                 cardDeck = cardDeck != null ? cardDeck.CreateCardDeck() : new(),
@@ -28,6 +29,7 @@ namespace TDG0407._prototype
                 aiLogic = aiLogic?.Clone(),
                 statusEffects = new(),
                 movementType = movementType,
+                heightBounds = heightBounds,
             };
         }
 

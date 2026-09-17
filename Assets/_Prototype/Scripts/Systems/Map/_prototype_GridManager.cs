@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TDG0407._prototype
@@ -55,21 +56,21 @@ namespace TDG0407._prototype
         public List<_prototype_PointView> PointViews { get { return pointViews; } }
         public List<_prototype_EntityView> GetAllEntityViews()
         {
-            List<_prototype_EntityView> entityViews = new();
-            if (pointViewMap == null) return entityViews;
+            HashSet<_prototype_EntityView> entityViews = new();
+            if (pointViewMap == null) return entityViews.ToList();
             foreach (var pointView in pointViewMap.Values)
             {
                 if (pointView.PlacedEntityViews != null)
                 {
-                    entityViews.AddRange(pointView.PlacedEntityViews);
+                    foreach(var view in pointView.PlacedEntityViews) entityViews.Add(view);
                 }
             }
-            return entityViews;
+            return entityViews.ToList();
         }
         public List<_prototype_LifeView> GetAllLifeViews()
         {
-            List<_prototype_LifeView> lifeViews = new();
-            if (pointViewMap == null) return lifeViews;
+            HashSet<_prototype_LifeView> lifeViews = new();
+            if (pointViewMap == null) return lifeViews.ToList();
             foreach (var pointView in pointViewMap.Values)
             {
                 if (pointView.PlacedEntityViews != null)
@@ -81,7 +82,40 @@ namespace TDG0407._prototype
                     }
                 }
             }
-            return lifeViews;
+            return lifeViews.ToList();
+        }
+
+        public List<_prototype_PointView> GetFootprint(_prototype_Point point, _prototype_Point size)
+        {
+            if (size.x <= 1 && size.y <= 1)
+            {
+                var pv = GetPointView(point);
+                return pv != null ? new List<_prototype_PointView> { pv } : null;
+            }
+
+            List<_prototype_PointView> footprint = new();
+            for (int x = 0; x < size.x; x++)
+            {
+                for (int y = 0; y < size.y; y++)
+                {
+                    var pv = GetPointView(point + new _prototype_Point(x, y));
+                    if (pv == null) return null; // out of bounds footprint
+                    footprint.Add(pv);
+                }
+            }
+            return footprint;
+        }
+
+        public bool CanPlaceEntityFootprint(_prototype_EntityData entityData, _prototype_Point point)
+        {
+            if (entityData == null) return false;
+            var fp = GetFootprint(point, entityData.size);
+            if (fp == null) return false;
+            foreach (var pv in fp)
+            {
+                if (!pv.CanPlaceEntitySingleTile(entityData)) return false;
+            }
+            return true;
         }
 
         private void Awake()
@@ -115,10 +149,45 @@ namespace TDG0407._prototype
                 if (point.x > maxPoint.x) maxPoint.x = point.x;
                 if (point.y > maxPoint.y) maxPoint.y = point.y;
             }
+
+            foreach (var entityView in GetAllEntityViews())
+            {
+                if (entityView != null && entityView.EntityData != null && (entityView.EntityData.size.x > 1 || entityView.EntityData.size.y > 1))
+                {
+                    var fp = GetFootprint(entityView.EntityData.point, entityView.EntityData.size);
+                    if (fp != null)
+                    {
+                        foreach (var pv in fp)
+                        {
+                            if (!pv.PlacedEntityViews.Contains(entityView))
+                            {
+                                pv.PlacedEntityViews.Add(entityView);
+                                pv.PointData.placedEntityDatas.Add(entityView.EntityData);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public _prototype_PointView GetPointView(_prototype_Point point)
         {
+            if (pointViewMap == null)
+            {
+                pointViewMap = new();
+                if (pointViews != null)
+                {
+                    foreach (var pv in pointViews)
+                    {
+                        if (pv != null)
+                        {
+                            Vector3 pos = pv.transform.localPosition;
+                            _prototype_Point pt = new(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.z));
+                            pointViewMap[pt] = pv;
+                        }
+                    }
+                }
+            }
             if (pointViewMap != null && pointViewMap.TryGetValue(point, out var pointView)) return pointView;
             return null;
         }
@@ -144,13 +213,45 @@ namespace TDG0407._prototype
             Node endNode = new(endPointView);
             openList.Add(startNode);
 
-            Func<_prototype_PointView, bool> CheckNode = null;
-            if (checkEntityPlaceableInTerminatedPoints)
-                CheckNode = (pointView) => pointView == startPointView || pointView == endPointView || pointView.CanPlaceEntity(entityData);
-            else
-                CheckNode = (pointView) => pointView.CanPlaceEntity(entityData);
+            Func<_prototype_PointView, bool> CheckNode = (pointView) =>
+            {
+                if (entityData != null && (entityData.size.x > 1 || entityData.size.y > 1))
+                {
+                    var fp = GetFootprint(pointView.Point, entityData.size);
+                    if (fp == null) return false;
+                    foreach (var pv in fp)
+                    {
+                        bool valid = pv == startPointView;
+                        if (checkEntityPlaceableInTerminatedPoints && pointView == endPointView && pv == endPointView) valid = true;
+                        if (!valid && !pv.CanPlaceEntitySingleTile(entityData)) return false;
+                    }
+                    return true;
+                }
+                else
+                {
+                    if (checkEntityPlaceableInTerminatedPoints)
+                        return pointView == startPointView || pointView == endPointView || pointView.CanPlaceEntitySingleTile(entityData);
+                    else
+                        return pointView.CanPlaceEntitySingleTile(entityData);
+                }
+            };
 
-            Func<_prototype_PointView, bool> IsSafeNode = (pointView) => hazardousPoints == null || !hazardousPoints.Contains(pointView.Point) || pointView == startPointView;
+            Func<_prototype_PointView, bool> IsSafeNode = (pointView) =>
+            {
+                if (hazardousPoints == null) return true;
+                if (entityData != null && (entityData.size.x > 1 || entityData.size.y > 1))
+                {
+                    var fp = GetFootprint(pointView.Point, entityData.size);
+                    if (fp != null)
+                    {
+                        foreach (var pv in fp)
+                        {
+                            if (hazardousPoints.Contains(pv.Point) && pv != startPointView) return false;
+                        }
+                    }
+                }
+                return !hazardousPoints.Contains(pointView.Point) || pointView == startPointView;
+            };
 
             while (openList.Count > 0)
             {
@@ -228,6 +329,7 @@ namespace TDG0407._prototype
         // 맵 밖으로 벗어났는지 확인하는 함수
         public bool IsWithinBounds(_prototype_Point p) 
         {
+            if (pointViewMap == null) return true;
             return pointViewMap.ContainsKey(p);
         }
         // 인접한 4방향 타일을 가져오는 함수

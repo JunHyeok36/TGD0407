@@ -15,7 +15,7 @@ namespace TDG0407._prototype
         public static async UniTask ApplyDamage(_prototype_DamageContext context)
         {
             if (context == null || context.target == null) return;
-            if (context.target.health.Current <= 0) return;
+            if (context.target.IsDead) return;
             if (context.source != null && context.source != context.target && context.source.IsSameSide(context.target)) return;
 
             List<(_prototype_EntityData, _prototype_IDamageModifier)> modifiers = new();
@@ -37,29 +37,15 @@ namespace TDG0407._prototype
 
             context.finalDamage = await context.target.TakeDamage(context);
 
-            if (context.source != null && context.target != null && context.modifiedDamage > 0)
+            if (context.target != null && context.modifiedDamage > 0)
             {
-                var sourcePointView = _prototype_GridManager.Instance?.GetPointView(context.source.point);
                 var targetPointView = _prototype_GridManager.Instance?.GetPointView(context.target.point);
-                
-                if (sourcePointView != null && targetPointView != null)
+                if (targetPointView != null)
                 {
-                    var sourceView = sourcePointView.PlacedEntityViews.FirstOrDefault(v => v.EntityData == context.source);
                     var targetView = targetPointView.PlacedEntityViews.FirstOrDefault(v => v.EntityData == context.target);
-
-                    if (sourceView != null && targetView != null)
+                    if (targetView != null)
                     {
-                        var hitTask = targetView.PlayHitAnimation();
-
-                        if (sourceView is _prototype_LifeView lifeView)
-                        {
-                            Vector3 dir = (targetView.transform.position - sourceView.transform.position).normalized;
-                            await UniTask.WhenAll(lifeView.PlayUniqueAnimation(_prototype_EntityAnimationType.Attack, dir), hitTask);
-                        }
-                        else
-                        {
-                            await hitTask;
-                        }
+                        await targetView.PlayHitAnimation();
                     }
                 }
             }
@@ -75,9 +61,14 @@ namespace TDG0407._prototype
                     context
                 ));
 
-                if (context.target.health.Current <= 0)
+                if (context.target.IsDead && context.target is not _prototype_LifeData)
                 {
                     _prototype_EventBus.Fire(new EntityDiedEvent(context.target, context.source));
+                }
+
+                if (context.target.TryGetComponent<_prototype_TrapComponentData>(out var trap) && trap.triggerOnDamage && !trap.isDisarmed)
+                {
+                    await trap.TriggerTrap(context.source);
                 }
             }
         }
@@ -103,6 +94,26 @@ namespace TDG0407._prototype
 
             if (entityView.EntityData is _prototype_LifeData lifeData)
             {
+                var traps = new List<_prototype_TrapComponentData>();
+                foreach (var v in toPointView.PlacedEntityViews)
+                {
+                    if (v != null && v.EntityData != null && v.EntityData.TryGetComponent<_prototype_TrapComponentData>(out var t))
+                    {
+                        if (!t.isDisarmed && t.triggerOnStep)
+                        {
+                            if (lifeData.heightBounds.Overlaps(v.EntityData.heightBounds))
+                            {
+                                traps.Add(t);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var trap in traps)
+                {
+                    await trap.TriggerTrap(lifeData);
+                }
+
                 var projectiles = toPointView.PlacedEntityViews
                     .Where(v => v.EntityData is _prototype_ProjectileData)
                     .ToList();
@@ -112,11 +123,24 @@ namespace TDG0407._prototype
                     if (projView.EntityData is _prototype_ProjectileData projData)
                     {
                         if (lifeData.side != _prototype_Side.None && lifeData.side == projData.side) continue;
+                        if (!lifeData.heightBounds.Overlaps(projData.heightBounds)) continue;
 
                         if (projView is _prototype_ProjectileView pv)
                         {
                             await pv.HitTarget(lifeData);
                         }
+                    }
+                }
+
+                var areaEffects = toPointView.PlacedEntityViews
+                    .OfType<_prototype_AreaEffectView>()
+                    .ToList();
+
+                foreach (var aev in areaEffects)
+                {
+                    if (aev != null && aev.EntityData != null && lifeData.heightBounds.Overlaps(aev.EntityData.heightBounds))
+                    {
+                        await aev.OnEntityEntered(lifeData);
                     }
                 }
             }

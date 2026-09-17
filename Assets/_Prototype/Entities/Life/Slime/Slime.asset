@@ -45,10 +45,10 @@ MonoBehaviour:
     healthRecoverAmount: 0
     staminaRecoverAmount: 3
     knockbackResist: 0
-    deathResist: 0
+    deathResistProp: 0
     dodgeProb: 0
-    criticalProb: 0.05
-    criticalWeight: 50
+    criticalProb: 0.01
+    criticalWeight: 10
   cardDeck:
     allCardDatas:
     - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}

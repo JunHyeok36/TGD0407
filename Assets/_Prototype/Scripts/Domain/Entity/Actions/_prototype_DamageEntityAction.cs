@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace TDG0407._prototype
 {
@@ -17,6 +19,7 @@ namespace TDG0407._prototype
             IEnumerable<_prototype_EntityData> targets,
             _prototype_IActionParams @params)
         {
+            if (source == null) return;
             var sourceLife = source as _prototype_LifeData;
             float calculatedDamage = 0f;
 
@@ -30,10 +33,10 @@ namespace TDG0407._prototype
                         switch (coeff.stat)
                         {
                             case _prototype_Stat.RedPower:
-                                statValue = sourceLife.lifeStat.redPower;
+                                statValue = sourceLife.RedPower;
                                 break;
                             case _prototype_Stat.BluePower:
-                                statValue = sourceLife.lifeStat.bluePower;
+                                statValue = sourceLife.BluePower;
                                 break;
                             case _prototype_Stat.Health: statValue = sourceLife.health.Current; break;
                             case _prototype_Stat.Stamina: statValue = sourceLife.stamina.Current; break;
@@ -45,58 +48,140 @@ namespace TDG0407._prototype
             }
             int baseDamage = (int)calculatedDamage;
 
-            List<UniTask> tasks = new();
-
             var sourceView = _prototype_GridManager.Instance?.GetPointView(source.point)?.PlacedEntityViews.Find(v => v.EntityData == source);
-            bool hasFaced = false;
+            var cardParams = @params as _prototype_CardActionParams;
 
-            foreach (var target in targets)
+            // 1. 공격 시도(Action Execution)에 따른 공격 모션 및 방향 회전 (피해 유무와 무관하게 실행)
+            UniTask attackAnimTask = UniTask.CompletedTask;
+            if (cardParams != null && sourceView != null)
             {
-                if (target == null || target == source) continue;
+                bool hasTargetPoint = false;
+                _prototype_Point targetPoint = _prototype_Point.zero;
 
-                // 팀킬 및 아군 투사체 피격 방지 (같은 side를 갖는 엔티티/투사체는 공격 대상에서 제외)
-                if (source != null && source.IsSameSide(target))
+                if (cardParams.TargetPoints != null && cardParams.TargetPoints.Count > 0)
                 {
-                    continue;
+                    targetPoint = cardParams.TargetPoints[0];
+                    hasTargetPoint = true;
+                }
+                else if (cardParams.Direction != _prototype_Point.zero)
+                {
+                    targetPoint = source.point + cardParams.Direction;
+                    hasTargetPoint = true;
+                }
+                else if (cardParams.TargetedPoint != source.point)
+                {
+                    targetPoint = cardParams.TargetedPoint;
+                    hasTargetPoint = true;
                 }
 
-                if (!hasFaced && sourceView != null)
+                if (!hasTargetPoint && targets != null)
                 {
-                    sourceView.FaceTowards(target.point, 0.2f);
-                    hasFaced = true;
-                }
-
-                var targetLife = target as _prototype_LifeData;
-
-                // 크리티컬 판정 및 데미지 계산
-                bool isCritical = false;
-                int currentDamage = baseDamage;
-                if (sourceLife != null && sourceLife.lifeStat.criticalProb > .0f)
-                {
-                    if (UnityEngine.Random.value < sourceLife.lifeStat.criticalProb)
+                    var firstTarget = targets.FirstOrDefault(t => t != null && t != source);
+                    if (firstTarget != null)
                     {
-                        isCritical = true;
-                        float critMultiplier = 1.5f;
-                        if (sourceLife.lifeStat.criticalWeight > 0)
-                        {
-                            critMultiplier = 1f + sourceLife.lifeStat.criticalWeight / 100f;
-                        }
-                        currentDamage = UnityEngine.Mathf.RoundToInt(baseDamage * critMultiplier);
+                        targetPoint = firstTarget.point;
+                        hasTargetPoint = true;
                     }
                 }
 
-                var damageContext = new _prototype_DamageContext(
-                    source,
-                    target,
-                    damageType,
-                    baseDamage,
-                    currentDamage,
-                    isCritical
-                );
-                tasks.Add(_prototype_InteractionManager.ApplyDamage(damageContext));
+                if (hasTargetPoint && targetPoint != source.point)
+                {
+                    sourceView.FaceTowards(targetPoint, 0.2f);
+                }
+                else if (cardParams.Direction != _prototype_Point.zero)
+                {
+                    sourceView.FaceTowards(source.point + cardParams.Direction, 0.2f);
+                }
+
+                Vector3 attackDirWorld = Vector3.zero;
+                if (hasTargetPoint && targetPoint != source.point)
+                {
+                    var targetPointView = _prototype_GridManager.Instance?.GetPointView(targetPoint);
+                    if (targetPointView != null)
+                    {
+                        attackDirWorld = targetPointView.transform.position - sourceView.transform.position;
+                        attackDirWorld.y = 0;
+                    }
+                }
+                else if (cardParams.Direction != _prototype_Point.zero)
+                {
+                    var dirPointView = _prototype_GridManager.Instance?.GetPointView(source.point + cardParams.Direction);
+                    if (dirPointView != null)
+                    {
+                        attackDirWorld = dirPointView.transform.position - sourceView.transform.position;
+                        attackDirWorld.y = 0;
+                    }
+                }
+
+                if (attackDirWorld.sqrMagnitude > 0.001f)
+                {
+                    attackDirWorld.Normalize();
+                }
+                else
+                {
+                    attackDirWorld = sourceView.transform.forward;
+                    attackDirWorld.y = 0;
+                    if (attackDirWorld.sqrMagnitude > 0.001f)
+                        attackDirWorld.Normalize();
+                    else
+                        attackDirWorld = Vector3.forward;
+                }
+
+                if (sourceView is _prototype_LifeView lifeView)
+                {
+                    attackAnimTask = lifeView.PlayUniqueAnimation(_prototype_EntityAnimationType.Attack, attackDirWorld);
+                }
             }
 
-            await UniTask.WhenAll(tasks);
+            // 2. 피격 대상들에 대한 데미지 적용
+            List<UniTask> damageTasks = new();
+            if (targets != null)
+            {
+                foreach (var target in targets)
+                {
+                    if (target == null || target == source) continue;
+
+                    // 팀킬 및 아군 투사체 피격 방지 (같은 side를 갖는 엔티티/투사체는 공격 대상에서 제외)
+                    if (source.IsSameSide(target))
+                    {
+                        continue;
+                    }
+
+                    // 크리티컬 판정 및 데미지 계산
+                    bool isCritical = false;
+                    int currentDamage = baseDamage;
+                    if (sourceLife != null && sourceLife.lifeStat.criticalProb > .0f)
+                    {
+                        if (UnityEngine.Random.value < sourceLife.lifeStat.criticalProb)
+                        {
+                            isCritical = true;
+                            float critMultiplier = 1.5f;
+                            critMultiplier = 1f + sourceLife.lifeStat.criticalWeight / 100f;
+                            currentDamage = UnityEngine.Mathf.RoundToInt(baseDamage * critMultiplier);
+                        }
+                    }
+
+                    var damageContext = new _prototype_DamageContext(
+                        source,
+                        target,
+                        damageType,
+                        baseDamage,
+                        currentDamage,
+                        isCritical
+                    );
+                    damageTasks.Add(_prototype_InteractionManager.ApplyDamage(damageContext));
+                }
+            }
+
+            // 3. 공격 모션과 데미지 태스크 모두 완료될 때까지 대기
+            if (damageTasks.Count > 0)
+            {
+                await UniTask.WhenAll(attackAnimTask, UniTask.WhenAll(damageTasks));
+            }
+            else
+            {
+                await attackAnimTask;
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using DG.Tweening;
@@ -42,10 +43,19 @@ namespace TDG0407._prototype
             var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
             if (playerView == null || playerView.EntityData.health.Current <= 0) return intent;
 
-            if (hasPlannedIntent && plannedCard != null)
+            var lifeData = entityView.EntityData as _prototype_LifeData;
+            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence)))
             {
-                var targetPoints = plannedCard.targetRange != null 
-                    ? plannedCard.targetRange.GetValidTargetPoints(entityView.Point, plannedTarget) 
+                hasPlannedIntent = false;
+                plannedCard = null;
+                _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+                return intent;
+            }
+
+            if (hasPlannedIntent && plannedCard is _prototype_BattleCardData plannedBattleCard)
+            {
+                var targetPoints = plannedBattleCard.targetRange != null 
+                    ? plannedBattleCard.targetRange.GetValidTargetPoints(entityView.Point, plannedTarget) 
                     : new List<_prototype_Point> { plannedTarget };
                 
                 if (targetPoints.Contains(playerView.Point))
@@ -67,45 +77,36 @@ namespace TDG0407._prototype
 
             if (_currentIdleTicks > 0) return;
 
+            var lifeData = entityView.EntityData as _prototype_LifeData;
+            if (lifeData == null) return;
+
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            {
+                return;
+            }
+
             var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
             if (playerView == null || playerView.EntityData.health.Current <= 0) return;
 
             _prototype_Point playerCurrentPoint = playerView.Point;
             _prototype_Point myPoint = entityView.Point;
 
-            var lifeData = entityView.EntityData as _prototype_LifeData;
-            if (lifeData != null && lifeData.cardDeck != null)
+            if (lifeData.cardDeck != null)
             {
-                _prototype_CardData cardToPlay = null;
+                _prototype_BattleCardData cardToPlay = null;
                 var lifeView = entityView as _prototype_LifeView;
                 var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
                 
                 foreach (var card in availableCards)
                 {
-                    if (card.currentCoolTicks <= 0)
+                    if (card is _prototype_BattleCardData battleCard && battleCard.currentCoolTicks <= 0)
                     {
-                        if (CanAffordCard(lifeData, card, allowMistake: true))
+                        if (CanAffordCard(lifeData, battleCard, allowMistake: true))
                         {
-                            bool inRange = false;
-                            if (card.castRange != null)
-                            {
-                                var validCastPoints = card.castRange.GetValidCastPoints(myPoint);
-                                if (validCastPoints.Contains(playerCurrentPoint))
-                                {
-                                    inRange = true;
-                                }
-                            }
-                            else
-                            {
-                                if (Math.Abs(myPoint.x - playerCurrentPoint.x) + Math.Abs(myPoint.y - playerCurrentPoint.y) == 1)
-                                {
-                                    inRange = true;
-                                }
-                            }
-
+                            bool inRange = IsInRangeOfTarget(entityView, playerCurrentPoint, battleCard);
                             if (inRange)
                             {
-                                cardToPlay = card;
+                                cardToPlay = battleCard;
                                 break;
                             }
                         }
@@ -119,23 +120,25 @@ namespace TDG0407._prototype
                     hasPlannedIntent = true;
 
                     bool showsHazard = false;
-                    foreach (var action in plannedCard.actionList)
+                    if (cardToPlay.actionList != null)
                     {
-                        if (action is _prototype_DamageEntityAction) showsHazard = true;
-                        if (action is _prototype_SpawnTargetedProjectileEntityAction ||
-                            action is _prototype_SpawnDirectionalProjectileEntityAction ||
-                            action is _prototype_ShootLaserEntityAction)
+                        foreach (var action in cardToPlay.actionList)
                         {
-                            showsHazard = false;
-                            break;
+                            if (action is _prototype_DamageEntityAction) showsHazard = true;
+                            if (action is _prototype_SpawnTargetedProjectileEntityAction ||
+                                action is _prototype_SpawnDirectionalProjectileEntityAction)
+                            {
+                                showsHazard = false;
+                                break;
+                            }
                         }
                     }
                     
                     if (showsHazard)
                     {
-                        if (plannedCard.targetRange != null)
+                        if (cardToPlay.targetRange != null)
                         {
-                            var targetPoints = plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget);
+                            var targetPoints = cardToPlay.targetRange.GetValidTargetPoints(myPoint, plannedTarget);
                             foreach (var pt in targetPoints)
                             {
                                 _prototype_GridVisualManager.Instance.ShowHazard(pt, entityView);
@@ -188,15 +191,24 @@ namespace TDG0407._prototype
                 }
             }
 
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+            {
+                hasPlannedIntent = false;
+                plannedCard = null;
+                return;
+            }
+
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            {
+                hasPlannedIntent = false;
+                plannedCard = null;
+            }
+
             bool hasActed = false;
 
             if (hasPlannedIntent && plannedCard != null)
             {
-                if (lifeData.HasStatusEffect(_prototype_StatusType.Silence))
-                {
-                    // Can't cast
-                }
-                else if (!CanAffordCard(lifeData, plannedCard, allowMistake: true))
+                if (!CanAffordCard(lifeData, plannedCard, allowMistake: true))
                 {
                     // 녹다운 방지 또는 자원 부족으로 시전 취소 -> 휴식/추적으로 전환
                     hasPlannedIntent = false;
@@ -204,64 +216,64 @@ namespace TDG0407._prototype
                 }
                 else
                 {
-                    var burning = lifeData.GetStatusEffect(_prototype_StatusType.Burning);
-                    bool destroyed = false;
-                    if (burning != null)
+                    if (plannedCard is _prototype_BattleCardData battleCardToPlay)
                     {
-                        float destroyProb = burning.value / (burning.value + 200f);
-                        if (UnityEngine.Random.value < destroyProb) destroyed = true;
-                    }
-
-                    var cost = plannedCard.costValue;
-                    if (cost != null)
-                    {
-                        int amount = (int)cost.value;
-                        if (cost.costType == _prototype_CostType.FixedStamina) lifeData.stamina.Current -= amount;
-                        else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= amount;
-                    }
-
-                    if (plannedCard.sourceProvider == null)
-                    {
-                        lifeData.cardDeck.handedCardDatas.Remove(plannedCard);
-                        if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(plannedCard);
-                        else lifeData.cardDeck.discardedCardDatas.Add(plannedCard);
-                    }
-
-                    if (!destroyed && plannedCard.actionList != null)
-                    {
-                        List<_prototype_Point> targetRange = plannedCard.targetRange != null 
-                            ? plannedCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
-                            : new List<_prototype_Point> { plannedTarget };
-
-                        List<_prototype_EntityData> targets = new();
-                        foreach (var pt in targetRange)
+                        bool destroyed = false;
+                        var burning = lifeData.GetStatusEffect(_prototype_StatusType.Burning);
+                        if (burning != null)
                         {
-                            var pointView = _prototype_GridManager.Instance.GetPointView(pt);
-                            if (pointView != null)
-                            {
-                                foreach (var ev in pointView.PlacedEntityViews)
-                                {
-                                    targets.Add(ev.EntityData);
-                                }
-                            }
+                            float destroyProb = burning.value / (burning.value + 200f);
+                            if (UnityEngine.Random.value < destroyProb) destroyed = true;
                         }
 
-                        _prototype_Point attackDir = _prototype_Point.zero;
-                        if (plannedTarget != default)
+                        var cost = battleCardToPlay.costValue;
+                        if (cost != null)
                         {
+                            int amount = (int)cost.value;
+                            if (cost.costType == _prototype_CostType.FixedStamina) lifeData.stamina.Current -= amount;
+                            else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= amount;
+                        }
+
+                        if (battleCardToPlay.sourceProvider == null)
+                        {
+                            lifeData.cardDeck.handedCardDatas.Remove(battleCardToPlay);
+                            if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(battleCardToPlay);
+                            else lifeData.cardDeck.discardedCardDatas.Add(battleCardToPlay);
+                        }
+
+                        if (!destroyed && battleCardToPlay.actionList != null)
+                        {
+                            List<_prototype_Point> targetRange = battleCardToPlay.targetRange != null 
+                                ? battleCardToPlay.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
+                                : new List<_prototype_Point> { plannedTarget };
+
+                            List<_prototype_EntityData> targets = new();
+                            foreach (var pt in targetRange)
+                            {
+                                var pointView = _prototype_GridManager.Instance.GetPointView(pt);
+                                if (pointView != null)
+                                {
+                                    foreach (var ev in pointView.PlacedEntityViews)
+                                    {
+                                        targets.Add(ev.EntityData);
+                                    }
+                                }
+                            }
+                            targets = targets.Distinct().ToList();
+
                             int dx = plannedTarget.x - entityView.Point.x;
                             int dy = plannedTarget.y - entityView.Point.y;
                             int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
                             int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
-                            attackDir = new _prototype_Point(normX, normY);
-                        }
-                        var cardParams = new _prototype_CardActionParams(plannedCard, plannedTarget, attackDir, targetRange);
+                            _prototype_Point attackDir = new _prototype_Point(normX, normY);
+                            var cardParams = new _prototype_CardActionParams(battleCardToPlay, plannedTarget, attackDir, targetRange);
 
-                        foreach (var action in plannedCard.actionList)
-                        {
-                            var filteredTargets = targets;
-                            if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
-                            await action.ExecuteAction(entityView.EntityData, filteredTargets, cardParams);
+                            foreach (var action in battleCardToPlay.actionList)
+                            {
+                                var filteredTargets = targets;
+                                if (!action.includeSelf) filteredTargets = targets.FindAll(t => t != entityView.EntityData);
+                                await action.ExecuteAction(entityView.EntityData, filteredTargets, cardParams);
+                            }
                         }
                     }
                 }
@@ -289,16 +301,16 @@ namespace TDG0407._prototype
                         var availableCards = lifeView != null ? lifeView.GetAvailableCards() : lifeData.cardDeck.handedCardDatas;
                         foreach (var card in availableCards)
                         {
-                            if (card.currentCoolTicks <= 0) // 쿨타임이 지난 카드만 고려
+                            if (card is _prototype_BattleCardData bc && bc.currentCoolTicks <= 0) // 쿨타임이 지난 카드만 고려
                             {
-                                int sp = GetCardStaminaCost(lifeData, card);
+                                int sp = GetCardStaminaCost(lifeData, bc);
                                 if (sp > 0) minSpNeeded = Math.Min(minSpNeeded, sp);
                                 else minSpNeeded = 0;
                             }
                         }
 
                         bool isRestMistake = RollMistake();
-                        int safeSpNeeded = isRestMistake ? minSpNeeded : minSpNeeded + 1;
+                        int safeSpNeeded = Math.Min(isRestMistake ? minSpNeeded : minSpNeeded + 1, lifeData.stamina.Max);
 
                         if (minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < safeSpNeeded)
                         {
@@ -321,6 +333,14 @@ namespace TDG0407._prototype
                     }
                 }
 
+                // Check if already in melee range of player
+                bool isAdjacentToPlayer = IsInRangeOfTarget(entityView, playerCurrentPoint, null);
+                if (isAdjacentToPlayer)
+                {
+                    // Already in range! Do not move closer (prevents bumping/overlapping player)
+                    shouldRest = true;
+                }
+
                 if (shouldRest && hazardousPoints.Contains(myPoint))
                 {
                     // 휴식해야 할 타이밍이지만 현재 위치가 위험하다면 휴식을 취소하고 움직인다
@@ -329,8 +349,23 @@ namespace TDG0407._prototype
 
                 if (!shouldRest)
                 {
+                    _prototype_Point bestTargetPoint = targetPoint;
+                    var entitySize = entityView.EntityData != null ? entityView.EntityData.size : _prototype_Point.one;
+                    if (entitySize.x > 1 || entitySize.y > 1)
+                    {
+                        var candidates = GetAdjacentPlacementsForTarget(playerCurrentPoint, entitySize);
+                        var validCandidates = candidates.Where(c => _prototype_GridManager.Instance != null && _prototype_GridManager.Instance.CanPlaceEntityFootprint(entityView.EntityData, c)).ToList();
+                        if (validCandidates.Count > 0)
+                        {
+                            validCandidates.Sort((a, b) => 
+                                (Math.Abs(a.x - myPoint.x) + Math.Abs(a.y - myPoint.y))
+                                .CompareTo(Math.Abs(b.x - myPoint.x) + Math.Abs(b.y - myPoint.y)));
+                            bestTargetPoint = validCandidates[0];
+                        }
+                    }
+
                     // 카드를 사용할 수 없으나 이동은 가능한 상태라면 플레이어 방향으로 이동 시도
-                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, targetPoint, entityView.EntityData, false, true, hazardousPoints);
+                    List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(myPoint, bestTargetPoint, entityView.EntityData, false, true, hazardousPoints);
                     if (path != null && path.Count > 0)
                     {
                         _prototype_PointView nextStep = path[0];
@@ -374,22 +409,12 @@ namespace TDG0407._prototype
                     // 이동도 못하고 공격도 못하면 제자리에서 대기(휴식)하여 스테미나를 회복
                     if (lifeData != null)
                     {
-                        lifeData.stamina.Current = Mathf.Min(lifeData.stamina.Max, lifeData.stamina.Current + lifeData.lifeStat.staminaRecoverAmount);
-                        
-                        // 시각적 효과 (통통 튀기)
-                        entityView.transform.DOPunchScale(new Vector3(0.1f, -0.1f, 0), 0.2f, 1, 0f);
+                        ExecuteEnemyRest(entityView);
 
-                        // 가장 필요 없는(쿨타임이 가장 긴) 카드를 버려서 슬롯을 하나 비워줌으로써 다음 턴에 새 카드를 뽑을 수 있게 함
-                        if (lifeData.cardDeck.handedCardDatas.Count > 0)
+                        // 손패 순환을 위해 가장 쓸모없는(쿨타임이 가장 긴) 카드 1장 버리기
+                        if (lifeData.cardDeck != null)
                         {
-                            _prototype_CardData worstCard = lifeData.cardDeck.handedCardDatas[0];
-                            foreach (var c in lifeData.cardDeck.handedCardDatas)
-                            {
-                                if (c.currentCoolTicks > worstCard.currentCoolTicks)
-                                    worstCard = c;
-                            }
-                            lifeData.cardDeck.handedCardDatas.Remove(worstCard);
-                            lifeData.cardDeck.discardedCardDatas.Add(worstCard);
+                            lifeData.cardDeck.DiscardHighestCooldownCard();
                         }
                     }
                     hasActed = true;
@@ -404,6 +429,63 @@ namespace TDG0407._prototype
 
             // Next turn intent evaluation
             EvaluateIntent(entityView);
+        }
+
+        private bool IsInRangeOfTarget(_prototype_EntityView entityView, _prototype_Point targetPoint, _prototype_CardData card)
+        {
+            if (entityView == null || _prototype_GridManager.Instance == null) return false;
+            var entitySize = entityView.EntityData != null ? entityView.EntityData.size : _prototype_Point.one;
+            var fp = _prototype_GridManager.Instance.GetFootprint(entityView.Point, entitySize);
+            if (fp == null) return false;
+
+            var battleCard = card as _prototype_BattleCardData;
+            foreach (var pv in fp)
+            {
+                if (battleCard != null && battleCard.castRange != null)
+                {
+                    var validCastPoints = battleCard.castRange.GetValidCastPoints(pv.Point);
+                    if (validCastPoints != null && validCastPoints.Contains(targetPoint))
+                        return true;
+                }
+                else
+                {
+                    if (Math.Abs(pv.Point.x - targetPoint.x) + Math.Abs(pv.Point.y - targetPoint.y) == 1)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        private List<_prototype_Point> GetAdjacentPlacementsForTarget(_prototype_Point target, _prototype_Point size)
+        {
+            List<_prototype_Point> list = new();
+            _prototype_Point[] cardinalDirs = new _prototype_Point[]
+            {
+                new(0, 1), new(1, 0), new(0, -1), new(-1, 0)
+            };
+
+            for (int dx = 0; dx < size.x; dx++)
+            {
+                for (int dy = 0; dy < size.y; dy++)
+                {
+                    foreach (var dir in cardinalDirs)
+                    {
+                        _prototype_Point adjTile = target + dir;
+                        _prototype_Point candidateOrigin = new _prototype_Point(adjTile.x - dx, adjTile.y - dy);
+
+                        // Check that footprint at candidateOrigin does NOT contain target
+                        bool overlaps = target.x >= candidateOrigin.x && target.x < candidateOrigin.x + size.x &&
+                                        target.y >= candidateOrigin.y && target.y < candidateOrigin.y + size.y;
+
+                        if (!overlaps && !list.Contains(candidateOrigin))
+                        {
+                            list.Add(candidateOrigin);
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
     }
 }

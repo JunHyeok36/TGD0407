@@ -8,6 +8,9 @@ namespace TDG0407._prototype
     {
         [Tooltip("넉백 면역 여부")]
         public bool isKnockbackImmune = true;
+
+        [Tooltip("데미지를 입어 파괴될 수 있는지 여부 (false이면 무적/파괴 불가)")]
+        public bool isDestructible = true;
         
         public _prototype_ObstacleData CreateObstacleData()
         {
@@ -17,8 +20,11 @@ namespace TDG0407._prototype
                 health = health.Clone(),
                 stamina = stamina.Clone(),
                 point = point,
+                size = size,
                 movementType = movementType,
+                heightBounds = heightBounds,
                 isKnockbackImmune = isKnockbackImmune,
+                isDestructible = isDestructible,
             };
         }
 

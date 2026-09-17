@@ -43,16 +43,28 @@ namespace TDG0407._prototype
             set => _isMovable = value;
         }
 
+        private System.IDisposable _statusChangeSub;
+        private bool _isStunAutoProgressing = false;
+        public bool IsStunAutoProgressing => _isStunAutoProgressing;
+
         private void Awake()
         {
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
+
+            _statusChangeSub?.Dispose();
+            _statusChangeSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(OnEntityStatusChanged);
         }
         private bool _initialDrawDone = false;
 
         public void Initialize()
         {
             _prototype_TickManager.RegisterPostTick(OnPostTick);
+
+            if (_statusChangeSub == null)
+            {
+                _statusChangeSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(OnEntityStatusChanged);
+            }
 
             if (!_initialDrawDone && _controlledEntityView != null && _controlledEntityView.EntityData != null)
             {
@@ -64,6 +76,83 @@ namespace TDG0407._prototype
         private void OnDestroy()
         {
             _prototype_TickManager.UnregisterPostTick(OnPostTick);
+            _statusChangeSub?.Dispose();
+            _statusChangeSub = null;
+        }
+
+        private void OnEntityStatusChanged(EntityStatusChangedEvent evt)
+        {
+            if (_controlledEntityView == null || evt.Target != _controlledEntityView.EntityData) return;
+
+            if (evt.Effect.type == _prototype_StatusType.Stun)
+            {
+                if (evt.IsAdded)
+                {
+                    CancelTargeting();
+                    _prototype_GridVisualManager.Instance?.HideMovementPath();
+                    _prototype_GridVisualManager.Instance?.HighlightPoint(null);
+                    StartStunAutoProgression().Forget();
+                }
+            }
+            else if (evt.Effect.type == _prototype_StatusType.Silence)
+            {
+                if (evt.IsAdded)
+                {
+                    CancelTargeting();
+                }
+                _prototype_PlayerUIView.Instance?.UpdatePlayerCardDeck();
+            }
+        }
+
+        public async UniTaskVoid StartStunAutoProgression()
+        {
+            if (_isStunAutoProgressing) return;
+            _isStunAutoProgressing = true;
+
+            try
+            {
+                while (_controlledEntityView != null &&
+                       _controlledEntityView.EntityData is _prototype_LifeData lifeData &&
+                       lifeData.health.Current > 0 &&
+                       lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+                {
+                    if (_prototype_TickManager.IsTickProcessing)
+                    {
+                        await UniTask.WaitWhile(() => _prototype_TickManager.IsTickProcessing);
+                    }
+
+                    if (_controlledEntityView == null ||
+                        !(_controlledEntityView.EntityData is _prototype_LifeData currentLife) ||
+                        currentLife.health.Current <= 0 ||
+                        !currentLife.HasStatusEffect(_prototype_StatusType.Stun))
+                    {
+                        break;
+                    }
+
+                    float startTime = Time.time;
+                    _controlledEntityLastPoint = _controlledEntityView.Point;
+
+                    await _prototype_TickManager.AdvanceTick(async () =>
+                    {
+                        if (_controlledEntityView != null)
+                        {
+                            _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
+                        }
+                        await UniTask.Delay(300);
+                    });
+
+                    float elapsed = Time.time - startTime;
+                    int remainingMs = Mathf.Max(0, Mathf.RoundToInt((0.8f - elapsed) * 1000f));
+                    if (remainingMs > 0)
+                    {
+                        await UniTask.Delay(remainingMs);
+                    }
+                }
+            }
+            finally
+            {
+                _isStunAutoProgressing = false;
+            }
         }
 
         private async UniTask OnPostTick()
@@ -86,6 +175,11 @@ namespace TDG0407._prototype
                 if (_prototype_PlayerUIView.Instance != null)
                     _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
             }
+
+            if (playerLife?.Data != null && playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun) && !_isStunAutoProgressing)
+            {
+                StartStunAutoProgression().Forget();
+            }
         }
 
         private void Update()
@@ -95,6 +189,16 @@ namespace TDG0407._prototype
             {
                 _initialDrawDone = true;
                 OnPostTick().Forget();
+            }
+
+            var playerLife = _controlledEntityView as _prototype_LifeView;
+            bool isStunned = _isStunAutoProgressing || (playerLife != null && playerLife.Data != null && playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun));
+
+            if (isStunned)
+            {
+                _prototype_GridVisualManager.Instance?.HideMovementPath();
+                _prototype_GridVisualManager.Instance?.HighlightPoint(null);
+                return;
             }
 
             if (Keyboard.current.rKey.wasPressedThisFrame)
@@ -124,12 +228,16 @@ namespace TDG0407._prototype
 
             if (_targetingCard != null)
             {
+                _prototype_PlayerUIView.Instance?.HideHazardInfoTooltip(force: true);
+                _prototype_GridVisualManager.Instance?.HighlightHazardAttacker(null, false);
                 _prototype_GridVisualManager.Instance?.HighlightPoint(null); // Hide single white indicator while targeting
                 _prototype_PlayerUIView.Instance.UpdateTargetingTooltipPosition(mousePos);
                 HandleTargetingInput(mousePoint);
             }
             else
             {
+                HandleHazardInteraction(mousePoint, mousePos);
+
                 if (isHandViewActive)
                 {
                     // 핸드 컨테이너가 활성화된 상태에서는 이동 불가 및 이동 경로 숨김
@@ -213,15 +321,13 @@ namespace TDG0407._prototype
 
         private bool CheckAndHandleStun()
         {
-            var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
-            if (lifeData != null && lifeData.statusEffects.Find(s => s.type == _prototype_StatusType.Stun) != null)
+            var lifeData = _controlledEntityView != null ? _controlledEntityView.EntityData as _prototype_LifeData : null;
+            if (lifeData != null && lifeData.HasStatusEffect(_prototype_StatusType.Stun))
             {
-                _controlledEntityLastPoint = _controlledEntityView.Point;
-                _prototype_TickManager.AdvanceTick(async () =>
+                if (!_isStunAutoProgressing)
                 {
-                    _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
-                    await UniTask.Delay(300);
-                }).Forget();
+                    StartStunAutoProgression().Forget();
+                }
                 return true;
             }
             return false;
@@ -230,6 +336,9 @@ namespace TDG0407._prototype
         private void HandleMovementInput(_prototype_Point targetPoint)
         {
             if (!_isMovable || _prototype_TickManager.IsTickProcessing) return;
+
+            _prototype_PlayerUIView.Instance?.HideHazardInfoTooltip(force: true);
+            _prototype_GridVisualManager.Instance?.HighlightHazardAttacker(null, false);
 
             if (CheckAndHandleStun()) return;
 
@@ -273,6 +382,9 @@ namespace TDG0407._prototype
 
         private void HandleRestInput()
         {
+            _prototype_PlayerUIView.Instance?.HideHazardInfoTooltip(force: true);
+            _prototype_GridVisualManager.Instance?.HighlightHazardAttacker(null, false);
+
             if (CheckAndHandleStun()) return;
 
             if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.Data != null)
@@ -280,10 +392,7 @@ namespace TDG0407._prototype
                 _controlledEntityLastPoint = _controlledEntityView.Point;
                 _prototype_TickManager.AdvanceTick(async () =>
                 {
-                    int recoverAmount = lifeView.Data.lifeStat.staminaRecoverAmount;
-                    if (recoverAmount <= 0) recoverAmount = 2; // Fallback 기본 회복량
-
-                    lifeView.Data.stamina.Current = Mathf.Min(lifeView.Data.stamina.Max, lifeView.Data.stamina.Current + recoverAmount);
+                    lifeView.Data.Rest();
 
                     // 시각적 효과 (위로 뿅 튀어오르는 효과로 휴식 인지)
                     lifeView.transform.DOPunchScale(new Vector3(0.2f, 0.4f, 0.2f), 0.3f, 2, 1);
@@ -322,21 +431,38 @@ namespace TDG0407._prototype
         {
             if (cardData == null) return;
 
-            // 상호작용 카드(sourceProvider != null)는 별도의 범위/대상 선택(타겟팅) 과정 없이 즉시 발동
-            if (cardData.sourceProvider != null)
+            var playerLife = _controlledEntityView as _prototype_LifeView;
+            if (playerLife != null && playerLife.Data != null)
             {
-                _targetingCard = cardData;
-                List<_prototype_Point> instantTargets = new() { cardData.sourceProvider.point };
-                ExecuteCardCast(instantTargets, cardData.sourceProvider.point);
+                if (playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun) || _isStunAutoProgressing)
+                {
+                    return;
+                }
+                if (playerLife.Data.HasStatusEffect(_prototype_StatusType.Silence))
+                {
+                    _prototype_PlayerUIView.Instance?.ShowWarning("침묵 상태에서는 카드를 사용할 수 없습니다!");
+                    return;
+                }
+            }
+
+            // 상호작용 카드는 별도의 범위/대상 선택(타겟팅) 과정 없이 즉시 발동
+            if (cardData is _prototype_InteractionCardData interactionCard)
+            {
+                _targetingCard = interactionCard;
+                List<_prototype_Point> instantTargets = interactionCard.sourceProvider != null
+                    ? new() { interactionCard.sourceProvider.point }
+                    : new();
+                _prototype_Point targetPt = interactionCard.sourceProvider != null ? interactionCard.sourceProvider.point : _controlledEntityView.Point;
+                ExecuteCardCast(instantTargets, targetPt);
                 return;
             }
 
             _targetingCard = cardData;
             _isMovable = false;
 
-            if (_targetingCard.castRange != null)
+            if (_targetingCard is _prototype_BattleCardData battleCard && battleCard.castRange != null)
             {
-                _currentCastRange = _targetingCard.castRange.GetValidCastPoints(_controlledEntityView.Point);
+                _currentCastRange = battleCard.castRange.GetValidCastPoints(_controlledEntityView.Point);
                 _prototype_GridVisualManager.Instance?.ShowCastRange(_currentCastRange, _controlledEntityView.Point);
             }
             _prototype_PlayerUIView.Instance.ShowTargetingUI(_targetingCard);
@@ -382,7 +508,9 @@ namespace TDG0407._prototype
                 }
 
                 // Show Target Range
-                List<_prototype_Point> targetRange = _targetingCard.targetRange?.GetValidTargetPoints(_controlledEntityView.Point, mousePoint.Value) ?? new List<_prototype_Point> { mousePoint.Value };
+                List<_prototype_Point> targetRange = (_targetingCard is _prototype_BattleCardData bc && bc.targetRange != null)
+                    ? bc.targetRange.GetValidTargetPoints(_controlledEntityView.Point, mousePoint.Value)
+                    : new List<_prototype_Point> { mousePoint.Value };
                 _prototype_GridVisualManager.Instance?.ShowTargetRange(targetRange, mousePoint.Value);
 
                 // Execute on Left Click
@@ -411,15 +539,43 @@ namespace TDG0407._prototype
                 return;
             }
 
-            var cardToCast = _targetingCard;
             var playerLife = _controlledEntityView as _prototype_LifeView;
+            if (playerLife?.Data?.HasStatusEffect(_prototype_StatusType.Silence) == true)
+            {
+                _prototype_PlayerUIView.Instance?.ShowWarning("침묵 상태에서는 카드를 사용할 수 없습니다!");
+                CancelTargeting();
+                return;
+            }
+
+            var cardToCast = _targetingCard;
+
+            // 상호작용 카드 실행
+            if (cardToCast is _prototype_InteractionCardData interactionCard)
+            {
+                CancelTargeting();
+                _controlledEntityLastPoint = _controlledEntityView.Point;
+                _prototype_TickManager.AdvanceTick(async () =>
+                {
+                    await interactionCard.ExecuteInteraction(_controlledEntityView.EntityData);
+                    _prototype_PlayerUIView.Instance?.UpdatePlayerInfo();
+                    _prototype_PlayerUIView.Instance?.UpdatePlayerCardDeck();
+                }).Forget();
+                return;
+            }
+
+            var battleCard = cardToCast as _prototype_BattleCardData;
+            if (battleCard == null)
+            {
+                CancelTargeting();
+                return;
+            }
 
             // 1. Move card to discard pile and Deduct Cost
             if (playerLife?.Data?.cardDeck != null)
             {
-                if (cardToCast.sourceProvider == null)
+                if (battleCard.sourceProvider == null)
                 {
-                    playerLife.Data.cardDeck.handedCardDatas.Remove(cardToCast);
+                    playerLife.Data.cardDeck.handedCardDatas.Remove(battleCard);
 
                     var burning = playerLife.Data.GetStatusEffect(_prototype_StatusType.Burning);
                     bool destroyed = false;
@@ -434,23 +590,26 @@ namespace TDG0407._prototype
 
                     if (destroyed)
                     {
-                        playerLife.Data.cardDeck.destroyedCardDatas.Add(cardToCast);
+                        playerLife.Data.cardDeck.destroyedCardDatas.Add(battleCard);
                     }
                     else
                     {
-                        playerLife.Data.cardDeck.discardedCardDatas.Add(cardToCast);
+                        playerLife.Data.cardDeck.discardedCardDatas.Add(battleCard);
                     }
                 }
 
-                var cost = cardToCast.costValue;
-                int amount = (int)cost.value;
-                if (cost.costType == _prototype_CostType.FixedStamina)
+                var cost = battleCard.costValue;
+                if (cost != null)
                 {
-                    playerLife.Data.stamina.Current -= amount;
-                }
-                else if (cost.costType == _prototype_CostType.FixedHealth)
-                {
-                    playerLife.Data.health.Current -= amount;
+                    int amount = (int)cost.value;
+                    if (cost.costType == _prototype_CostType.FixedStamina)
+                    {
+                        playerLife.Data.stamina.Current -= amount;
+                    }
+                    else if (cost.costType == _prototype_CostType.FixedHealth)
+                    {
+                        playerLife.Data.health.Current -= amount;
+                    }
                 }
             }
 
@@ -466,34 +625,29 @@ namespace TDG0407._prototype
                     var pointView = _prototype_GridManager.Instance.GetPointView(pt);
                     if (pointView != null)
                     {
-                        bool found = false;
                         foreach (var entityView in pointView.PlacedEntityViews)
                         {
                             targets.Add(entityView.EntityData);
-                            found = true;
                         }
                     }
                 }
+                targets = targets.Distinct().ToList();
 
-                if (cardToCast.actionList != null)
+                if (battleCard.actionList != null)
                 {
-                    foreach (var action in cardToCast.actionList)
+                    foreach (var action in battleCard.actionList)
                     {
                         var filteredTargets = targets;
                         if (!action.includeSelf)
                         {
                             filteredTargets = targets.Where(t => t != _controlledEntityView.EntityData).ToList();
                         }
-                        _prototype_Point attackDir = _prototype_Point.zero;
-                        if (targetedPoint != default)
-                        {
-                            int dx = targetedPoint.x - _controlledEntityView.Point.x;
-                            int dy = targetedPoint.y - _controlledEntityView.Point.y;
-                            int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
-                            int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
-                            attackDir = new _prototype_Point(normX, normY);
-                        }
-                        var actionParams = new _prototype_CardActionParams(cardToCast, targetedPoint, attackDir, targetRange);
+                        int dx = targetedPoint.x - _controlledEntityView.Point.x;
+                        int dy = targetedPoint.y - _controlledEntityView.Point.y;
+                        int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
+                        int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
+                        _prototype_Point attackDir = new _prototype_Point(normX, normY);
+                        var actionParams = new _prototype_CardActionParams(battleCard, targetedPoint, attackDir, targetRange);
                         await action.ExecuteAction(_controlledEntityView.EntityData, filteredTargets, actionParams);
                     }
                 }
@@ -501,6 +655,90 @@ namespace TDG0407._prototype
                 _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
                 _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
             }).Forget();
+        }
+
+        private void HandleHazardInteraction(_prototype_Point? mousePoint, Vector2 mousePos)
+        {
+            if (_prototype_PlayerUIView.Instance == null || _prototype_GridVisualManager.Instance == null) return;
+
+            // ESC 키 누르면 핀 고정 해제
+            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: true);
+                _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                return;
+            }
+
+            bool leftClicked = Mouse.current.leftButton.wasPressedThisFrame;
+
+            if (mousePoint.HasValue)
+            {
+                var hazardInfos = _prototype_GridVisualManager.Instance.GetHazardAttackInfosAtPoint(mousePoint.Value);
+                if (hazardInfos != null && hazardInfos.Count > 0)
+                {
+                    if (leftClicked)
+                    {
+                        // 클릭 시 핀 고정 토글
+                        bool willPin = !_prototype_PlayerUIView.Instance.IsHazardTooltipPinned ||
+                                       _prototype_PlayerUIView.Instance.PinnedHazardPoint != mousePoint.Value;
+
+                        if (willPin)
+                        {
+                            _prototype_PlayerUIView.Instance.ShowHazardInfoTooltip(hazardInfos, mousePos, mousePoint.Value, isPinned: true);
+                            _prototype_GridVisualManager.Instance.HighlightHazardAttacker(hazardInfos[0].AttackerView, true);
+                        }
+                        else
+                        {
+                            _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: true);
+                            _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                        }
+                    }
+                    else
+                    {
+                        // 호버 동작 (현재 핀 고정 상태가 아니면 호버된 타일 정보 표시)
+                        if (!_prototype_PlayerUIView.Instance.IsHazardTooltipPinned)
+                        {
+                            _prototype_PlayerUIView.Instance.ShowHazardInfoTooltip(hazardInfos, mousePos, mousePoint.Value, isPinned: false);
+                            _prototype_GridVisualManager.Instance.HighlightHazardAttacker(hazardInfos[0].AttackerView, true);
+                        }
+                    }
+                }
+                else
+                {
+                    // Hazard가 없는 타일
+                    if (leftClicked)
+                    {
+                        // 빈 곳 클릭 시 핀 고정 해제
+                        _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: true);
+                        _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                    }
+                    else if (!_prototype_PlayerUIView.Instance.IsHazardTooltipPinned)
+                    {
+                        _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: false);
+                        _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                    }
+                }
+            }
+            else
+            {
+                // 타일 밖 마우스
+                if (leftClicked)
+                {
+                    _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: true);
+                    _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                }
+                else if (!_prototype_PlayerUIView.Instance.IsHazardTooltipPinned)
+                {
+                    _prototype_PlayerUIView.Instance.HideHazardInfoTooltip(force: false);
+                    _prototype_GridVisualManager.Instance.HighlightHazardAttacker(null, false);
+                }
+            }
+
+            // 핀 고정 상태가 아닐 때 마우스 위치에 따라 툴팁 위치 갱신
+            if (!_prototype_PlayerUIView.Instance.IsHazardTooltipPinned)
+            {
+                _prototype_PlayerUIView.Instance.UpdateHazardTooltipPosition(mousePos);
+            }
         }
     }
 

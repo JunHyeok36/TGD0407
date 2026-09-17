@@ -9,6 +9,8 @@ namespace TDG0407._prototype
         public _prototype_Point direction = _prototype_Point.zero;
         public int speed = 1; // cells per tick
         public _prototype_Side side = _prototype_Side.None;
+
+        public override bool IsSolid => false;
         
         [NonSerialized] public _prototype_EntityData shooter;
         public List<_prototype_EntityAction> onHitActions = new();

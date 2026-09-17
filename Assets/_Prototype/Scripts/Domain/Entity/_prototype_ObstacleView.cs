@@ -29,7 +29,7 @@ namespace TDG0407._prototype
 
         private async void CheckDeath()
         {
-            if (Data.health.Current <= 0)
+            if (Data != null && Data.isDestructible && Data.health.Current <= 0)
             {
                 Data.health.OnValueChanged -= CheckDeath;
 

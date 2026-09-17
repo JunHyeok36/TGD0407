@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612a39be3ae8e45449fcb6c4ed8f22cc, type: 3}
+  m_Name: ExplosiveBarrel
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleDataModel
+  ename: ExplosiveBarrel
+  health:
+    _min: 0
+    _max: 1
+    _cur: 1
+  stamina:
+    _min: 0
+    _max: 0
+    _cur: 0
+  point:
+    x: 0
+    y: 0
+  size:
+    x: 1
+    y: 1
+  movementType: 0
+  components:
+  - rid: 8244398056347533740
+  - rid: 8244398056347533741
+  isKnockbackImmune: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398056347533740
+      type: {class: _prototype_CardProviderComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        providedCards:
+        - {fileID: 11400000, guid: b3bcec0f9ded4e844a045a511226a077, type: 2}
+        - {fileID: 11400000, guid: f5d3bd8271ddd464c83d6a6e6f465e1a, type: 2}
+    - rid: 8244398056347533741
+      type: {class: _prototype_TrapComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        trapType: 2
+        triggerDamage: 30
+        isSolidObstacle: 0
+        triggerOnStep: 0
+        triggerOnDamage: 1
+        stopsMovement: 0
+        isConsumedOnTrigger: 1
+        statusEffectToApply: 0
+        statusEffectDuration: 1
+        explosionRadius: 1
+        knockbackDistance: 1
+        hazardDurationTicks: 2
+    - rid: 8244398056347533742
+      type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        requiredMode: 1
+    - rid: 8244398056347533743
+      type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        castRange:
+          rid: 8244398056347533746
+    - rid: 8244398056347533744
+      type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        requiredMode: 1
+    - rid: 8244398056347533745
+      type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        castRange:
+          rid: 8244398056347533747
+    - rid: 8244398056347533746
+      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _range: 1
+    - rid: 8244398056347533747
+      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _range: 3

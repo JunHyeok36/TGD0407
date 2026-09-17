@@ -10,7 +10,7 @@ namespace TDG0407._prototype
             _prototype_Side side, _prototype_Point direction, int speed, _prototype_EntityData shooter, List<_prototype_EntityAction> onHitActions, float homingAnglePerStep = 0f, _prototype_EntityData homingTarget = null,
             bool isTracking = false, bool stopAtTargetPoint = false, _prototype_Point fixedTargetPoint = default, int maxTravelDistance = -1)
         {
-            return new _prototype_ProjectileData(
+            var data = new _prototype_ProjectileData(
                 ename,
                 new _prototype_BoundedValue<int>(health.Min, health.Max, health.Current),
                 new _prototype_BoundedValue<int>(stamina.Min, stamina.Max, stamina.Current),
@@ -28,6 +28,8 @@ namespace TDG0407._prototype
                 fixedTargetPoint,
                 maxTravelDistance
             );
+            data.heightBounds = heightBounds;
+            return data;
         }
 
         public _prototype_ProjectileData CreateProjectileData(_prototype_ProjectileData source)
@@ -52,6 +54,7 @@ namespace TDG0407._prototype
             {
                 currentFloatAngle = source.currentFloatAngle,
                 traveledDistance = source.traveledDistance,
+                heightBounds = source.heightBounds,
             };
             return pd;
         }

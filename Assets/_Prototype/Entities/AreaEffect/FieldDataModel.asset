@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c1df48aea84aa4e8b6baf26e00ec8e, type: 3}
+  m_Name: FieldDataModel
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_FieldDataModel
+  ename: PoisonField
+  health:
+    _min: 0
+    _max: 100
+    _cur: 100
+  stamina:
+    _min: 0
+    _max: 10
+    _cur: 10
+  point:
+    x: 0
+    y: 0
+  size:
+    x: 1
+    y: 1
+  movementType: 0
+  components: []
+  onTriggerActions:
+  - rid: 8244398056347533759
+  side: 0
+  visualPiecePrefab: {fileID: 3515393147235816147, guid: b87c77cd83d7e104b92ecb06b9319703, type: 3}
+  durationTicks: 3
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398056347533759
+      type: {class: _prototype_DamageEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        damageType: 1
+        damageCoefficients:
+        - stat: 4
+          coefficient: 8

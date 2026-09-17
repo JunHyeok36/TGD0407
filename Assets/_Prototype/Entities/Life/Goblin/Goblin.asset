@@ -15,8 +15,8 @@ MonoBehaviour:
   ename: Goblin
   health:
     _min: 0
-    _max: 50
-    _cur: 50
+    _max: 100
+    _cur: 100
   stamina:
     _min: 0
     _max: 8
@@ -24,13 +24,19 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
   components: []
   lifeStat:
     redPower: 0
     bluePower: 0
-    redResist: 0
-    blueResist: 0
+    redResist: 101
+    blueResist: 79
     handCardSlotCount: 3
     drawQuickness: 0
     curseResist: 0
@@ -42,19 +48,18 @@ MonoBehaviour:
     silenceResist: 0
     fearResist: 0
     knockdownResist: 0
-    healthRecoverAmount: 0
     staminaRecoverAmount: 3
-    knockbackResist: 0
-    deathResist: 0
+    knockbackResist: 8
+    deathResistProp: 0.5
     dodgeProb: 0
     criticalProb: 0.05
     criticalWeight: 50
   cardDeck:
     allCardDatas:
+    - {fileID: 11400000, guid: 7ae1ac854d50e674a86d3867261c4478, type: 2}
     - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
     - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
     - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
-    - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
     - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
     remainedCardDatas: []
     handedCardDatas: []

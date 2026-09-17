@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Script: {fileID: 11500000, guid: ab5fe3716fa3c7047a013d937acdaaf4, type: 3}
   m_Name: PiercingThrust
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: PiercingThrust
   description: "\uC9C1\uC120\uC73C\uB85C \uAE38\uAC8C \uBED7\uC5B4\uB098\uAC00\uB294
     \uCC0C\uB974\uAE30 \uACF5\uACA9\uC785\uB2C8\uB2E4."

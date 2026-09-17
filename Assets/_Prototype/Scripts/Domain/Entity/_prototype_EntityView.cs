@@ -5,22 +5,29 @@ using UnityEngine;
 
 namespace TDG0407._prototype
 { 
-
     public abstract class _prototype_EntityView : MonoBehaviour
     {
-
         [Header("Dev References")]
         [SerializeField] private _prototype_EntityDataModel DEV_entityDataModel;
 
         protected _prototype_EntityAnimationPlayer AnimationPlayer { get; set; }
-        
         
         protected _prototype_EntityData _entityData;
         public _prototype_EntityData EntityData { get { return _entityData; } }
 
         public _prototype_Point Point { get { return _entityData.point; } }
 
-        protected virtual Vector3 LocalPositionOffset => Vector3.zero;
+        protected virtual Vector3 LocalPositionOffset
+        {
+            get
+            {
+                if (_entityData != null && (_entityData.size.x > 1 || _entityData.size.y > 1))
+                {
+                    return new Vector3((_entityData.size.x - 1) * 0.5f, 0, (_entityData.size.y - 1) * 0.5f);
+                }
+                return Vector3.zero;
+            }
+        }
 
         public virtual void Initialize(
             _prototype_EntityData entityData,
@@ -32,19 +39,18 @@ namespace TDG0407._prototype
                 ? DEV_entityDataModel.CreateData(entityData)
                 : entityData ?? throw new Exception("An EntityDataModel or EntityData is required.");
             _entityData.point = pointView.Point;
+
             if (TryGetComponent(out _prototype_EntityAnimationPlayer animationPlayer))
             {
                 AnimationPlayer = animationPlayer;
-            }
-            else
-            {
-                throw new Exception($"{name} requires an _prototype_EntityAnimationPlayer component.");
             }
 
             if (TryGetComponent(out _prototype_EnemyAIController enemyAIController))
             {
                 enemyAIController.Initialize(this);
             }
+
+            transform.localPosition = LocalPositionOffset;
 
             if (_entityData.components != null)
             {
@@ -60,6 +66,7 @@ namespace TDG0407._prototype
         protected virtual void OnDestroy()
         {
             _prototype_TickManager.UnregisterPostTick(OnPostTick);
+            if (_entityData?.components != null) foreach (var c in _entityData.components) c?.OnDestroy(this);
         }
 
         private async UniTask OnPostTick()
@@ -135,7 +142,7 @@ namespace TDG0407._prototype
 
         public virtual void FaceTowards(_prototype_Point targetPoint, float duration = 0.2f)
         {
-            if (!(_entityData is _prototype_LifeData || _entityData is _prototype_ProjectileData || _entityData is _prototype_LaserProjectileData)) return;
+            if (!(_entityData is _prototype_LifeData || _entityData is _prototype_ProjectileData || _entityData is _prototype_AreaEffectData)) return;
 
             var targetPointView = _prototype_GridManager.Instance.GetPointView(targetPoint);
             if (targetPointView == null) return;
@@ -155,7 +162,5 @@ namespace TDG0407._prototype
                 }
             }
         }
-
     }
-
 }

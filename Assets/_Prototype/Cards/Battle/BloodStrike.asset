@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05035d7170c492e47bf1f4d7354e148a, type: 3}
+  m_Script: {fileID: 11500000, guid: ab5fe3716fa3c7047a013d937acdaaf4, type: 3}
   m_Name: BloodStrike
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_CardDataModel
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: BloodStrike
   description: "\uCCB4\uB825\uC744 \uC18C\uBAA8\uD558\uC5EC \uAC15\uB825\uD55C \uC77C\uACA9\uC744
     \uB0A0\uB9BD\uB2C8\uB2E4."
@@ -27,8 +27,11 @@ MonoBehaviour:
     rid: 2475498181128356183
   targetRange:
     rid: 8244398012911059042
+  targetAnchorType: 0
   actionList:
   - rid: 2475498181128356185
+  - rid: 8244398036531806306
+  visibilityConditions: []
   references:
     version: 2
     RefIds:
@@ -51,3 +54,10 @@ MonoBehaviour:
       data:
         includeEmptyPoints: 1
         _range: 1
+    - rid: 8244398036531806306
+      type: {class: _prototype_ApplyStatusEffectEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        statusType: 6
+        durationTicks: 5
+        value: 25

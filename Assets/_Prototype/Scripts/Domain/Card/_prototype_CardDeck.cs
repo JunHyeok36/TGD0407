@@ -28,15 +28,15 @@ namespace TDG0407._prototype
         public _prototype_CardDeck(_prototype_CardDeck other)
         {
             this.allCardDatas = new List<_prototype_CardData>();
-            foreach (var cardData in other.allCardDatas) this.allCardDatas.Add(new(cardData));
+            foreach (var cardData in other.allCardDatas) if (cardData != null) this.allCardDatas.Add(cardData.Clone());
             this.remainedCardDatas = new List<_prototype_CardData>();
-            foreach (var cardData in other.remainedCardDatas) this.remainedCardDatas.Add(new(cardData));
+            foreach (var cardData in other.remainedCardDatas) if (cardData != null) this.remainedCardDatas.Add(cardData.Clone());
             this.handedCardDatas = new List<_prototype_CardData>();
-            foreach (var cardData in other.handedCardDatas) this.handedCardDatas.Add(new(cardData));
+            foreach (var cardData in other.handedCardDatas) if (cardData != null) this.handedCardDatas.Add(cardData.Clone());
             this.discardedCardDatas = new List<_prototype_CardData>();
-            foreach (var cardData in other.discardedCardDatas) this.discardedCardDatas.Add(new(cardData));
+            foreach (var cardData in other.discardedCardDatas) if (cardData != null) this.discardedCardDatas.Add(cardData.Clone());
             this.destroyedCardDatas = new List<_prototype_CardData>();
-            foreach (var cardData in other.destroyedCardDatas) this.destroyedCardDatas.Add(new(cardData));
+            foreach (var cardData in other.destroyedCardDatas) if (cardData != null) this.destroyedCardDatas.Add(cardData.Clone());
         }
 
         public void InitializeDeck()
@@ -81,9 +81,16 @@ namespace TDG0407._prototype
                 if (remainedCardDatas.Count > 0)
                 {
                     var drawnCard = remainedCardDatas[0];
-                    drawnCard.currentCoolTicks = drawnCard.coolTicks.Current; // Set initial cooldown
                     remainedCardDatas.RemoveAt(0);
-                    handedCardDatas.Add(drawnCard);
+
+                    if (drawnCard != null)
+                    {
+                        if (drawnCard is _prototype_BattleCardData battleCard)
+                        {
+                            battleCard.currentCoolTicks = battleCard.coolTicks != null ? battleCard.coolTicks.Current : 0;
+                        }
+                        handedCardDatas.Add(drawnCard);
+                    }
                 }
             }
         }
@@ -92,6 +99,26 @@ namespace TDG0407._prototype
         {
             discardedCardDatas.AddRange(handedCardDatas);
             handedCardDatas.Clear();
+        }
+
+        public _prototype_CardData DiscardHighestCooldownCard()
+        {
+            if (handedCardDatas.Count == 0) return null;
+
+            _prototype_CardData worstCard = handedCardDatas[0];
+            int maxCool = worstCard is _prototype_BattleCardData wbc ? wbc.currentCoolTicks : 0;
+            foreach (var c in handedCardDatas)
+            {
+                int cCool = c is _prototype_BattleCardData cbc ? cbc.currentCoolTicks : 0;
+                if (cCool > maxCool)
+                {
+                    worstCard = c;
+                    maxCool = cCool;
+                }
+            }
+            handedCardDatas.Remove(worstCard);
+            discardedCardDatas.Add(worstCard);
+            return worstCard;
         }
 
     }

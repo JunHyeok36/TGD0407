@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +10,9 @@ namespace TDG0407._prototype
     {
 
         [SerializeField] private int _range = 1;
+
+        public _prototype_AroundRectCastSelector() { }
+        public _prototype_AroundRectCastSelector(int range) { _range = range; }
 
         public List<_prototype_Point> GetValidCastPoints(_prototype_Point selfPoint)
         {

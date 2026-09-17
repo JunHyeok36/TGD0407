@@ -24,7 +24,7 @@ namespace TDG0407._prototype
                 if (proj.side != _prototype_Side.None) return proj.side;
                 if (proj.shooter is _prototype_LifeData shooterLife) return shooterLife.side;
             }
-            if (entity is _prototype_LaserProjectileData laser) return laser.side;
+            if (entity is _prototype_AreaEffectData area) return area.side;
             return _prototype_Side.None;
         }
 

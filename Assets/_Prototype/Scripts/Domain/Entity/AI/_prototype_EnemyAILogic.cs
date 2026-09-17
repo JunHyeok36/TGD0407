@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace TDG0407._prototype
@@ -29,15 +30,16 @@ namespace TDG0407._prototype
 
         public virtual int GetCardStaminaCost(_prototype_LifeData lifeData, _prototype_CardData card)
         {
-            if (card?.costValue == null || lifeData == null) return 0;
-            switch (card.costValue.costType)
+            var battleCard = card as _prototype_BattleCardData;
+            if (battleCard?.costValue == null || lifeData == null) return 0;
+            switch (battleCard.costValue.costType)
             {
                 case _prototype_CostType.FixedStamina:
-                    return (int)card.costValue.value;
+                    return (int)battleCard.costValue.value;
                 case _prototype_CostType.MaxStaminaRatio:
-                    return UnityEngine.Mathf.RoundToInt(lifeData.stamina.Max * (card.costValue.value / 100f));
+                    return UnityEngine.Mathf.RoundToInt(lifeData.stamina.Max * (battleCard.costValue.value / 100f));
                 case _prototype_CostType.CurrentStaminaRatio:
-                    return UnityEngine.Mathf.RoundToInt(lifeData.stamina.Current * (card.costValue.value / 100f));
+                    return UnityEngine.Mathf.RoundToInt(lifeData.stamina.Current * (battleCard.costValue.value / 100f));
                 default:
                     return 0;
             }
@@ -46,11 +48,12 @@ namespace TDG0407._prototype
         public virtual bool CanAffordCard(_prototype_LifeData lifeData, _prototype_CardData card, bool allowMistake = true)
         {
             if (lifeData == null || card == null) return false;
-            if (card.costValue == null) return true;
+            var battleCard = card as _prototype_BattleCardData;
+            if (battleCard?.costValue == null) return true;
 
-            if (card.costValue.costType == _prototype_CostType.FixedHealth)
+            if (battleCard.costValue.costType == _prototype_CostType.FixedHealth)
             {
-                if (lifeData.health.Current <= card.costValue.value) return false;
+                if (lifeData.health.Current <= battleCard.costValue.value) return false;
             }
 
             int spCost = GetCardStaminaCost(lifeData, card);
@@ -114,6 +117,22 @@ namespace TDG0407._prototype
                 return true; // Overridden by fear
             }
             return false;
+        }
+
+        /// <summary>
+        /// 적 엔티티가 대기(휴식)할 때 스태미나를 회복하고 시각적 효과를 재생합니다.
+        /// </summary>
+        protected virtual void ExecuteEnemyRest(_prototype_EntityView entityView)
+        {
+            var lifeData = entityView?.EntityData as _prototype_LifeData;
+            if (lifeData == null) return;
+
+            lifeData.Rest();
+
+            if (entityView != null)
+            {
+                entityView.transform.DOPunchScale(new Vector3(0.1f, -0.1f, 0), 0.2f, 1, 0f);
+            }
         }
     }
 }

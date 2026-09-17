@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
 using System.Text;
+using System.Linq;
 
 namespace TDG0407._prototype
 {
@@ -132,8 +133,36 @@ namespace TDG0407._prototype
                 if (_lifeView.Data.statusEffects != null && _lifeView.Data.statusEffects.Count > 0)
                 {
                     StringBuilder statusStr = new();
-                    foreach (var s in _lifeView.Data.statusEffects)
-                        statusStr.Append($"[{s.type} {s.durationTicks}] ");
+                    var groups = _lifeView.Data.statusEffects.GroupBy(s => s.type);
+                    foreach (var group in groups)
+                    {
+                        var type = group.Key;
+                        int count = group.Count();
+                        int maxTicks = group.Max(s => s.durationTicks);
+
+                        if (type == _prototype_StatusType.Bleeding ||
+                            type == _prototype_StatusType.Burning ||
+                            type == _prototype_StatusType.Poisoning)
+                        {
+                            if (count > 1)
+                            {
+                                statusStr.Append($"[{type} x{count} ({maxTicks}t)] ");
+                            }
+                            else
+                            {
+                                statusStr.Append($"[{type} ({maxTicks}t)] ");
+                            }
+                        }
+                        else if (type == _prototype_StatusType.Curse)
+                        {
+                            float totalVal = group.Sum(s => s.value);
+                            statusStr.Append($"[{type} -{totalVal:0} ({maxTicks}t)] ");
+                        }
+                        else
+                        {
+                            statusStr.Append($"[{type} {maxTicks}] ");
+                        }
+                    }
                     _statusText.text = statusStr.ToString().TrimEnd();
                 }
                 else

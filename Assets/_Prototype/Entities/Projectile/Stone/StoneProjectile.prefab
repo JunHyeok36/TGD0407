@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88b0fd161edce6e43ab91cf109654532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ProjectileView
-  entityDataModel: {fileID: 11400000, guid: b1ac4b6d8378b414495c83840f0c05e8, type: 2}
+  DEV_entityDataModel: {fileID: 0}
+  _lineMaterial: {fileID: 0}
 --- !u!114 &2256766079112869721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,7 +87,7 @@ Transform:
   m_GameObject: {fileID: 2194109013316542947}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -125,7 +126,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -153932562505908826, guid: 3c79377fa17df494e88ba46419d10fd0, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

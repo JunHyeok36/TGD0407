@@ -25,3 +25,6 @@ MonoBehaviour:
     x: 0
     y: 0
   movementType: 1
+  heightBounds:
+    _min: 0.8
+    _max: 1.4

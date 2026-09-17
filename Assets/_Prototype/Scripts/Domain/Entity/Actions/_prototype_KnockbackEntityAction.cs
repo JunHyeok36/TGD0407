@@ -58,7 +58,7 @@ namespace TDG0407._prototype
             var targetView = targetPointView.PlacedEntityViews.Find(v => v.EntityData == target);
             if (targetView == null) return;
 
-            // 넉백 저항 검사
+            // ?�백 ?�??검??
             if (_prototype_PushEntityAction.CheckKnockbackResist(target))
             {
                 if (target is _prototype_LifeData life)
@@ -92,7 +92,7 @@ namespace TDG0407._prototype
                     break;
                 }
 
-                // 지형 통과 및 엔티티 점유 가능 여부 검사
+                // 지???�과 �??�티???�유 가???��? 검??
                 if (!nextPointView.IsTraversable(target.movementType) || !nextPointView.CanPlaceEntity(target))
                 {
                     collided = true;
@@ -101,21 +101,31 @@ namespace TDG0407._prototype
 
                 currentPoint = nextPoint;
                 currentPointView = nextPointView;
+
+                // �??�과 같이 ?�동??즉시 멈추???�정??밟�? 경우 ?�당 ?�?�에???�백 중단
+                bool hasStoppingTrap = nextPointView.PlacedEntityViews.Exists(v => v.EntityData.TryGetComponent<_prototype_TrapComponentData>(out var td) && td.stopsMovement && !td.isDisarmed);
+                if (hasStoppingTrap)
+                {
+                    break;
+                }
             }
 
-            // 실제 위치 이동이 발생한 경우 이동 애니메이션 적용 (바라보는 방향 유지)
+            // ?�제 ?�치 ?�동??발생??경우 ?�동 ?�니메이???�용 (바라보는 방향 ?��?)
             if (currentPointView != targetPointView)
             {
                 await _prototype_InteractionManager.MoveEntity(targetView, targetPointView, currentPointView, rotateTowardsDestination: false);
             }
 
-            // 충돌이 발생한 경우 연출 및 onCollisionActions 실행
+            // 충돌??발생??경우 ?�출 �?onCollisionActions ?�행
             if (collided)
             {
-                Vector3 punchDir = new Vector3(dir.x, 0, dir.y).normalized;
-                var shakeTask = targetView.transform.DOShakePosition(0.2f, 0.25f, 10, 90f, false, true).AsyncWaitForCompletion();
-                var punchTask = targetView.transform.DOPunchPosition(punchDir * 0.2f, 0.2f, 1, 0).AsyncWaitForCompletion();
-                await UniTask.WhenAll(shakeTask.AsUniTask(), punchTask.AsUniTask());
+                if (Application.isPlaying)
+                {
+                    Vector3 punchDir = new Vector3(dir.x, 0, dir.y).normalized;
+                    var shakeTask = targetView.transform.DOShakePosition(0.2f, 0.25f, 10, 90f, false, true).AsyncWaitForCompletion();
+                    var punchTask = targetView.transform.DOPunchPosition(punchDir * 0.2f, 0.2f, 1, 0).AsyncWaitForCompletion();
+                    await UniTask.WhenAll(shakeTask.AsUniTask(), punchTask.AsUniTask());
+                }
 
                 if (onCollisionActions != null && onCollisionActions.Count > 0)
                 {
@@ -147,7 +157,7 @@ namespace TDG0407._prototype
 
                 if (dx == 0 && dy == 0) return _prototype_Point.zero;
 
-                // 8방향 또는 주요 축 방향으로 정규화 (-1, 0, 1)
+                // 8방향 ?�는 주요 �?방향?�로 ?�규??(-1, 0, 1)
                 int normX = dx != 0 ? (int)Mathf.Sign(dx) : 0;
                 int normY = dy != 0 ? (int)Mathf.Sign(dy) : 0;
 

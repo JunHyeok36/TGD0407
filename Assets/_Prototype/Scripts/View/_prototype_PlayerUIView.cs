@@ -25,6 +25,10 @@ namespace TDG0407._prototype
         [SerializeField] private PanelRenderer _panelRenderer;
         [SerializeField] private VisualTreeAsset _cardViewTemplate;
 
+        [Header("Floating UI & HUD Prefabs")]
+        [SerializeField] private GameObject _floatingTextPrefab;
+        [SerializeField] private GameObject _lifeHudPrefab;
+
         private Label _label_point;
         private Label _label_health;
         private Label _label_stamina;
@@ -40,6 +44,15 @@ namespace TDG0407._prototype
         private Label _tooltipCardCost;
         private Label _tooltipCardDesc;
 
+        // Hazard Info Tooltip UI Elements
+        private VisualElement _hazardInfoTooltip;
+        private Label _hazardTooltipHeaderTitle;
+        private Label _hazardTooltipPinBadge;
+        private VisualElement _hazardTooltipItemsContainer;
+        public bool IsHazardTooltipPinned { get; private set; }
+        private _prototype_Point? _pinnedHazardPoint;
+        public _prototype_Point? PinnedHazardPoint => _pinnedHazardPoint;
+
         private VisualElement _warningMessageContainer;
         private Label _warningMessageText;
         private VisualElement _gameOverContainer;
@@ -48,6 +61,8 @@ namespace TDG0407._prototype
         private VisualElement _modeIndicatorBanner;
         private Label _modeIndicatorText;
         private System.IDisposable _playModeSub;
+        private System.IDisposable _floatingDamagedSub;
+        private System.IDisposable _floatingStatusSub;
 
         public bool IsCardHovered { get; private set; }
 
@@ -57,6 +72,21 @@ namespace TDG0407._prototype
         {
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// BootStrapper Step 0(선등록 단계)에서 호출되어, 엔티티/HUD 생성 전에 프리팹을 정적 등록합니다.
+        /// </summary>
+        public void RegisterFloatingUIPrefabs()
+        {
+            if (_floatingTextPrefab != null)
+            {
+                _prototype_FloatingText.SetPrefab(_floatingTextPrefab);
+            }
+            if (_lifeHudPrefab != null)
+            {
+                _prototype_LifeHUD.SetDefaultPrefab(_lifeHudPrefab);
+            }
         }
 
         public void Initialize()
@@ -73,6 +103,12 @@ namespace TDG0407._prototype
             // 모드 변경 이벤트 구독
             EnsurePlayModeSubscription();
 
+            // FloatingText 피격 및 상태이상 이벤트 리스너 구독
+            _floatingDamagedSub?.Dispose();
+            _floatingDamagedSub = _prototype_EventBus.Listen<EntityDamagedEvent>(_prototype_FloatingText.OnEntityDamaged);
+            _floatingStatusSub?.Dispose();
+            _floatingStatusSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(_prototype_FloatingText.OnEntityStatusChanged);
+
             // 초기 UI 갱신
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
@@ -88,6 +124,8 @@ namespace TDG0407._prototype
         {
             _panelRenderer.UnregisterUIReloadCallback(OnUIReload);
             _playModeSub?.Dispose();
+            _floatingDamagedSub?.Dispose();
+            _floatingStatusSub?.Dispose();
         }
 
         private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
@@ -123,6 +161,8 @@ namespace TDG0407._prototype
                 ? _prototype_PlayModeManager.Instance.CurrentMode
                 : _prototype_PlayMode.Battle;
             UpdateModeIndicator(currentMode);
+
+            BuildHazardInfoTooltip(root);
         }
 
         public void ShowWarning(string message, float duration = 2.0f)
@@ -207,7 +247,13 @@ namespace TDG0407._prototype
             {
                 _targetingTooltip.style.display = DisplayStyle.Flex;
                 if (_tooltipCardName != null) _tooltipCardName.text = cardData.id;
-                if (_tooltipCardCost != null) _tooltipCardCost.text = $"Cost: {cardData.costValue.value}";
+                if (_tooltipCardCost != null)
+                {
+                    if (cardData is _prototype_BattleCardData battleCard)
+                        _tooltipCardCost.text = $"Cost: {battleCard.costValue?.value ?? 0}";
+                    else
+                        _tooltipCardCost.text = "Cost: -";
+                }
                 if (_tooltipCardDesc != null) _tooltipCardDesc.text = cardData.description;
             }
         }
@@ -238,6 +284,225 @@ namespace TDG0407._prototype
                     _targetingTooltip.style.left = screenPosition.x;
                     _targetingTooltip.style.top = y;
                 }
+            }
+        }
+
+        private void BuildHazardInfoTooltip(VisualElement root)
+        {
+            if (root == null) return;
+
+            // Remove existing one if any
+            var existing = root.Q<VisualElement>("HazardInfoTooltip");
+            if (existing != null) existing.RemoveFromHierarchy();
+
+            _hazardInfoTooltip = new VisualElement();
+            _hazardInfoTooltip.name = "HazardInfoTooltip";
+            _hazardInfoTooltip.pickingMode = PickingMode.Ignore;
+            _hazardInfoTooltip.style.position = Position.Absolute;
+            _hazardInfoTooltip.style.backgroundColor = new Color(0.04f, 0.08f, 0.05f, 0.95f);
+            _hazardInfoTooltip.style.borderTopColor = new Color(1.0f, 0.45f, 0.05f, 0.95f);
+            _hazardInfoTooltip.style.borderBottomColor = new Color(1.0f, 0.45f, 0.05f, 0.95f);
+            _hazardInfoTooltip.style.borderLeftColor = new Color(1.0f, 0.45f, 0.05f, 0.95f);
+            _hazardInfoTooltip.style.borderRightColor = new Color(1.0f, 0.45f, 0.05f, 0.95f);
+            _hazardInfoTooltip.style.borderTopWidth = 2;
+            _hazardInfoTooltip.style.borderBottomWidth = 2;
+            _hazardInfoTooltip.style.borderLeftWidth = 2;
+            _hazardInfoTooltip.style.borderRightWidth = 2;
+            _hazardInfoTooltip.style.borderTopLeftRadius = 8;
+            _hazardInfoTooltip.style.borderTopRightRadius = 8;
+            _hazardInfoTooltip.style.borderBottomLeftRadius = 8;
+            _hazardInfoTooltip.style.borderBottomRightRadius = 8;
+            _hazardInfoTooltip.style.paddingTop = 12;
+            _hazardInfoTooltip.style.paddingBottom = 12;
+            _hazardInfoTooltip.style.paddingLeft = 14;
+            _hazardInfoTooltip.style.paddingRight = 14;
+            _hazardInfoTooltip.style.width = 360;
+            _hazardInfoTooltip.style.display = DisplayStyle.None;
+
+            // Header Container (Title + Pin Badge)
+            var header = new VisualElement();
+            header.style.flexDirection = FlexDirection.Row;
+            header.style.justifyContent = Justify.SpaceBetween;
+            header.style.alignItems = Align.Center;
+            header.style.marginBottom = 8;
+            header.style.borderBottomWidth = 1;
+            header.style.borderBottomColor = new Color(1f, 0.45f, 0.05f, 0.35f);
+            header.style.paddingBottom = 6;
+
+            _hazardTooltipHeaderTitle = new Label("⚠ 공격 예고");
+            _hazardTooltipHeaderTitle.style.fontSize = 19;
+            _hazardTooltipHeaderTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+            _hazardTooltipHeaderTitle.style.color = new Color(1f, 0.75f, 0.2f);
+            header.Add(_hazardTooltipHeaderTitle);
+
+            _hazardTooltipPinBadge = new Label("[PINNED]");
+            _hazardTooltipPinBadge.style.fontSize = 13;
+            _hazardTooltipPinBadge.style.unityFontStyleAndWeight = FontStyle.Bold;
+            _hazardTooltipPinBadge.style.color = new Color(0.2f, 1f, 0.4f);
+            _hazardTooltipPinBadge.style.backgroundColor = new Color(0f, 0.3f, 0.1f, 0.7f);
+            _hazardTooltipPinBadge.style.paddingLeft = 6;
+            _hazardTooltipPinBadge.style.paddingRight = 6;
+            _hazardTooltipPinBadge.style.paddingTop = 2;
+            _hazardTooltipPinBadge.style.paddingBottom = 2;
+            _hazardTooltipPinBadge.style.borderTopLeftRadius = 4;
+            _hazardTooltipPinBadge.style.borderTopRightRadius = 4;
+            _hazardTooltipPinBadge.style.borderBottomLeftRadius = 4;
+            _hazardTooltipPinBadge.style.borderBottomRightRadius = 4;
+            _hazardTooltipPinBadge.style.display = DisplayStyle.None;
+            header.Add(_hazardTooltipPinBadge);
+
+            _hazardInfoTooltip.Add(header);
+
+            // Items Container
+            _hazardTooltipItemsContainer = new VisualElement();
+            _hazardTooltipItemsContainer.style.flexDirection = FlexDirection.Column;
+            _hazardInfoTooltip.Add(_hazardTooltipItemsContainer);
+
+            var container = root.Q<VisualElement>("Wrapper") ?? root;
+            container.Add(_hazardInfoTooltip);
+        }
+
+        public void ShowHazardInfoTooltip(List<_prototype_HazardAttackInfo> infos, Vector2 screenPosition, _prototype_Point point, bool isPinned)
+        {
+            if (_hazardInfoTooltip == null || infos == null || infos.Count == 0)
+            {
+                HideHazardInfoTooltip(true);
+                return;
+            }
+
+            IsHazardTooltipPinned = isPinned;
+            _pinnedHazardPoint = isPinned ? point : null;
+
+            if (_hazardTooltipHeaderTitle != null)
+            {
+                _hazardTooltipHeaderTitle.text = infos.Count > 1
+                    ? $"⚠ 중첩 공격 ({infos.Count}개) - ({point.x}, {point.y})"
+                    : $"⚠ 공격 예고 - ({point.x}, {point.y})";
+            }
+
+            if (_hazardTooltipPinBadge != null)
+            {
+                _hazardTooltipPinBadge.style.display = isPinned ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+
+            if (_hazardTooltipItemsContainer != null)
+            {
+                _hazardTooltipItemsContainer.Clear();
+
+                for (int i = 0; i < infos.Count; i++)
+                {
+                    var info = infos[i];
+                    if (i > 0)
+                    {
+                        var divider = new VisualElement();
+                        divider.style.height = 1;
+                        divider.style.backgroundColor = new Color(1f, 1f, 1f, 0.15f);
+                        divider.style.marginTop = 5;
+                        divider.style.marginBottom = 5;
+                        _hazardTooltipItemsContainer.Add(divider);
+                    }
+
+                    var cardBox = new VisualElement();
+                    cardBox.style.flexDirection = FlexDirection.Column;
+
+                    // Row 1: Attacker Name & Card ID
+                    var row1 = new VisualElement();
+                    row1.style.flexDirection = FlexDirection.Row;
+                    row1.style.justifyContent = Justify.SpaceBetween;
+                    row1.style.alignItems = Align.Center;
+
+                    var nameLabel = new Label($"🗡 {info.AttackerName}");
+                    nameLabel.style.fontSize = 20;
+                    nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                    nameLabel.style.color = new Color(1f, 0.45f, 0.45f);
+                    row1.Add(nameLabel);
+
+                    string attackTitle = !string.IsNullOrEmpty(info.AttackTitle)
+                        ? info.AttackTitle
+                        : (info.Card != null ? info.Card.id : "공격");
+                    var cardLabel = new Label(attackTitle);
+                    cardLabel.style.fontSize = 17;
+                    cardLabel.style.color = new Color(0.9f, 0.9f, 0.9f);
+                    row1.Add(cardLabel);
+                    cardBox.Add(row1);
+
+                    // Row 2: Estimated Damage
+                    var row2 = new VisualElement();
+                    row2.style.flexDirection = FlexDirection.Row;
+                    row2.style.justifyContent = Justify.SpaceBetween;
+                    row2.style.alignItems = Align.Center;
+                    row2.style.marginTop = 4;
+
+                    var dmgTypeStr = info.DamageType == _prototype_DamageType.Physical ? "물리" : "마법";
+                    var dmgLabel = new Label($"예상 피해: {info.EstimatedDamage} ({dmgTypeStr})");
+                    dmgLabel.style.fontSize = 18;
+                    dmgLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                    dmgLabel.style.color = new Color(1f, 0.35f, 0.35f);
+                    row2.Add(dmgLabel);
+                    cardBox.Add(row2);
+
+                    // Row 3: Additional Effects
+                    if (info.AdditionalEffects != null && info.AdditionalEffects.Count > 0)
+                    {
+                        var effectBox = new VisualElement();
+                        effectBox.style.flexDirection = FlexDirection.Column;
+                        effectBox.style.marginTop = 4;
+
+                        foreach (var effect in info.AdditionalEffects)
+                        {
+                            var effectLabel = new Label($"• {effect}");
+                            effectLabel.style.fontSize = 16;
+                            effectLabel.style.color = new Color(0.4f, 0.88f, 1f);
+                            effectBox.Add(effectLabel);
+                        }
+                        cardBox.Add(effectBox);
+                    }
+
+                    _hazardTooltipItemsContainer.Add(cardBox);
+                }
+            }
+
+            _hazardInfoTooltip.style.display = DisplayStyle.Flex;
+            UpdateHazardTooltipPosition(screenPosition);
+        }
+
+        public void HideHazardInfoTooltip(bool force = false)
+        {
+            if (!force && IsHazardTooltipPinned) return;
+
+            IsHazardTooltipPinned = false;
+            _pinnedHazardPoint = null;
+            if (_hazardInfoTooltip != null)
+            {
+                _hazardInfoTooltip.style.display = DisplayStyle.None;
+            }
+        }
+
+        public void UpdateHazardTooltipPosition(Vector2 screenPosition)
+        {
+            if (_hazardInfoTooltip == null || _hazardInfoTooltip.style.display != DisplayStyle.Flex) return;
+
+            Vector2 offset = new Vector2(24, 24);
+            Vector2 targetScreen = screenPosition + offset;
+
+            if (_hazardInfoTooltip.panel != null)
+            {
+                Vector2 screenTopLeft = new Vector2(targetScreen.x, Screen.height - targetScreen.y);
+                Vector2 panelPos = UnityEngine.UIElements.RuntimePanelUtils.ScreenToPanel(_hazardInfoTooltip.panel, screenTopLeft);
+
+                float maxLeft = _hazardInfoTooltip.panel.visualTree.layout.width - 340;
+                float maxTop = _hazardInfoTooltip.panel.visualTree.layout.height - 240;
+                if (maxLeft > 0 && panelPos.x > maxLeft) panelPos.x = panelPos.x - 360;
+                if (maxTop > 0 && panelPos.y > maxTop) panelPos.y = maxTop;
+
+                _hazardInfoTooltip.style.left = Mathf.Max(10, panelPos.x);
+                _hazardInfoTooltip.style.top = Mathf.Max(10, panelPos.y);
+            }
+            else
+            {
+                float y = Screen.height - targetScreen.y;
+                _hazardInfoTooltip.style.left = targetScreen.x;
+                _hazardInfoTooltip.style.top = y;
             }
         }
 
@@ -298,6 +563,8 @@ namespace TDG0407._prototype
                     if (_label_remainsCount != null) _label_remainsCount.text = lifeData.cardDeck.remainedCardDatas.Count.ToString();
                     if (_label_discardedCount != null) _label_discardedCount.text = lifeData.cardDeck.discardedCardDatas.Count.ToString();
 
+                    bool isSilenced = lifeData.HasStatusEffect(_prototype_StatusType.Silence);
+
                     var availableCards = lifeView.GetAvailableCards();
                     foreach (_prototype_CardData cardData in availableCards)
                     {
@@ -307,10 +574,32 @@ namespace TDG0407._prototype
                         if (lblName != null) lblName.text = cardData.id;
 
                         var lblCost = cardViewInstance.Q<Label>("CardCost");
-                        if (lblCost != null) lblCost.text = cardData.costValue.value.ToString();
-
                         var lblType = cardViewInstance.Q<Label>("CardType");
-                        if (lblType != null) lblType.text = cardData.cardType.ToString();
+                        var cooldownOverlay = cardViewInstance.Q<VisualElement>("CooldownOverlay");
+                        var cooldownText = cardViewInstance.Q<Label>("CooldownText");
+
+                        if (cardData is _prototype_BattleCardData battleCard)
+                        {
+                            if (lblCost != null) lblCost.text = battleCard.costValue != null ? battleCard.costValue.value.ToString() : "0";
+                            if (lblType != null) lblType.text = battleCard.cardType.ToString();
+
+                            // 쿨타임 시각적 피드백
+                            if (battleCard.currentCoolTicks > 0)
+                            {
+                                if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.Flex;
+                                if (cooldownText != null) cooldownText.text = battleCard.currentCoolTicks.ToString();
+                            }
+                            else
+                            {
+                                if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
+                            }
+                        }
+                        else if (cardData is _prototype_InteractionCardData interactionCard)
+                        {
+                            if (lblCost != null) lblCost.text = "-";
+                            if (lblType != null) lblType.text = "Interact";
+                            if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
+                        }
 
                         var lblDesc = cardViewInstance.Q<Label>("CardDesc");
                         if (lblDesc != null)
@@ -318,21 +607,39 @@ namespace TDG0407._prototype
                             lblDesc.text = string.IsNullOrEmpty(cardData.description) ? "No description available." : cardData.description;
                         }
 
-                        var cooldownOverlay = cardViewInstance.Q<VisualElement>("CooldownOverlay");
-                        var cooldownText = cardViewInstance.Q<Label>("CooldownText");
-
-                        // 쿨타임 시각적 피드백
-                        if (cardData.currentCoolTicks > 0)
+                        // 침묵 시각적 피드백 (보라색 틴트 + 침묵 텍스트 오버레이)
+                        if (isSilenced)
                         {
-                            if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.Flex;
-                            if (cooldownText != null) cooldownText.text = cardData.currentCoolTicks.ToString();
+                            cardViewInstance.style.opacity = 0.75f;
+                            var silenceOverlay = new VisualElement();
+                            silenceOverlay.name = "SilenceOverlay";
+                            silenceOverlay.style.position = Position.Absolute;
+                            silenceOverlay.style.left = 0;
+                            silenceOverlay.style.top = 0;
+                            silenceOverlay.style.right = 0;
+                            silenceOverlay.style.bottom = 0;
+                            silenceOverlay.style.backgroundColor = new StyleColor(new Color(0.45f, 0.1f, 0.65f, 0.5f));
+                            silenceOverlay.style.alignItems = Align.Center;
+                            silenceOverlay.style.justifyContent = Justify.Center;
+                            silenceOverlay.style.borderTopLeftRadius = 12;
+                            silenceOverlay.style.borderTopRightRadius = 12;
+                            silenceOverlay.style.borderBottomLeftRadius = 12;
+                            silenceOverlay.style.borderBottomRightRadius = 12;
+                            silenceOverlay.pickingMode = PickingMode.Ignore;
+
+                            var lblSilence = new Label("침묵");
+                            lblSilence.style.color = new StyleColor(new Color(1f, 0.85f, 1f, 1f));
+                            lblSilence.style.fontSize = 28;
+                            lblSilence.style.unityFontStyleAndWeight = FontStyle.Bold;
+                            lblSilence.pickingMode = PickingMode.Ignore;
+                            silenceOverlay.Add(lblSilence);
+
+                            cardViewInstance.Add(silenceOverlay);
                         }
                         else
                         {
-                            if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
+                            cardViewInstance.style.opacity = 1f;
                         }
-
-                        cardViewInstance.style.opacity = 1f;
 
                         cardViewInstance.style.position = Position.Absolute;
                         // 드래그 기능 등록
@@ -357,6 +664,15 @@ namespace TDG0407._prototype
             {
                 if (evt.button == 1) // Right click to Burn
                 {
+                    if (_prototype_PlayerController.Instance != null &&
+                        _prototype_PlayerController.Instance.ControlledEntityView is _prototype_LifeView lifeViewStunCheck &&
+                        lifeViewStunCheck.Data != null &&
+                        (lifeViewStunCheck.Data.HasStatusEffect(_prototype_StatusType.Stun) || _prototype_PlayerController.Instance.IsStunAutoProgressing))
+                    {
+                        evt.StopPropagation();
+                        return;
+                    }
+
                     if (!evt.shiftKey)
                     {
                         ShowWarning("카드를 소각하려면 Shift 키를 누른 상태로 우클릭하세요!");
@@ -396,25 +712,49 @@ namespace TDG0407._prototype
 
                 if (evt.button != 0) return;
 
-                if (cardData.currentCoolTicks > 0)
+                if (_prototype_PlayerController.Instance != null &&
+                    _prototype_PlayerController.Instance.ControlledEntityView is _prototype_LifeView lifeViewCheck &&
+                    lifeViewCheck.Data != null)
                 {
-                    ShowWarning("현재 사용할 수 없습니다! (대기 중)");
-                    evt.StopPropagation();
-                    return;
+                    if (lifeViewCheck.Data.HasStatusEffect(_prototype_StatusType.Stun) || _prototype_PlayerController.Instance.IsStunAutoProgressing)
+                    {
+                        evt.StopPropagation();
+                        return;
+                    }
+
+                    if (lifeViewCheck.Data.HasStatusEffect(_prototype_StatusType.Silence))
+                    {
+                        ShowWarning("침묵 상태에서는 카드를 사용할 수 없습니다!");
+                        evt.StopPropagation();
+                        return;
+                    }
                 }
 
-                bool hasEnoughCost = true;
-                if (_prototype_PlayerController.Instance != null && _prototype_PlayerController.Instance.ControlledEntityView is _prototype_LifeView lifeView)
+                if (cardData is _prototype_BattleCardData battleCard)
                 {
-                    var cost = cardData.costValue;
-                    if (cost.costType == _prototype_CostType.FixedStamina && lifeView.Data.stamina.Current < cost.value) hasEnoughCost = false;
-                    else if (cost.costType == _prototype_CostType.FixedHealth && lifeView.Data.health.Current < cost.value) hasEnoughCost = false;
-                }
+                    if (battleCard.currentCoolTicks > 0)
+                    {
+                        ShowWarning("현재 사용할 수 없습니다! (대기 중)");
+                        evt.StopPropagation();
+                        return;
+                    }
 
-                if (!hasEnoughCost)
-                {
-                    ShowWarning("소모 자원이 부족합니다!");
-                    return;
+                    bool hasEnoughCost = true;
+                    if (_prototype_PlayerController.Instance != null && _prototype_PlayerController.Instance.ControlledEntityView is _prototype_LifeView lifeView)
+                    {
+                        var cost = battleCard.costValue;
+                        if (cost != null)
+                        {
+                            if (cost.costType == _prototype_CostType.FixedStamina && lifeView.Data.stamina.Current < cost.value) hasEnoughCost = false;
+                            else if (cost.costType == _prototype_CostType.FixedHealth && lifeView.Data.health.Current < cost.value) hasEnoughCost = false;
+                        }
+                    }
+
+                    if (!hasEnoughCost)
+                    {
+                        ShowWarning("소모 자원이 부족합니다!");
+                        return;
+                    }
                 }
 
                 isDragging = true;

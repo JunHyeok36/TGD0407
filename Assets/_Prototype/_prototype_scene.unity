@@ -172,12 +172,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059301
+    rid: 8244398056347533568
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059301
+    - rid: 8244398056347533568
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -262,12 +262,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059306
+    rid: 8244398056347533573
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059306
+    - rid: 8244398056347533573
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -440,12 +440,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059290
+    rid: 8244398056347533557
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059290
+    - rid: 8244398056347533557
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -504,12 +504,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059299
+    rid: 8244398056347533566
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059299
+    - rid: 8244398056347533566
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -910,130 +910,6 @@ MonoBehaviour:
   - {fileID: 1993044995}
   - {fileID: 792325792}
   - {fileID: 1593816154}
---- !u!21 &109124797
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: M_Obstacle (Instance)
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
-  disabledShaderPasses:
-  - MOTIONVECTORS
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_Lightmaps:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_LightmapsInd:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_ShadowMasks:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _AddPrecomputedVelocity: 0
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 1
-    - _Glossiness: 0.030726254
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0.030726254
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 0
-    - _UVSec: 0
-    - _WorkflowMode: 1
-    - _XRMotionVectorsPass: 1
-    - _ZWrite: 1
-    m_Colors:
-    - _BaseColor: {r: 0.501, g: 0.493, b: 0.534, a: 1}
-    - _Color: {r: 0.501, g: 0.4929999, b: 0.534, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &147136289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,12 +961,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059262
+    rid: 8244398056347533530
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059262
+    - rid: 8244398056347533530
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -1458,6 +1334,96 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 208637914}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &219521767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 219521768}
+  - component: {fileID: 219521770}
+  - component: {fileID: 219521769}
+  m_Layer: 0
+  m_Name: NextTickMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &219521768
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219521767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
+  m_LocalPosition: {x: 1, y: -0.0000000018626451, z: 0.022000002}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 920652783}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &219521769
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219521767}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 411529528}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &219521770
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219521767}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &251688030
 GameObject:
   m_ObjectHideFlags: 0
@@ -1548,6 +1514,40 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 251688030}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!21 &252223882
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Legacy Shaders/Particles/Alpha Blended
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 03df4d0a41459ea4c9d9393e531beb9c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _InvFade: 1
+    m_Colors:
+    - _TintColor: {r: 0.1, g: 0.475, b: 0.5, a: 0.45}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &256293052
 GameObject:
   m_ObjectHideFlags: 0
@@ -1871,12 +1871,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059305
+    rid: 8244398056347533572
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059305
+    - rid: 8244398056347533572
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2141,12 +2141,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059256
+    rid: 8244398056347533524
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059256
+    - rid: 8244398056347533524
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2178,6 +2178,40 @@ LODGroup:
     - renderer: {fileID: 890012529}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!21 &363130493
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Legacy Shaders/Particles/Alpha Blended
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 03df4d0a41459ea4c9d9393e531beb9c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _InvFade: 1
+    m_Colors:
+    - _TintColor: {r: 0.1, g: 0.4, b: 0.5, a: 0.4}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &384182616
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,6 +2392,40 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 386258091}
   m_Mesh: {fileID: 5725235537216381791, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!21 &411529528
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Legacy Shaders/Particles/Alpha Blended
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 7aa5a251466e98545afa5f8c5dd7b687, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _InvFade: 1
+    m_Colors:
+    - _TintColor: {r: 0.1, g: 0.475, b: 0.5, a: 0.475}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &429785423
 GameObject:
   m_ObjectHideFlags: 0
@@ -2501,12 +2569,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059237
+    rid: 8244398056347533505
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059237
+    - rid: 8244398056347533505
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2718,6 +2786,119 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 450854449}
   m_Mesh: {fileID: 5725235537216381791, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &491552630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 491552631}
+  - component: {fileID: 491552634}
+  - component: {fileID: 491552633}
+  - component: {fileID: 491552632}
+  m_Layer: 0
+  m_Name: EndMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &491552631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491552630}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1290499439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &491552632
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491552630}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 363130493}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &491552633
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491552630}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!33 &491552634
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491552630}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &493441719
 GameObject:
   m_ObjectHideFlags: 0
@@ -2771,12 +2952,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059287
+    rid: 8244398056347533554
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059287
+    - rid: 8244398056347533554
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -2861,12 +3042,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059302
+    rid: 8244398056347533569
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059302
+    - rid: 8244398056347533569
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3311,12 +3492,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059239
+    rid: 8244398056347533507
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059239
+    - rid: 8244398056347533507
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3489,12 +3670,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059296
+    rid: 8244398056347533563
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059296
+    - rid: 8244398056347533563
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3735,12 +3916,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059248
+    rid: 8244398056347533516
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059248
+    - rid: 8244398056347533516
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -3915,12 +4096,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059257
+    rid: 8244398056347533525
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059257
+    - rid: 8244398056347533525
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4005,12 +4186,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059234
+    rid: 8244398056347533502
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059234
+    - rid: 8244398056347533502
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4402,12 +4583,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059273
+    rid: 8244398056347533497
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059273
+    - rid: 8244398056347533497
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4582,12 +4763,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059254
+    rid: 8244398056347533522
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059254
+    - rid: 8244398056347533522
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4672,12 +4853,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059274
+    rid: 8244398056347533541
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059274
+    - rid: 8244398056347533541
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -4799,6 +4980,232 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 735172483}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &743625273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 743625274}
+  - component: {fileID: 743625277}
+  - component: {fileID: 743625276}
+  - component: {fileID: 743625275}
+  m_Layer: 0
+  m_Name: NextTickMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &743625274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743625273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.55, y: 0.55, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1290499439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &743625275
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743625273}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 252223882}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &743625276
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743625273}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!33 &743625277
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743625273}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &745918505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 745918506}
+  - component: {fileID: 745918509}
+  - component: {fileID: 745918508}
+  - component: {fileID: 745918507}
+  m_Layer: 0
+  m_Name: HazardAttackerReticle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &745918506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745918505}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 4, y: 0.03, z: -1}
+  m_LocalScale: {x: 1.15, y: 1.15, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1742581802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &745918507
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745918505}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1651845907}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &745918508
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745918505}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!33 &745918509
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745918505}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &752360946
 GameObject:
   m_ObjectHideFlags: 0
@@ -4942,12 +5349,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059247
+    rid: 8244398056347533515
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059247
+    - rid: 8244398056347533515
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5122,12 +5529,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059304
+    rid: 8244398056347533571
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059304
+    - rid: 8244398056347533571
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5349,12 +5756,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059231
+    rid: 8244398056347533499
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059231
+    - rid: 8244398056347533499
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -5656,6 +6063,40 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844966060}
   m_Mesh: {fileID: 6019285513221835138, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!21 &848783694
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Legacy Shaders/Particles/Alpha Blended
+  m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 7aa5a251466e98545afa5f8c5dd7b687, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _InvFade: 1
+    m_Colors:
+    - _TintColor: {r: 0.1, g: 0.4, b: 0.5, a: 0.425}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &852477683
 GameObject:
   m_ObjectHideFlags: 0
@@ -5797,6 +6238,38 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 860898304}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!21 &865287302
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Mobile/Particles/Alpha Blended
+  m_Shader: {fileID: 10721, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats: []
+    m_Colors: []
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &866299053
 GameObject:
   m_ObjectHideFlags: 0
@@ -6247,6 +6720,178 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 905020204}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &920652782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920652783}
+  - component: {fileID: 920652785}
+  - component: {fileID: 920652784}
+  m_Layer: 0
+  m_Name: MoveIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &920652783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920652782}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 219521768}
+  - {fileID: 2051706983}
+  m_Father: {fileID: 1742581802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &920652784
+LineRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920652782}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1060424037}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Positions:
+  - {x: 0, y: 0.015, z: 0}
+  - {x: 1, y: 0.015, z: 0}
+  - {x: 2, y: 0.015, z: 0}
+  - {x: 2, y: 0.015, z: 1}
+  - {x: 3, y: 0.015, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.45
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.45
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 0.2, g: 0.85, b: 1, a: 0.9}
+      key1: {r: 0.2, g: 0.85, b: 1, a: 0.9}
+      key2: {r: 0.65, g: 0.65, b: 0.65, a: 0.45}
+      key3: {r: 0.65, g: 0.65, b: 0.65, a: 0.45}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 16318
+      ctime2: 16449
+      ctime3: 65535
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 16318
+      atime2: 16449
+      atime3: 65535
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 4
+      m_NumAlphaKeys: 4
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 1
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 1
+--- !u!114 &920652785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920652782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af92b202b2063245ad4bbb94caab67a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_MoveIndicator
+  scrollSpeed: -1
+  _dashPatternTexture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
+  _targetMarkerTexture: {fileID: 2800000, guid: 7aa5a251466e98545afa5f8c5dd7b687, type: 3}
 --- !u!1001 &943792109
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6595,22 +7240,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1032198549 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-  m_PrefabInstance: {fileID: 1217246133951029841}
+--- !u!21 &1060424037
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1032198552 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8345557701439984426, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-  m_PrefabInstance: {fileID: 1217246133951029841}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7e3ae340e425be40b9ea68dd20a6f23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleView
+  m_Name: Mobile/Particles/Alpha Blended (Instance)
+  m_Shader: {fileID: 10721, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
+        m_Scale: {x: 8, y: 1}
+        m_Offset: {x: 0.5, y: 0}
+    m_Ints: []
+    m_Floats: []
+    m_Colors: []
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1060536647
 GameObject:
   m_ObjectHideFlags: 0
@@ -6664,12 +7325,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059309
+    rid: 8244398056347533576
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059309
+    - rid: 8244398056347533576
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -6881,6 +7542,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1065970665}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1001 &1074663759
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1145528424}
+    m_Modifications:
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2230640444071310111, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+      propertyPath: m_Name
+      value: SpikeTrap
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+--- !u!4 &1074663760 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1279186940288773683, guid: 1fa1081393a4c354ab8de47ec20e427d, type: 3}
+  m_PrefabInstance: {fileID: 1074663759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1085787785
 GameObject:
   m_ObjectHideFlags: 0
@@ -7061,6 +7784,38 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101483476}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!21 &1134823313
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Mobile/Particles/Alpha Blended
+  m_Shader: {fileID: 10721, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats: []
+    m_Colors: []
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1138409306
 GameObject:
   m_ObjectHideFlags: 0
@@ -7114,12 +7869,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059266
+    rid: 8244398056347533534
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059266
+    - rid: 8244398056347533534
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7182,6 +7937,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1740627831}
+  - {fileID: 1074663760}
   m_Father: {fileID: 101444837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1145528425
@@ -7202,12 +7958,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059278
+    rid: 8244398056347533545
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059278
+    - rid: 8244398056347533545
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7312,12 +8068,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059233
+    rid: 8244398056347533501
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059233
+    - rid: 8244398056347533501
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7439,6 +8195,57 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270341020}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &1290499438
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290499439}
+  - component: {fileID: 1290499440}
+  m_Layer: 0
+  m_Name: MoveIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1290499439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290499438}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2044577479}
+  - {fileID: 1908529363}
+  - {fileID: 743625274}
+  - {fileID: 491552631}
+  m_Father: {fileID: 1742581802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1290499440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290499438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af92b202b2063245ad4bbb94caab67a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_MoveIndicator
+  scrollSpeed: -1
+  _dashPatternTexture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
+  _targetMarkerTexture: {fileID: 0}
 --- !u!1 &1301100106
 GameObject:
   m_ObjectHideFlags: 0
@@ -7492,12 +8299,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059238
+    rid: 8244398056347533506
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059238
+    - rid: 8244398056347533506
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7583,13 +8390,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059235
+    rid: 8244398056347533503
   placedEntityViews:
   - {fileID: 943792111}
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059235
+    - rid: 8244398056347533503
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7764,12 +8571,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059282
+    rid: 8244398056347533549
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059282
+    - rid: 8244398056347533549
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -7854,12 +8661,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059263
+    rid: 8244398056347533531
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059263
+    - rid: 8244398056347533531
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -8214,12 +9021,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059240
+    rid: 8244398056347533508
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059240
+    - rid: 8244398056347533508
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -8755,13 +9562,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059230
+    rid: 8244398056347533498
   placedEntityViews:
   - {fileID: 1860073067}
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059230
+    - rid: 8244398056347533498
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -8846,12 +9653,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059283
+    rid: 8244398056347533550
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059283
+    - rid: 8244398056347533550
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9026,12 +9833,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059307
+    rid: 8244398056347533574
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059307
+    - rid: 8244398056347533574
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9063,6 +9870,47 @@ LODGroup:
     - renderer: {fileID: 1678327078}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!21 &1651845907
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sprites/Default (Instance)
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: ce71bdfeb1899ef4c9d9be93b9413897, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 0.35, b: 0.1, a: 0.95}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1678327076
 GameObject:
   m_ObjectHideFlags: 0
@@ -9206,12 +10054,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059300
+    rid: 8244398056347533567
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059300
+    - rid: 8244398056347533567
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9474,12 +10322,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059295
+    rid: 8244398056347533562
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059295
+    - rid: 8244398056347533562
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9540,12 +10388,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059291
+    rid: 8244398056347533558
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059291
+    - rid: 8244398056347533558
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9720,12 +10568,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059236
+    rid: 8244398056347533504
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059236
+    - rid: 8244398056347533504
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -9968,6 +10816,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1749453764}
+  - {fileID: 1290499439}
+  - {fileID: 920652783}
+  - {fileID: 745918506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1742581803
@@ -9985,6 +10836,7 @@ MonoBehaviour:
   _pointHoverIndicator: {fileID: 1749453764}
   _dashPatternTexture: {fileID: 2800000, guid: b55704b89e550b144b1102b43525b9ab, type: 3}
   _targetCircleTexture: {fileID: 2800000, guid: 03df4d0a41459ea4c9d9393e531beb9c, type: 3}
+  _targetSquareTexture: {fileID: 2800000, guid: 7aa5a251466e98545afa5f8c5dd7b687, type: 3}
   _castRangeColor: {r: 0.15, g: 0.9, b: 1, a: 0.88}
   _targetRangeColor: {r: 1, g: 0.25, b: 0.35, a: 0.95}
   _targetReticleColor: {r: 1, g: 0.92, b: 0.25, a: 1}
@@ -10024,6 +10876,8 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 00984632e4a3cf44b975bed5b791c7db, type: 3}
   - {fileID: 2800000, guid: 2eed107a713b00044bf94b569f58d43d, type: 3}
   - {fileID: 2800000, guid: 170614f78495a1f4d9eb4af2d6fd4a1e, type: 3}
+  _friendlyProjectileColor: {r: 0.2, g: 0.6, b: 1, a: 0.95}
+  _projectileArrowScrollSpeed: 1.25
 --- !u!1 &1749453760
 GameObject:
   m_ObjectHideFlags: 0
@@ -10167,12 +11021,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059292
+    rid: 8244398056347533559
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059292
+    - rid: 8244398056347533559
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10414,6 +11268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_PlayerUIView
   _panelRenderer: {fileID: 1808269083}
   _cardViewTemplate: {fileID: 9197481963319205126, guid: a54d4ffad559f5d4fa819d52af0cecfe, type: 3}
+  _floatingTextPrefab: {fileID: 5635016228997878863, guid: f909d22a92f10354a9e0c8199b564bdb, type: 3}
+  _lifeHudPrefab: {fileID: 2252905291769676276, guid: 956330d25330880428a4dab66b3db575, type: 3}
 --- !u!1 &1809944196
 GameObject:
   m_ObjectHideFlags: 0
@@ -10467,12 +11323,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059308
+    rid: 8244398056347533575
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059308
+    - rid: 8244398056347533575
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10557,12 +11413,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059265
+    rid: 8244398056347533533
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059265
+    - rid: 8244398056347533533
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -10999,8 +11855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ebb4a48e5c6e0439c281b3907d9f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BootStrapper
-  _floatingTextPrefab: {fileID: 5635016228997878863, guid: f909d22a92f10354a9e0c8199b564bdb, type: 3}
-  _lifeHudPrefab: {fileID: 2252905291769676276, guid: 956330d25330880428a4dab66b3db575, type: 3}
 --- !u!4 &1903989873
 Transform:
   m_ObjectHideFlags: 0
@@ -11106,6 +11960,157 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905133641}
   m_Mesh: {fileID: 5725235537216381791, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &1908529362
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1908529363}
+  - component: {fileID: 1908529364}
+  m_Layer: 0
+  m_Name: RemainingPathLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1908529363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908529362}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 0.99999976, z: 0.99999976}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1290499439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &1908529364
+LineRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908529362}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1134823313}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 0.6, g: 0.6, b: 0.6, a: 0}
+      key1: {r: 0.6, g: 0.6, b: 0.6, a: 0.35}
+      key2: {r: 0, g: 0, b: 0, a: 0.35}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 13107
+      atime2: 65535
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 3
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 1
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 1
 --- !u!1 &1910608731
 GameObject:
   m_ObjectHideFlags: 0
@@ -11429,12 +12434,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059245
+    rid: 8244398056347533513
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059245
+    - rid: 8244398056347533513
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -11789,12 +12794,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059232
+    rid: 8244398056347533500
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059232
+    - rid: 8244398056347533500
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -12096,6 +13101,247 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2034469812}
   m_Mesh: {fileID: -398900113712687466, guid: f88d79267de859e4986dd18d2dd2f83a, type: 3}
+--- !u!1 &2044577478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2044577479}
+  - component: {fileID: 2044577480}
+  m_Layer: 0
+  m_Name: ActivePathLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2044577479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044577478}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 0.99999976, z: 0.99999976}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1290499439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &2044577480
+LineRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044577478}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 865287302}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.4
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 0.2, g: 0.85, b: 1, a: 0}
+      key1: {r: 0.2, g: 0.85, b: 1, a: 0.85}
+      key2: {r: 0, g: 0, b: 0, a: 0.85}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 13107
+      atime2: 65535
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 3
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 1
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 1
+--- !u!1 &2051706982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2051706983}
+  - component: {fileID: 2051706985}
+  - component: {fileID: 2051706984}
+  m_Layer: 0
+  m_Name: EndMarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2051706983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051706982}
+  serializedVersion: 2
+  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
+  m_LocalPosition: {x: 3, y: -1.0000001, z: 0.019999862}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 920652783}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &2051706984
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051706982}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 848783694}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2051706985
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051706982}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2094213551
 GameObject:
   m_ObjectHideFlags: 0
@@ -12149,12 +13395,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059303
+    rid: 8244398056347533570
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059303
+    - rid: 8244398056347533570
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -12305,7 +13551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff38066be6e8ed44a1dd165296d3d15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_TickManagerService
-  currentTick: 0
+  currentTick: 1
 --- !u!4 &2127978529
 Transform:
   m_ObjectHideFlags: 0
@@ -12462,12 +13708,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059255
+    rid: 8244398056347533523
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059255
+    - rid: 8244398056347533523
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -15667,67 +16913,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &1217246133951029841
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 4325531500414609404}
-    m_Modifications:
-    - target: {fileID: 2590411579303231256, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_Name
-      value: InteractableTest
-      objectReference: {fileID: 0}
-    - target: {fileID: 6531531644055029522, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 109124797}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7064565600050207233, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2c75b1725e7ef4846911431009b9538a, type: 3}
 --- !u!1 &1334500208536850624
 GameObject:
   m_ObjectHideFlags: 0
@@ -18314,7 +19499,6 @@ Transform:
   m_Children:
   - {fileID: 3121798457269454455}
   - {fileID: 857829613801550114}
-  - {fileID: 1032198549}
   m_Father: {fileID: 101444837}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4325531500611245970
@@ -19042,12 +20226,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059286
+    rid: 8244398056347533553
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059286
+    - rid: 8244398056347533553
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19091,12 +20275,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059250
+    rid: 8244398056347533518
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059250
+    - rid: 8244398056347533518
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19140,12 +20324,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059280
+    rid: 8244398056347533547
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059280
+    - rid: 8244398056347533547
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19189,12 +20373,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059276
+    rid: 8244398056347533543
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059276
+    - rid: 8244398056347533543
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19238,12 +20422,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059251
+    rid: 8244398056347533519
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059251
+    - rid: 8244398056347533519
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19287,12 +20471,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059288
+    rid: 8244398056347533555
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059288
+    - rid: 8244398056347533555
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19336,12 +20520,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059285
+    rid: 8244398056347533552
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059285
+    - rid: 8244398056347533552
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19385,12 +20569,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059271
+    rid: 8244398056347533539
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059271
+    - rid: 8244398056347533539
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19434,12 +20618,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059252
+    rid: 8244398056347533520
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059252
+    - rid: 8244398056347533520
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19483,13 +20667,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059310
+    rid: 8244398056347533577
   placedEntityViews:
   - {fileID: 3387502718430652424}
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059310
+    - rid: 8244398056347533577
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19533,12 +20717,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059253
+    rid: 8244398056347533521
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059253
+    - rid: 8244398056347533521
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19582,12 +20766,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059268
+    rid: 8244398056347533536
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059268
+    - rid: 8244398056347533536
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19631,12 +20815,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059259
+    rid: 8244398056347533527
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059259
+    - rid: 8244398056347533527
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -19680,12 +20864,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059289
+    rid: 8244398056347533556
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059289
+    - rid: 8244398056347533556
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21165,12 +22349,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059267
+    rid: 8244398056347533535
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059267
+    - rid: 8244398056347533535
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21214,12 +22398,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059260
+    rid: 8244398056347533528
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059260
+    - rid: 8244398056347533528
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21263,12 +22447,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059241
+    rid: 8244398056347533509
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059241
+    - rid: 8244398056347533509
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21312,12 +22496,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059269
+    rid: 8244398056347533537
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059269
+    - rid: 8244398056347533537
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21361,13 +22545,13 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059294
+    rid: 8244398056347533561
   placedEntityViews:
   - {fileID: 953291185}
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059294
+    - rid: 8244398056347533561
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21411,12 +22595,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059279
+    rid: 8244398056347533546
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059279
+    - rid: 8244398056347533546
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21460,12 +22644,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059297
+    rid: 8244398056347533564
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059297
+    - rid: 8244398056347533564
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21508,12 +22692,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059293
+    rid: 8244398056347533560
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059293
+    - rid: 8244398056347533560
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21557,12 +22741,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059275
+    rid: 8244398056347533542
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059275
+    - rid: 8244398056347533542
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21605,12 +22789,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059258
+    rid: 8244398056347533526
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059258
+    - rid: 8244398056347533526
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21654,13 +22838,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059244
-  placedEntityViews:
-  - {fileID: 1032198552}
+    rid: 8244398056347533512
+  placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059244
+    - rid: 8244398056347533512
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21704,12 +22887,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059243
+    rid: 8244398056347533511
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059243
+    - rid: 8244398056347533511
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21753,12 +22936,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059246
+    rid: 8244398056347533514
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059246
+    - rid: 8244398056347533514
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21802,12 +22985,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059264
+    rid: 8244398056347533532
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059264
+    - rid: 8244398056347533532
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21851,12 +23034,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059281
+    rid: 8244398056347533548
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059281
+    - rid: 8244398056347533548
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21900,12 +23083,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059261
+    rid: 8244398056347533529
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059261
+    - rid: 8244398056347533529
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21949,12 +23132,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059284
+    rid: 8244398056347533551
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059284
+    - rid: 8244398056347533551
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -21998,12 +23181,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059277
+    rid: 8244398056347533544
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059277
+    - rid: 8244398056347533544
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22047,12 +23230,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059272
+    rid: 8244398056347533540
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059272
+    - rid: 8244398056347533540
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22096,12 +23279,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059298
+    rid: 8244398056347533565
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059298
+    - rid: 8244398056347533565
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22144,12 +23327,12 @@ MonoBehaviour:
   type: 1
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059249
+    rid: 8244398056347533517
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059249
+    - rid: 8244398056347533517
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22193,12 +23376,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059270
+    rid: 8244398056347533538
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059270
+    - rid: 8244398056347533538
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:
@@ -22242,12 +23425,12 @@ MonoBehaviour:
   type: 0
   isHoverable: 1
   _pointData:
-    rid: 8244398012911059242
+    rid: 8244398056347533510
   placedEntityViews: []
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059242
+    - rid: 8244398056347533510
       type: {class: _prototype_PointData, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         point:

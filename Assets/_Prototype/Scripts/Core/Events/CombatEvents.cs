@@ -103,4 +103,53 @@ namespace TDG0407._prototype
             NewMode = newMode;
         }
     }
+
+    /// <summary>
+    /// 엔티티가 '죽음의 문턱'에 진입했을 때 발행되는 이벤트입니다.
+    /// </summary>
+    public struct EntityDeathsDoorEnteredEvent
+    {
+        public _prototype_EntityData Target { get; }
+        public EntityDeathsDoorEnteredEvent(_prototype_EntityData target)
+        {
+            Target = target;
+        }
+    }
+
+    /// <summary>
+    /// 죽음의 문턱 상태에서 피해를 입었으나 '죽음 저항'에 성공하여 생존했을 때 발행되는 이벤트입니다.
+    /// </summary>
+    public struct EntityDeathResistedEvent
+    {
+        public _prototype_EntityData Target { get; }
+        public float ResistProp { get; }
+        public int ResistChance => UnityEngine.Mathf.RoundToInt(ResistProp * 100f);
+        public int CurrentStack { get; }
+
+        public EntityDeathResistedEvent(_prototype_EntityData target, float resistProp, int currentStack)
+        {
+            Target = target;
+            ResistProp = resistProp;
+            CurrentStack = currentStack;
+        }
+
+        public EntityDeathResistedEvent(_prototype_EntityData target, int resistChance, int currentStack)
+        {
+            Target = target;
+            ResistProp = resistChance / 100f;
+            CurrentStack = currentStack;
+        }
+    }
+
+    /// <summary>
+    /// 체력이 50% 이상 회복되어 '죽음의 문턱' 상태를 극복하고 디버프가 해제되었을 때 발행되는 이벤트입니다.
+    /// </summary>
+    public struct EntityDeathsDoorClearedEvent
+    {
+        public _prototype_EntityData Target { get; }
+        public EntityDeathsDoorClearedEvent(_prototype_EntityData target)
+        {
+            Target = target;
+        }
+    }
 }

@@ -41,14 +41,8 @@ MonoBehaviour:
       type: {class: _prototype_CardProviderComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         providedCards:
-        - cardModel: {fileID: 11400000, guid: dda85fe7f00aee44596cadb673c63c2c, type: 2}
-          visibilityConditions:
-          - rid: 8244397920127025599
-          - rid: 8244397920127025598
-        - cardModel: {fileID: 11400000, guid: 7c64b6bc6d5077b49ad1c67f175ae5fa, type: 2}
-          visibilityConditions:
-          - rid: 8244397920127025601
-          - rid: 8244397920127025600
+        - {fileID: 11400000, guid: dda85fe7f00aee44596cadb673c63c2c, type: 2}
+        - {fileID: 11400000, guid: 7c64b6bc6d5077b49ad1c67f175ae5fa, type: 2}
     - rid: 8244397920127025598
       type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:

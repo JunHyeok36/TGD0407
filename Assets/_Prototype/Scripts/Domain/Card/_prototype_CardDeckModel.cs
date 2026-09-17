@@ -18,15 +18,15 @@ namespace TDG0407._prototype
         public _prototype_CardDeck CreateCardDeck()
         {
             List<_prototype_CardData> allCardDatas = new();
-            foreach (var cardData in this.allCardDatas) allCardDatas.Add(cardData.CreateCardData());
+            foreach (var cardData in this.allCardDatas) if (cardData != null) allCardDatas.Add(cardData.CreateCardData());
             List<_prototype_CardData> remainedCardDatas = new();
-            foreach (var cardData in this.remainedCardDatas) remainedCardDatas.Add(cardData.CreateCardData());
+            foreach (var cardData in this.remainedCardDatas) if (cardData != null) remainedCardDatas.Add(cardData.CreateCardData());
             List<_prototype_CardData> handedCardDatas = new();
-            foreach (var cardData in this.handedCardDatas) handedCardDatas.Add(cardData.CreateCardData());
+            foreach (var cardData in this.handedCardDatas) if (cardData != null) handedCardDatas.Add(cardData.CreateCardData());
             List<_prototype_CardData> discardedCardDatas = new();
-            foreach (var cardData in this.discardedCardDatas) discardedCardDatas.Add(cardData.CreateCardData());
+            foreach (var cardData in this.discardedCardDatas) if (cardData != null) discardedCardDatas.Add(cardData.CreateCardData());
             List<_prototype_CardData> destroyedCardDatas = new();
-            foreach (var cardData in this.destroyedCardDatas) destroyedCardDatas.Add(cardData.CreateCardData());
+            foreach (var cardData in this.destroyedCardDatas) if (cardData != null) destroyedCardDatas.Add(cardData.CreateCardData());
 
 
             var deck = new _prototype_CardDeck

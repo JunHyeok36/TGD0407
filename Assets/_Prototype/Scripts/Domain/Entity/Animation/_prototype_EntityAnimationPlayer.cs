@@ -11,6 +11,9 @@ namespace TDG0407._prototype
             if (this == null || gameObject == null)
                 return;
 
+            if (!Application.isPlaying)
+                return;
+
             await transform.DOShakePosition(0.2f, 0.2f, 10, 90, false, true)
                 .AsyncWaitForCompletion();
         }
@@ -23,6 +26,12 @@ namespace TDG0407._prototype
                 return;
 
             transform.SetParent(targetPointView.transform, true);
+            if (!Application.isPlaying)
+            {
+                transform.localPosition = localPositionOffset;
+                return;
+            }
+
             await transform.DOLocalMove(localPositionOffset, 0.2f)
                 .SetEase(Ease.InOutSine)
                 .AsyncWaitForCompletion();

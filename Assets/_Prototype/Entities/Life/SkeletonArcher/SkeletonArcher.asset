@@ -24,9 +24,14 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
   components: []
-  side: 0
   lifeStat:
     redPower: 5
     bluePower: 0
@@ -43,10 +48,10 @@ MonoBehaviour:
     silenceResist: 0
     fearResist: 0
     knockdownResist: 0
-    healthRecoverAmount: 3
+    healthRecoverAmount: 0
     staminaRecoverAmount: 2
     knockbackResist: 0
-    deathResist: 0
+    deathResistProp: 0
     dodgeProb: 0
     criticalProb: 0.05
     criticalWeight: 50
@@ -57,11 +62,11 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 85e6330b9719fba47bf2a8fa9e5134b3, type: 2}
     - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
     - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
-    - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
     remainedCardDatas: []
     handedCardDatas: []
     discardedCardDatas: []
     destroyedCardDatas: []
+  inventoryModel: {fileID: 0}
   aiLogic:
     rid: 8244397704902606954
   references:

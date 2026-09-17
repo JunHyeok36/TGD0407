@@ -1,4 +1,4 @@
-﻿# 03. 시스템 아키텍처
+# 03. 시스템 아키텍처
 
 ## 디렉터리 구조
 
@@ -144,20 +144,25 @@ MonoBehaviour 기반의 Unity 뷰 컴포넌트.
 플레이어의 행동 하나가 틱을 1 전진시키며, 등록된 모든 TickActionPlanner가 순서에 따라 실행된다.
 
 ```
-플레이어 입력
+플레이어 입력 (또는 스턴 시 0.8초 자동 진행)
     │
     ▼
 TickManager.AdvanceTick(playerAction)
     │
     ├─ OnPreTick (사전 처리)
-    ├─ playerAction() (플레이어 행동)
+    ├─ playerAction() (플레이어 행동 / 스턴 시 흔들림 연출)
     ├─ 각 Entity의 TickActionPlanner 수집
     │      ├─ 플레이어 타겟 Intent → 우선 순차 실행
     │      └─ 기타 Intent → 병렬 실행
-    └─ OnPostTick (사후 처리)
+    └─ OnPostTick (사후 처리 및 지속시간 차감)
 ```
 
 **우선순위 규칙**: 플레이어를 직접 타겟으로 하는 행동이 기타 행동보다 먼저 실행된다.
+
+### 스턴 상태 시 자동 틱 진행 (Auto-Tick Progression)
+- 플레이어가 `Stun` 상태에 걸리면 모든 수동 조작(이동, 카드 조작, 휴식)이 차단된다.
+- 시스템은 입력을 대기하지 않고 **0.8초 간격**으로 `AdvanceTick`을 자동 반복 호출하여 게임을 진행시킨다.
+- 각 자동 틱마다 플레이어 캐릭터에 가벼운 흔들림(Shake) 연출이 실행되며, 스턴이 해제되거나 사망할 때까지 지속된다.
 
 ---
 
@@ -167,7 +172,7 @@ _prototype_EventBus 를 통해 이벤트 기반 통신을 수행한다.
 
 ```csharp
 // 구독
-_prototype_EventBus.Listen<EntityDiedEvent>(OnEntityDied);
+_prototype_EventBus.Listen<EntityStatusChangedEvent>(OnEntityStatusChanged);
 
 // 발행
 _prototype_EventBus.Fire(new TickAdvancedEvent(currentTick));
@@ -179,7 +184,18 @@ _prototype_EventBus.Fire(new TickAdvancedEvent(currentTick));
 | TickAdvancedEvent | 틱 진행 완료 시 발행 |
 | EntityDiedEvent | Entity 사망 시 발행 |
 | EntityDamagedEvent | Entity 피해 시 발행 |
+| EntityStatusChangedEvent | Entity의 상태효과 추가/갱신/해제 시 발행 (AI 의도 제어 및 UI 갱신에 활용) |
 | PlayModeChangedEvent | 플레이 모드 전환 시 발행 |
+
+---
+
+## View / UI 책임 분리
+
+- **Bootstrapper 책임 경량화**:
+  - 기존 Bootstrapper에 밀집되어 있던 뷰 프리팹(FloatingText/DamageText, WarningText, Grid Indicator 등)을 `PlayerController` 및 `PlayerUIView`로 이관하여 컴포넌트별 책임을 명확히 분리하였다.
+- **상태효과 시각화**:
+  - `_prototype_PlayerUIView`: 침묵 상태 시 손패 카드에 보라색 오버레이(`SilenceOverlay`) 표시 및 카드 사용 차단.
+  - `_prototype_LifeHUD`: 머리 위 상태 텍스트에 DoT 중첩 수(`[Bleeding x2 (5t)]`), 저주 누적치(`[Curse -55 (4t)]`), CC 잔여 틱을 그룹화하여 직관적으로 표시.
 
 ---
 

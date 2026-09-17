@@ -46,7 +46,7 @@ MonoBehaviour:
     healthRecoverAmount: 5
     staminaRecoverAmount: 3
     knockbackResist: 0
-    deathResist: 0
+    deathResistProp: 0
     dodgeProb: 0
     criticalProb: 0
     criticalWeight: 50

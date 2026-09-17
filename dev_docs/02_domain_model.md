@@ -206,17 +206,29 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 
 #### 상태효과 (StatusEffect)
 
-| 유형 | 설명 |
-|------|------|
-| Stun | 해당 틱 동안 모든 행동 불가 |
-| Knockdown | 스테미나 완전 소모 시 발생. 최초 발동 시 최대 체력 30% 고정 피해 (이 피해로 사망 불가), 기본 5틱간 카드 쿨타임 100% 증가 |
-| Silence | 해당 틱 동안 카드 사용 불가 |
-| Fear | 해당 틱 동안 특정 Entity를 향해 이동·대상 지정 불가. 적의 경우 반대 방향으로 이동 |
-| Curse | 해당 틱 동안 curseResist가 value만큼 감소 |
-| Bleeding | 해당 틱 동안 value의 **고정** 피해 |
-| Burning | 해당 틱 동안 value의 **물리** 피해. 카드 캐스팅 시 value/(value+200)% 확률로 카드 소실. Freeze와 공존 불가 |
-| Freeze | 해당 틱 동안 기본 이동 불가 (카드 이동은 가능). Burning과 공존 불가 |
-| Poisoning | 해당 틱 동안 남은틱 × value의 **마법** 피해. 치유 효과 50% 감소 |
+| 유형 | 분류 | 설명 | 중첩 및 갱신 규칙 |
+|------|------|------|-------------------|
+| Stun | CC | 해당 틱 동안 모든 행동 불가 | 단일 인스턴스. 재부여 시 `Mathf.Max(남은틱, 새틱)`으로 갱신 |
+| Knockdown | CC | 스테미나 소모 시 발동. 최초 1회 최대 체력 30% 고정 피해(사망 불가), 기본 5틱간 카드 쿨타임 100% 증가 | 단일 인스턴스. 30% 피해는 최초 1회만 적용, 틱은 `Mathf.Max` 갱신 |
+| Silence | CC | 해당 틱 동안 카드 사용 불가 | 단일 인스턴스. 재부여 시 `Mathf.Max` 갱신 |
+| Fear | CC | 해당 틱 동안 특정 Entity를 향해 이동·대상 지정 불가. 적의 경우 반대 방향으로 이동 | 단일 인스턴스. 재부여 시 `Mathf.Max` 갱신 |
+| Freeze | CC | 해당 틱 동안 기본 이동 불가 (카드 이동은 가능). Burning과 상호 배타 | 단일 인스턴스. `Mathf.Max` 갱신. **Burning과 상호 전소멸(All-Clear)** |
+| SuperArmor | 버프 | 피격 시 넉백 저항 및 강인도 유지 | 단일 인스턴스. 재부여 시 `Mathf.Max` 갱신 |
+| Bleeding | DoT | 해당 틱 동안 value의 **고정** 피해 | **독립 인스턴스(병렬 유지)**. 각 인스턴스별 개별 피해 및 0.8배 FloatingText 팝업 |
+| Burning | DoT | 해당 틱 동안 value의 **물리** 피해. 카드 캐스팅 시 확률적 소실. Freeze와 상호 배타 | **독립 인스턴스(병렬 유지)**. **Freeze와 상호 전소멸(All-Clear)** |
+| Poisoning | DoT | 해당 틱 동안 남은틱 × value의 **마법** 피해. 치유 효과 50% 감소 | **독립 인스턴스(병렬 유지)**. 각 인스턴스별 개별 피해 처리 |
+| Curse | 디버프 | 해당 틱 동안 curseResist가 value만큼 감소 | 단일 인스턴스. 지속시간은 `Mathf.Max`, value는 **누적 합산(`+=`)** |
+
+##### 상태효과 상세 규칙
+1. **군중 제어기(CC) & 버프**:
+   - 무한 CC 방지를 위해 1개 인스턴스만 유지하며, 지속시간은 더 큰 값으로 갱신합니다.
+2. **지속 피해(DoT)**:
+   - 서로 다른 지속시간과 피해량을 온전히 유지하기 위해 독립 인스턴스로 병렬 누적됩니다.
+   - 틱 진행 시 각 DoT마다 개별 데미지 틱이 발생하며, 시인성을 위해 기본 FloatingText보다 0.8배 작은 크기로 순차 팝업됩니다.
+3. **Burning vs Freeze 상호 전소멸(All-Clear)**:
+   - Burning이 부여될 때 대상에게 Freeze가 있으면, 기존 Freeze를 모두 제거하고 신규 Burning도 상쇄 소멸합니다. (Freeze 부여 시 기존 Burning 제거도 동일)
+4. **Curse (스탯 디버프)**:
+   - 지속시간은 `Mathf.Max`로 갱신되고, 저항 감소 수치(`value`)는 중첩 시 계속 누적 합산됩니다.
 
 #### TickDuration (지속 시간)
 상태효과 및 카드의 지속 시간 표현.
@@ -228,12 +240,23 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 | Conditional | 조건에 따라 결정 (이벤트로 직접 해제시켜야 함) |
 
 ---
-## Entity 종류
+## Entity 종류 및 상호작용 규칙
+
 ### Obstacle (ObstacleData)
 - Deck을 가지지 않고 행동이 단순하거나 반복적인 Entity.
+
 ### Projectile
 - 특정 방향과 속도로 날아가 상호작용하는 Entity.
 - 레이저 투사체(LaserProjectileData)가 구현되어 있으며, 방향·속도·관통 여부·충돌 처리 등을 포함한다.
+
+### Entity 상호작용 & 연출 공통 규칙
+1. **FloatingText 발생 대상 제한**:
+   - 데미지 수치 및 상태효과 텍스트 등의 FloatingText는 오직 **`Life` 엔티티**에서만 발생한다.
+   - `Projectile`이나 `Obstacle`은 피격되거나 파괴되더라도 일반 FloatingText를 띄우지 않는다.
+2. **동일 세력(Side) 투사체 보호**:
+   - 공격 범위 내에 아군(동일 Side)이 생성한 Projectile이 포함되어도 이를 공격하거나 파괴하지 않는다. 적대적 세력의 투사체나 대상만 피격 판정 대상에 포함된다.
+3. **넉백(Knockback) 시 시선 방향 유지**:
+   - 넉백 효과를 받아 강제로 밀려날 때에는 스스로 이동하는 느낌을 방지하고 "밀려나는" 연출을 위해 **기존에 바라보던 시선 방향(Facing Direction)을 강제로 유지**시킨 상태에서 좌표를 이동한다.
 
 ---
 
@@ -249,9 +272,17 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 | cardType | CardType | 카드 유형 |
 | cardCost | CostValue | 소비 자원 정보 |
 | coolTicks | int | 쿨타임 (틱 단위) |
+| followCaster | bool | 시전자 위치 추적 여부 (true 시 넉백 등 이동 후 공격 범위가 새 위치에서 재계산됨) |
 | castRangeSelector | ICastRangeSelector | 시전 범위 선택기 |
 | targetRangeSelector | ITargetRangeSelector | 목표 범위 선택기 |
 | cardActionList | List<ICardAction> | 실행 행동 목록 |
+
+#### followCaster (시전자 추적 옵션)
+- **적용 대상**: 할퀴기(Claw)와 같은 시전자 기준 근접 공격 카드.
+- **동작 방식**:
+  - 적 AI가 공격을 예고(Planned Target)한 후, 플레이어가 해당 적을 넉백/밀치기로 밀어냈을 때 공격 목표 범위가 이동된 위치를 기준으로 실시간 재계산된다.
+  - 이를 통해 플레이어가 공격 예정인 적을 밀어내어 공격을 회피(Whiff)시키는 전술적 플레이가 가능하다.
+  - 고정 지점 공격(FixedGround, 예: 메테오 등) 카드는 `followCaster = false`로 설정하여 원래 조준 지점을 유지한다.
 
 #### CardType
 | 값 | 설명 |

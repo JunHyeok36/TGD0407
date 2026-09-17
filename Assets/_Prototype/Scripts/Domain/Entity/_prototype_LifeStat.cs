@@ -7,7 +7,7 @@ namespace TDG0407._prototype
     public class _prototype_LifeStat
     {
         // 공격력
-        public int redPower = 5;
+        public int redPower = 15;
         public int bluePower = 0;
 
         // 방어력
@@ -30,14 +30,13 @@ namespace TDG0407._prototype
         public int knockdownResist;
 
         // 회복 관련
-        public int healthRecoverAmount = 5;
         public int staminaRecoverAmount = 3;
 
         // 기타
-        public int knockbackResist;
-        public int deathResist;
-        public int dodgeProb;
-        public float criticalProb = .0f; // 0 ~ 1
+        public int knockbackResist = 0;
+        public float deathResistProp = .0f;
+        public float dodgeProb = .0f;
+        public float criticalProb = .0f;
         public int criticalWeight = 50;
 
         public _prototype_LifeStat() { }
@@ -59,10 +58,9 @@ namespace TDG0407._prototype
             this.silenceResist = other.silenceResist;
             this.fearResist = other.fearResist;
             this.knockdownResist = other.knockdownResist;
-            this.healthRecoverAmount = other.healthRecoverAmount;
             this.staminaRecoverAmount = other.staminaRecoverAmount;
             this.knockbackResist = other.knockbackResist;
-            this.deathResist = other.deathResist;
+            this.deathResistProp = other.deathResistProp;
             this.dodgeProb = other.dodgeProb;
             this.criticalProb = other.criticalProb;
             this.criticalWeight = other.criticalWeight;

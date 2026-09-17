@@ -24,4 +24,14 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 1
+  heightBounds:
+    _min: 0.5
+    _max: 1
+  components: []
+  references:
+    version: 2
+    RefIds: []

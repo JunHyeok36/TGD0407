@@ -9,11 +9,11 @@ namespace TDG0407._prototype
     {
         
         [ReadOnly] public _prototype_Point point;
-        [ReadOnly] public List<_prototype_EntityData> placedEntityDatas;
+        [ReadOnly] public List<_prototype_EntityData> placedEntityDatas = new();
         public _prototype_PointType type = _prototype_PointType.Normal;
         public bool isHoverable = true;
 
-        public _prototype_PointData() {}
+        public _prototype_PointData() { placedEntityDatas = new(); }
 
         public _prototype_PointData(_prototype_Point point, _prototype_PointType type = _prototype_PointType.Normal, bool isHoverable = true)
         {

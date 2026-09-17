@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef97ce57c1968b44a72198f2b9ec150, type: 3}
+  m_Name: GiantDummy
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeDataModel
+  ename: GiantDummy
+  health:
+    _min: 0
+    _max: 120
+    _cur: 120
+  stamina:
+    _min: 0
+    _max: 20
+    _cur: 20
+  point:
+    x: 0
+    y: 0
+  size:
+    x: 2
+    y: 2
+  movementType: 0
+  components: []
+  lifeStat:
+    redPower: 5
+    bluePower: 0
+    redResist: 0
+    blueResist: 0
+    handCardSlotCount: 5
+    drawQuickness: 0
+    curseResist: 0
+    bleedingResist: 0
+    burningResist: 0
+    poisoningResist: 0
+    stunResist: 0
+    freezeResist: 0
+    silenceResist: 0
+    fearResist: 0
+    knockdownResist: 0
+    healthRecoverAmount: 5
+    staminaRecoverAmount: 3
+    knockbackResist: 0
+    deathResistProp: 0
+    dodgeProb: 0
+    criticalProb: 0
+    criticalWeight: 50
+  cardDeck:
+    allCardDatas:
+    - {fileID: 11400000, guid: 522d715ee6df03544a6e1cc0f08473e9, type: 2}
+    - {fileID: 11400000, guid: 7ae1ac854d50e674a86d3867261c4478, type: 2}
+    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
+    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
+    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
+    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
+    remainedCardDatas: []
+    handedCardDatas: []
+    discardedCardDatas: []
+    destroyedCardDatas: []
+  inventoryModel: {fileID: 0}
+  aiLogic:
+    rid: 8244398056347533412
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398056347533412
+      type: {class: _prototype_MeleeChaseAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        mistakeRate: 0
+        attackDamage: 10
+        minIdleTicks: 0
+        maxIdleTicks: 1

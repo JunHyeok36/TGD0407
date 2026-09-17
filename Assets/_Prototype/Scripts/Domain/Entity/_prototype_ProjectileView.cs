@@ -50,21 +50,12 @@ namespace TDG0407._prototype
 
         public void SetTrajectoryVisible(bool visible)
         {
-            if (_lineObj != null)
+            // 모든 투사체는 Hazard 타일 시스템을 적용하므로 LineRenderer/EndCap 항상 비활성화
+            if (_lineObj != null) _lineObj.SetActive(false);
+            if (_endCapObject != null) _endCapObject.SetActive(false);
+            if (!visible)
             {
-                _lineObj.SetActive(visible);
-            }
-            if (_endCapObject != null)
-            {
-                if (visible)
-                {
-                    bool hasPoints = _lineRenderer != null && _lineRenderer.positionCount >= 2;
-                    _endCapObject.SetActive(hasPoints);
-                }
-                else
-                {
-                    _endCapObject.SetActive(false);
-                }
+                _prototype_GridVisualManager.Instance?.ClearProjectileHazards(this);
             }
         }
 
@@ -276,6 +267,10 @@ namespace TDG0407._prototype
 
                 xMark.SetActive(false);
             }
+
+            // 모든 투사체는 Hazard 타일 시스템을 사용 -> LineRenderer/EndCap 비활성화
+            if (_lineObj != null) _lineObj.SetActive(false);
+            if (_endCapObject != null) _endCapObject.SetActive(false);
         }
 
         private void Update()
@@ -290,7 +285,7 @@ namespace TDG0407._prototype
 
         public void UpdateTrajectoryLine()
         {
-            if (Data == null || Data.direction == _prototype_Point.zero || _lineRenderer == null)
+            if (Data == null || Data.direction == _prototype_Point.zero)
             {
                 SetTrajectoryVisible(false);
                 return;
@@ -300,6 +295,87 @@ namespace TDG0407._prototype
                 SetTrajectoryVisible(false);
                 return;
             }
+
+            // 모든 투사체: Hazard 타일 + 체브론 화살표 오버레이 (아군=파랑, 적군=오렌지)
+            UpdateProjectileHazards();
+        }
+
+        private void UpdateProjectileHazards()
+        {
+            var gvm = _prototype_GridVisualManager.Instance;
+            if (gvm == null) return;
+
+            // 아군 여부: 플레이어 투사체(Side.None) 또는 아군 측 투사체
+            // 현재 플레이어는 Side.None, 적군은 Side.B
+            bool isFriendly = Data.side != _prototype_Side.B;
+
+            // 전체 이동 궤적 타일 수집 (투사체 현재 위치부터 최종 도달점까지)
+            var allTrajectoryPoints = new List<_prototype_Point>();
+            allTrajectoryPoints.Add(Data.point);
+
+            var currentPoint = Data.point;
+            int simulatedTravel = Data.traveledDistance;
+            _prototype_Point currentDir = Data.direction;
+
+            foreach (var checkDir in _plannedDirections)
+            {
+                var nextPoint = currentPoint + checkDir;
+                if (!_prototype_GridManager.Instance.IsWithinBounds(nextPoint)) break;
+                var nextPv = _prototype_GridManager.Instance.GetPointView(nextPoint);
+                if (nextPv == null || nextPv.PointData.type != _prototype_PointType.Normal) break;
+
+                allTrajectoryPoints.Add(nextPoint);
+                currentPoint = nextPoint;
+                currentDir = checkDir;
+                simulatedTravel++;
+
+                bool hit = false;
+                foreach (var ev in nextPv.PlacedEntityViews)
+                {
+                    if (ev == null || ev.EntityData == null) continue;
+                    if (!Data.heightBounds.Overlaps(ev.EntityData.heightBounds)) continue;
+
+                    if (ev.EntityData is _prototype_LifeData ld)
+                    {
+                        if (ld.side != _prototype_Side.None && ld.side == Data.side) continue;
+                        hit = true;
+                    }
+                    else if (ev.EntityData is _prototype_ObstacleData obs)
+                    {
+                        if (obs.IsSolid)
+                        {
+                            hit = true;
+                        }
+                    }
+                    else if (ev.EntityData.TryGetComponent<_prototype_TrapComponentData>(out var td) && td.triggerOnDamage && !td.isDisarmed)
+                    {
+                        hit = true;
+                    }
+                }
+                if (hit) break;
+
+                if (Data.maxTravelDistance > 0 && simulatedTravel >= Data.maxTravelDistance) break;
+                if (Data.stopAtTargetPoint && currentPoint == Data.fixedTargetPoint) break;
+            }
+
+            if (allTrajectoryPoints.Count <= 1)
+            {
+                // 다음 이동 가능한 타일이 없으면 현재 타일만 해저드로 정리
+                gvm.ClearProjectileHazards(this);
+                return;
+            }
+
+            // 최종 도달 지점: 빗금 Hazard 타일
+            var endPoint = allTrajectoryPoints[allTrajectoryPoints.Count - 1];
+
+            // 중간 경로 타일들(투사체 현재 위치 포함, 끝 지점 제외): 화살표(>>>)가 흐르는 테두리 타일
+            var arrowPoints = allTrajectoryPoints.GetRange(0, allTrajectoryPoints.Count - 1);
+
+            gvm.ShowProjectileHazards(arrowPoints, endPoint, this, currentDir, isFriendly);
+        }
+
+        private void UpdateFriendlyLineRenderer()
+        {
 
             List<Vector3> points = new List<Vector3>();
 
@@ -338,6 +414,9 @@ namespace TDG0407._prototype
                 foreach (var entityView in nextPointView.PlacedEntityViews)
                 {
                     var entityData = entityView.EntityData;
+                    if (entityData == null) continue;
+                    if (!Data.heightBounds.Overlaps(entityData.heightBounds)) continue;
+
                     if (entityData is _prototype_LifeData lifeData)
                     {
                         if (lifeData.side != _prototype_Side.None && lifeData.side == Data.side) continue;
@@ -345,7 +424,10 @@ namespace TDG0407._prototype
                     }
                     else if (entityData is _prototype_ObstacleData obsData)
                     {
-                        hit = true;
+                        if (obsData.IsSolid)
+                        {
+                            hit = true;
+                        }
                     }
                 }
 
@@ -413,8 +495,12 @@ namespace TDG0407._prototype
 
         protected override void OnDestroy()
         {
+            base.OnDestroy();
             _prototype_TickManager.UnregisterPostTick(PreCalculatePath);
             _prototype_TickManager.UnregisterTick(ProcessTick);
+
+            var gvm = _prototype_GridVisualManager.Instance;
+            if (gvm != null) gvm.ClearProjectileHazards(this);
         }
 
         public async UniTask ExecuteMovement(Queue<_prototype_Point> executeQueue)
@@ -422,6 +508,7 @@ namespace TDG0407._prototype
             if (_isDestroyed || this == null || gameObject == null || Data == null || Data.direction == _prototype_Point.zero) return;
 
             SetTrajectoryVisible(false);
+            _prototype_GridVisualManager.Instance?.ClearProjectileHazards(this);
 
             Data.currentFloatAngle = _plannedEndFloatAngle;
 
@@ -448,6 +535,9 @@ namespace TDG0407._prototype
                 foreach (var entityView in nextPointView.PlacedEntityViews)
                 {
                     var entityData = entityView.EntityData;
+                    if (entityData == null) continue;
+                    if (!Data.heightBounds.Overlaps(entityData.heightBounds)) continue;
+
                     if (entityData is _prototype_LifeData lifeData)
                     {
                         if (lifeData.side != _prototype_Side.None && lifeData.side == Data.side) continue;
@@ -457,8 +547,11 @@ namespace TDG0407._prototype
                     }
                     else if (entityData is _prototype_ObstacleData obsData)
                     {
-                        targetsToDamage.Add(entityData);
-                        hit = true;
+                        if (obsData.IsSolid)
+                        {
+                            targetsToDamage.Add(entityData);
+                            hit = true;
+                        }
                     }
                 }
 
@@ -553,15 +646,22 @@ namespace TDG0407._prototype
                 bool blocked = false;
                 foreach (var entityView in checkPointView.PlacedEntityViews)
                 {
-                    if (entityView.EntityData is _prototype_LifeData lifeData)
+                    var entityData = entityView.EntityData;
+                    if (entityData == null) continue;
+                    if (!Data.heightBounds.Overlaps(entityData.heightBounds)) continue;
+
+                    if (entityData is _prototype_LifeData lifeData)
                     {
                         if (lifeData.side != _prototype_Side.None && lifeData.side == Data.side) continue;
                         if (lifeData.side == _prototype_Side.A) willHitPlayer = true;
                         blocked = true;
                     }
-                    else if (entityView.EntityData is _prototype_ObstacleData)
+                    else if (entityData is _prototype_ObstacleData obsData)
                     {
-                        blocked = true;
+                        if (obsData.IsSolid)
+                        {
+                            blocked = true;
+                        }
                     }
                 }
                 if (blocked) break;
@@ -596,6 +696,10 @@ namespace TDG0407._prototype
         {
             if (_isDestroyed) return;
             _isDestroyed = true;
+
+            SetTrajectoryVisible(false);
+            _prototype_GridVisualManager.Instance?.ClearProjectileHazards(this);
+
             var pointView = _prototype_GridManager.Instance.GetPointView(Data.point);
             if (pointView != null) pointView.RemoveEntity(this);
             if (gameObject != null) Destroy(gameObject);

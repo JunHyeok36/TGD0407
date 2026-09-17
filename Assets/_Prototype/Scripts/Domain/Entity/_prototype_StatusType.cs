@@ -14,6 +14,7 @@ namespace TDG0407._prototype
         Burning = 7,
         Freeze = 8,
         Poisoning = 9,
-        SuperArmor = 10
+        SuperArmor = 10,
+        DeathsDoor = 11
     }
 }

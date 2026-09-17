@@ -10,8 +10,7 @@ namespace TDG0407._prototype
         Skill,
         Support,
         Utility,
-        Curse,
-        Communication
+        Curse
 
     }
 

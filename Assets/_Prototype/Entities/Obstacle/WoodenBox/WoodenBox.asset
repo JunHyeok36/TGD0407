@@ -34,9 +34,7 @@ MonoBehaviour:
       type: {class: _prototype_CardProviderComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
         providedCards:
-        - cardModel: {fileID: 11400000, guid: d956ffefff6320e42b7739c26d9f5ab6, type: 2}
-          visibilityConditions:
-          - rid: 8244398012911059126
+        - {fileID: 11400000, guid: d956ffefff6320e42b7739c26d9f5ab6, type: 2}
     - rid: 8244398012911059126
       type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:

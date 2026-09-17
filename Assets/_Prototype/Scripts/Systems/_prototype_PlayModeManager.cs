@@ -222,9 +222,9 @@ namespace TDG0407._prototype
         {
             if (cardData == null) return false;
             if (_currentMode == _prototype_PlayMode.Battle)
-                return cardData.sourceProvider == null;
+                return cardData is _prototype_BattleCardData;
             else
-                return cardData.sourceProvider != null;
+                return cardData is _prototype_InteractionCardData;
         }
     }
 }

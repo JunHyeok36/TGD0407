@@ -85,14 +85,14 @@ namespace TDG0407._prototype
                     return true;
 
                 int resist = life.lifeStat.knockbackResist;
-                // 센티널 값: 9999 이상일 경우 100% 면역
-                if (resist >= 9999)
+                // 센티널 값: 99999 이상일 경우 100% 면역
+                if (resist >= 99999)
                     return true;
 
-                // 음수 및 일반 계산: 0 이하이면 0% (미저항), 양수이면 resist / (resist + 200f)
+                // 음수 및 일반 계산: 0 이하이면 0% (미저항), 양수이면 resist / (resist + 500f)
                 if (resist > 0)
                 {
-                    float prob = (float)resist / (resist + 200f);
+                    float prob = (float)resist / (resist + 500f);
                     return UnityEngine.Random.value < prob;
                 }
             }
