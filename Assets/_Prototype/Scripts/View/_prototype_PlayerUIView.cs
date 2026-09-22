@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,10 +33,17 @@ namespace TDG0407._prototype
         private Label _label_point;
         private Label _label_health;
         private Label _label_stamina;
+        private VisualElement _playerStatusTray;
         private Label _label_remainsCount;
         private Label _label_discardedCount;
         private VisualElement _cardDragArea;
         private VisualElement _handCardContainer;
+
+        // Status Tooltip UI Elements
+        private VisualElement _statusTooltip;
+        private Label _statusTooltipTitle;
+        private Label _statusTooltipDesc;
+        private System.IDisposable _playerStatusChangeSub;
 
         // Targeting UI Elements
         private VisualElement _targetingHint;
@@ -64,6 +72,28 @@ namespace TDG0407._prototype
         private System.IDisposable _floatingDamagedSub;
         private System.IDisposable _floatingStatusSub;
 
+        // Reward Notification Modal Elements
+        private VisualElement _rewardContainer;
+        private Label _rewardHeader;
+        private Label _rewardBadge;
+        private Label _rewardSource;
+        private Label _rewardTitle;
+        private Label _rewardDescription;
+        private Label _rewardDestinationHint;
+        private Button _rewardConfirmBtn;
+        private System.IDisposable _cardAcquiredSub;
+        private System.IDisposable _itemAcquiredSub;
+        private System.Action _onRewardModalClosed;
+        public bool IsRewardModalOpen => _rewardContainer != null && _rewardContainer.style.display == DisplayStyle.Flex;
+
+        // Left Acquisition Toast Container
+        private VisualElement _acquisitionToastContainer;
+
+        // Card Description Detailed Mode (Alt/Shift)
+        private bool _isDetailedDescriptionMode = false;
+        private _prototype_CardData _currentTargetingCard;
+        private _prototype_EntityData _currentHoveredTarget;
+
         public bool IsCardHovered { get; private set; }
 
         private List<VisualElement> handCardViews = new();
@@ -72,6 +102,23 @@ namespace TDG0407._prototype
         {
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
+        }
+
+        private void Update()
+        {
+            bool isAltOrShift = false;
+            if (UnityEngine.InputSystem.Keyboard.current != null)
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                isAltOrShift = kb.leftAltKey.isPressed || kb.rightAltKey.isPressed ||
+                               kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
+            }
+
+            if (isAltOrShift != _isDetailedDescriptionMode)
+            {
+                _isDetailedDescriptionMode = isAltOrShift;
+                RefreshAllCardDescriptions();
+            }
         }
 
         /// <summary>
@@ -109,6 +156,23 @@ namespace TDG0407._prototype
             _floatingStatusSub?.Dispose();
             _floatingStatusSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(_prototype_FloatingText.OnEntityStatusChanged);
 
+            // 획득 알림 모달 이벤트 리스너 구독
+            _cardAcquiredSub?.Dispose();
+            _cardAcquiredSub = _prototype_EventBus.Listen<EntityCardAcquiredEvent>(OnEntityCardAcquired);
+            _itemAcquiredSub?.Dispose();
+            _itemAcquiredSub = _prototype_EventBus.Listen<EntityItemAcquiredEvent>(OnEntityItemAcquired);
+
+            // 플레이어 상태변화 이벤트 리스너 구독
+            _playerStatusChangeSub?.Dispose();
+            _playerStatusChangeSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(evt =>
+            {
+                var playerView = _prototype_PlayerController.Instance?.ControlledEntityView;
+                if (playerView != null && evt.Target == playerView.EntityData)
+                {
+                    UpdatePlayerInfo();
+                }
+            });
+
             // 초기 UI 갱신
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
@@ -126,6 +190,9 @@ namespace TDG0407._prototype
             _playModeSub?.Dispose();
             _floatingDamagedSub?.Dispose();
             _floatingStatusSub?.Dispose();
+            _cardAcquiredSub?.Dispose();
+            _itemAcquiredSub?.Dispose();
+            _playerStatusChangeSub?.Dispose();
         }
 
         private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
@@ -133,6 +200,7 @@ namespace TDG0407._prototype
             _label_point = root.Q<Label>("Point");
             _label_health = root.Q<Label>("Health");
             _label_stamina = root.Q<Label>("Stamina");
+            _playerStatusTray = root.Q<VisualElement>("PlayerStatusTray");
             _label_remainsCount = root.Q<Label>("RemainsCount");
             _label_discardedCount = root.Q<Label>("DiscardedCount");
 
@@ -153,6 +221,34 @@ namespace TDG0407._prototype
             _modeIndicatorBanner = root.Q<VisualElement>("ModeIndicatorBanner");
             _modeIndicatorText = root.Q<Label>("ModeIndicatorText");
 
+            _rewardContainer = root.Q<VisualElement>("RewardNotificationContainer");
+            _acquisitionToastContainer = root.Q<VisualElement>("AcquisitionToastContainer");
+            _acquisitionToastContainer?.Clear();
+            _rewardHeader = root.Q<Label>("RewardHeader");
+            _rewardBadge = root.Q<Label>("RewardBadge");
+            _rewardSource = root.Q<Label>("RewardSource");
+            _rewardTitle = root.Q<Label>("RewardTitle");
+            _rewardDescription = root.Q<Label>("RewardDescription");
+            _rewardDestinationHint = root.Q<Label>("RewardDestinationHint");
+            _rewardConfirmBtn = root.Q<Button>("RewardConfirmButton");
+
+            if (_rewardConfirmBtn != null)
+            {
+                _rewardConfirmBtn.clicked -= HideRewardModal;
+                _rewardConfirmBtn.clicked += HideRewardModal;
+            }
+            if (_rewardContainer != null)
+            {
+                _rewardContainer.RegisterCallback<PointerDownEvent>(evt =>
+                {
+                    if (evt.target == _rewardContainer)
+                    {
+                        HideRewardModal();
+                        evt.StopPropagation();
+                    }
+                });
+            }
+
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
 
@@ -163,6 +259,187 @@ namespace TDG0407._prototype
             UpdateModeIndicator(currentMode);
 
             BuildHazardInfoTooltip(root);
+            BuildStatusTooltip(root);
+        }
+
+        private void OnEntityCardAcquired(EntityCardAcquiredEvent evt)
+        {
+            if (_prototype_PlayerController.Instance != null &&
+                _prototype_PlayerController.Instance.ControlledEntityView != null &&
+                evt.Entity == _prototype_PlayerController.Instance.ControlledEntityView.EntityData)
+            {
+                string cardName = evt.Card != null ? evt.Card.id : "카드";
+                ShowAcquisitionToast(null, cardName, 1, isCard: true);
+                ShowCardAcquiredModal(evt.Card, evt.SourceName);
+            }
+        }
+
+        private void OnEntityItemAcquired(EntityItemAcquiredEvent evt)
+        {
+            if (_prototype_PlayerController.Instance != null &&
+                _prototype_PlayerController.Instance.ControlledEntityView != null &&
+                evt.Entity == _prototype_PlayerController.Instance.ControlledEntityView.EntityData)
+            {
+                string itemName = evt.Item != null ? (!string.IsNullOrEmpty(evt.Item.displayName) ? evt.Item.displayName : evt.Item.id) : "아이템";
+                Sprite itemIcon = evt.Item != null ? evt.Item.icon : null;
+                ShowAcquisitionToast(itemIcon, itemName, evt.Quantity, isCard: false);
+                ShowItemAcquiredModal(evt.Item, evt.Quantity, evt.SourceName);
+            }
+        }
+
+        /// <summary>
+        /// 화면 좌측에 아이템/카드 획득 알림 토스트(TYPE A: CMD 레트로 터미널)를 띄웁니다.
+        /// </summary>
+        public void ShowAcquisitionToast(Sprite icon, string name, int count = 1, bool isCard = true, string customTag = null)
+        {
+            if (_acquisitionToastContainer == null) return;
+
+            // 최대 4개 초과 시 가장 오래된 항목 제거
+            while (_acquisitionToastContainer.childCount >= 4)
+            {
+                _acquisitionToastContainer.RemoveAt(0);
+            }
+
+            var toast = new VisualElement();
+            toast.AddToClassList("cmd-toast-item");
+
+            // 1. Icon Box
+            var iconBox = new VisualElement();
+            iconBox.AddToClassList("cmd-toast-icon-box");
+            if (icon != null)
+            {
+                var iconImg = new VisualElement();
+                iconImg.AddToClassList("cmd-toast-icon");
+                iconImg.style.backgroundImage = new StyleBackground(icon);
+                iconBox.Add(iconImg);
+            }
+            else
+            {
+                var fallbackLabel = new Label(isCard ? "🎴" : "🧪");
+                fallbackLabel.AddToClassList("cmd-toast-fallback-icon");
+                iconBox.Add(fallbackLabel);
+            }
+            toast.Add(iconBox);
+
+            // 2. Content (Tag + Name)
+            var content = new VisualElement();
+            content.AddToClassList("cmd-toast-content");
+
+            string tagText = !string.IsNullOrEmpty(customTag)
+                ? customTag
+                : (isCard ? "> [CARD]" : "> [ITEM]");
+            var tagLabel = new Label(tagText);
+            tagLabel.AddToClassList("cmd-toast-tag");
+            if (!isCard)
+            {
+                tagLabel.style.color = new Color(0.3f, 0.85f, 1f); // 아이템은 청록색
+            }
+            content.Add(tagLabel);
+
+            var nameLabel = new Label(name);
+            nameLabel.AddToClassList("cmd-toast-name");
+            content.Add(nameLabel);
+            toast.Add(content);
+
+            // 3. Count Badge
+            var badge = new VisualElement();
+            badge.AddToClassList("cmd-toast-badge");
+            var badgeText = new Label($"+{count}");
+            badgeText.AddToClassList("cmd-toast-badge-text");
+            badge.Add(badgeText);
+            toast.Add(badge);
+
+            _acquisitionToastContainer.Add(toast);
+
+            // 슬라이드 인 애니메이션 (1프레임 뒤 클래스 추가)
+            toast.schedule.Execute(() =>
+            {
+                toast.AddToClassList("cmd-toast-item-show");
+            }).StartingIn(10);
+
+            // 3초 후 슬라이드 아웃 및 제거
+            toast.schedule.Execute(() =>
+            {
+                if (toast.panel != null)
+                {
+                    toast.RemoveFromClassList("cmd-toast-item-show");
+                    toast.AddToClassList("cmd-toast-item-hide");
+
+                    toast.schedule.Execute(() =>
+                    {
+                        if (toast.parent != null)
+                        {
+                            toast.RemoveFromHierarchy();
+                        }
+                    }).StartingIn(300);
+                }
+            }).StartingIn(3000);
+        }
+
+        public void ShowCardAcquiredModal(_prototype_CardData card, string sourceName = "상자", System.Action onClose = null)
+        {
+            if (_rewardContainer == null) return;
+
+            _onRewardModalClosed = onClose;
+            if (_rewardHeader != null) _rewardHeader.text = "★ NEW CARD ACQUIRED ★";
+            if (_rewardBadge != null)
+            {
+                _rewardBadge.text = card is _prototype_InteractionCardData ? "[상호작용 카드]" : "[전투 카드]";
+                _rewardBadge.style.color = card is _prototype_InteractionCardData ? new StyleColor(new Color(0.2f, 0.8f, 1f)) : new StyleColor(new Color(0.2f, 1f, 0.2f));
+            }
+            if (_rewardSource != null) _rewardSource.text = string.IsNullOrEmpty(sourceName) ? "" : $"출처: {sourceName}";
+            if (_rewardTitle != null) _rewardTitle.text = card != null ? card.id : "카드";
+            if (_rewardDescription != null)
+            {
+                if (card != null)
+                {
+                    var playerView = _prototype_PlayerController.Instance?.ControlledEntityView as _prototype_LifeView;
+                    var playerLife = playerView?.Data;
+                    _rewardDescription.text = _prototype_CardDescriptionFormatter.FormatDescription(card, playerLife, _isDetailedDescriptionMode);
+                }
+                else
+                {
+                    _rewardDescription.text = "";
+                }
+            }
+            if (_rewardDestinationHint != null) _rewardDestinationHint.text = "> 덱(allCardDatas & remainedCards)에 추가되었습니다.";
+
+            _rewardContainer.style.display = DisplayStyle.Flex;
+            _rewardContainer.BringToFront();
+
+            UpdatePlayerCardDeck();
+        }
+
+        public void ShowItemAcquiredModal(_prototype_ItemDataModel item, int quantity = 1, string sourceName = "상자", System.Action onClose = null)
+        {
+            if (_rewardContainer == null) return;
+
+            _onRewardModalClosed = onClose;
+            if (_rewardHeader != null) _rewardHeader.text = "★ NEW ITEM ACQUIRED ★";
+            if (_rewardBadge != null)
+            {
+                _rewardBadge.text = "[아이템]";
+                _rewardBadge.style.color = new StyleColor(new Color(1f, 0.84f, 0f));
+            }
+            if (_rewardSource != null) _rewardSource.text = string.IsNullOrEmpty(sourceName) ? "" : $"출처: {sourceName}";
+            if (_rewardTitle != null) _rewardTitle.text = item != null ? $"{item.name} x{quantity}" : $"아이템 x{quantity}";
+            if (_rewardDescription != null) _rewardDescription.text = item != null ? item.description : "";
+            if (_rewardDestinationHint != null) _rewardDestinationHint.text = "> 인벤토리에 추가되었습니다.";
+
+            _rewardContainer.style.display = DisplayStyle.Flex;
+            _rewardContainer.BringToFront();
+        }
+
+        public void HideRewardModal()
+        {
+            if (_rewardContainer != null)
+            {
+                _rewardContainer.style.display = DisplayStyle.None;
+            }
+
+            var callback = _onRewardModalClosed;
+            _onRewardModalClosed = null;
+            callback?.Invoke();
         }
 
         public void ShowWarning(string message, float duration = 2.0f)
@@ -242,6 +519,8 @@ namespace TDG0407._prototype
 
         public void ShowTargetingUI(_prototype_CardData cardData)
         {
+            _currentTargetingCard = cardData;
+            _currentHoveredTarget = null;
             if (_targetingHint != null) _targetingHint.style.display = DisplayStyle.Flex;
             if (_targetingTooltip != null)
             {
@@ -254,14 +533,31 @@ namespace TDG0407._prototype
                     else
                         _tooltipCardCost.text = "Cost: -";
                 }
-                if (_tooltipCardDesc != null) _tooltipCardDesc.text = cardData.description;
+                if (_tooltipCardDesc != null)
+                {
+                    var playerLife = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData as _prototype_LifeData;
+                    _tooltipCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(cardData, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+                }
             }
         }
 
         public void HideTargetingUI()
         {
+            _currentTargetingCard = null;
+            _currentHoveredTarget = null;
             if (_targetingHint != null) _targetingHint.style.display = DisplayStyle.None;
             if (_targetingTooltip != null) _targetingTooltip.style.display = DisplayStyle.None;
+        }
+
+        public void UpdateTargetingHover(_prototype_EntityData hoveredEntity)
+        {
+            if (_currentHoveredTarget == hoveredEntity) return;
+            _currentHoveredTarget = hoveredEntity;
+            if (_currentTargetingCard != null && _tooltipCardDesc != null)
+            {
+                var playerLife = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData as _prototype_LifeData;
+                _tooltipCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(_currentTargetingCard, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+            }
         }
 
         public void UpdateTargetingTooltipPosition(Vector2 screenPosition)
@@ -534,14 +830,187 @@ namespace TDG0407._prototype
                     if (_label_point != null) _label_point.text = $"> POS : {controlledEntityView.Point}";
                     if (_label_health != null) _label_health.text = $"> HP  : {displayHp}/{entityData.health.Max}";
                     if (_label_stamina != null) _label_stamina.text = $"> SP  : {displaySp}/{entityData.stamina.Max}";
+
+                    UpdatePlayerStatusTray(entityData as _prototype_LifeData);
                 }
                 else
                 {
                     if (_label_point != null) _label_point.text = string.Empty;
                     if (_label_health != null) _label_health.text = string.Empty;
                     if (_label_stamina != null) _label_stamina.text = string.Empty;
+                    _playerStatusTray?.Clear();
                 }
 
+            }
+        }
+
+        private void BuildStatusTooltip(VisualElement root)
+        {
+            if (root == null) return;
+            var existing = root.Q<VisualElement>("StatusTooltip");
+            if (existing != null) existing.RemoveFromHierarchy();
+
+            _statusTooltip = new VisualElement();
+            _statusTooltip.name = "StatusTooltip";
+            _statusTooltip.pickingMode = PickingMode.Ignore;
+            _statusTooltip.style.position = Position.Absolute;
+            _statusTooltip.style.backgroundColor = new Color(0.02f, 0.05f, 0.02f, 0.95f);
+            _statusTooltip.style.borderTopColor = new Color(0.2f, 0.9f, 0.2f, 0.9f);
+            _statusTooltip.style.borderBottomColor = new Color(0.2f, 0.9f, 0.2f, 0.9f);
+            _statusTooltip.style.borderLeftColor = new Color(0.2f, 0.9f, 0.2f, 0.9f);
+            _statusTooltip.style.borderRightColor = new Color(0.2f, 0.9f, 0.2f, 0.9f);
+            _statusTooltip.style.borderTopWidth = 1;
+            _statusTooltip.style.borderBottomWidth = 1;
+            _statusTooltip.style.borderLeftWidth = 1;
+            _statusTooltip.style.borderRightWidth = 1;
+            _statusTooltip.style.borderTopLeftRadius = 6;
+            _statusTooltip.style.borderTopRightRadius = 6;
+            _statusTooltip.style.borderBottomLeftRadius = 6;
+            _statusTooltip.style.borderBottomRightRadius = 6;
+            _statusTooltip.style.paddingTop = 8;
+            _statusTooltip.style.paddingBottom = 8;
+            _statusTooltip.style.paddingLeft = 12;
+            _statusTooltip.style.paddingRight = 12;
+            _statusTooltip.style.minWidth = 180;
+            _statusTooltip.style.maxWidth = 280;
+            _statusTooltip.style.display = DisplayStyle.None;
+
+            _statusTooltipTitle = new Label("상태효과");
+            _statusTooltipTitle.style.fontSize = 17;
+            _statusTooltipTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+            _statusTooltipTitle.style.color = new Color(0.4f, 1f, 0.4f);
+            _statusTooltipTitle.style.marginBottom = 4;
+            _statusTooltip.Add(_statusTooltipTitle);
+
+            _statusTooltipDesc = new Label("효과 설명");
+            _statusTooltipDesc.style.fontSize = 14;
+            _statusTooltipDesc.style.color = new Color(0.85f, 0.95f, 0.85f);
+            _statusTooltipDesc.style.whiteSpace = WhiteSpace.Normal;
+            _statusTooltip.Add(_statusTooltipDesc);
+
+            var container = root.Q<VisualElement>("Wrapper") ?? root;
+            container.Add(_statusTooltip);
+        }
+
+        private void UpdatePlayerStatusTray(_prototype_LifeData playerLife)
+        {
+            if (_playerStatusTray == null) return;
+            _playerStatusTray.Clear();
+            if (playerLife == null || playerLife.statusEffects == null || playerLife.statusEffects.Count == 0) return;
+
+            var groups = playerLife.statusEffects.GroupBy(s => s.type);
+            var db = _prototype_StatusVisualDatabase.Instance;
+
+            foreach (var group in groups)
+            {
+                var type = group.Key;
+                int count = group.Count();
+                int maxTicks = group.Max(s => s.durationTicks);
+
+                string sym = "?";
+                Color color = Color.white;
+                string dName = type.ToString();
+                string dDesc = "";
+
+                if (db != null)
+                {
+                    var entry = db.GetEntry(type);
+                    if (entry != null)
+                    {
+                        sym = entry.symbolChar;
+                        color = entry.themeColor;
+                        dName = !string.IsNullOrEmpty(entry.displayName) ? entry.displayName : type.ToString();
+                        dDesc = entry.description;
+                    }
+                    else
+                    {
+                        var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
+                        sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
+                    }
+                }
+                else
+                {
+                    var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
+                    sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
+                }
+
+                var badge = new VisualElement();
+                badge.AddToClassList("status-badge");
+                badge.style.borderTopColor = new StyleColor(color);
+                badge.style.borderBottomColor = new StyleColor(color);
+                badge.style.borderLeftColor = new StyleColor(color);
+                badge.style.borderRightColor = new StyleColor(color);
+
+                var symLabel = new Label(sym);
+                symLabel.AddToClassList("status-badge-symbol");
+                badge.Add(symLabel);
+
+                string countText = count > 1 ? $"x{count} " : "";
+                string tickText = maxTicks > 0 ? $"{maxTicks}t" : "";
+                string fullBadgeText = $"{countText}{tickText}".Trim();
+                if (!string.IsNullOrEmpty(fullBadgeText))
+                {
+                    var textLabel = new Label(fullBadgeText);
+                    textLabel.AddToClassList("status-badge-text");
+                    badge.Add(textLabel);
+                }
+
+                // 툴팁 호버 연동
+                string tooltipTitle = count > 1 ? $"{dName} x{count}" : dName;
+                string tooltipBody = string.IsNullOrEmpty(dDesc) ? $"{type}" : dDesc;
+                if (maxTicks > 0) tooltipBody += $"\n지속시간: {maxTicks}턴 남음";
+
+                badge.RegisterCallback<PointerEnterEvent>(evt =>
+                {
+                    ShowStatusTooltip(tooltipTitle, tooltipBody, color, evt.position);
+                });
+                badge.RegisterCallback<PointerMoveEvent>(evt =>
+                {
+                    UpdateStatusTooltipPosition(evt.position);
+                });
+                badge.RegisterCallback<PointerLeaveEvent>(evt =>
+                {
+                    HideStatusTooltip();
+                });
+
+                _playerStatusTray.Add(badge);
+            }
+        }
+
+        private void ShowStatusTooltip(string title, string desc, Color themeColor, Vector2 screenPos)
+        {
+            if (_statusTooltip == null) return;
+            if (_statusTooltipTitle != null)
+            {
+                _statusTooltipTitle.text = title;
+                _statusTooltipTitle.style.color = new StyleColor(themeColor);
+            }
+            if (_statusTooltipDesc != null)
+            {
+                _statusTooltipDesc.text = desc;
+            }
+            _statusTooltip.style.display = DisplayStyle.Flex;
+            UpdateStatusTooltipPosition(screenPos);
+        }
+
+        private void UpdateStatusTooltipPosition(Vector2 screenPos)
+        {
+            if (_statusTooltip == null || _statusTooltip.style.display != DisplayStyle.Flex) return;
+            Vector2 offset = new Vector2(16, 16);
+            Vector2 target = screenPos + offset;
+            if (_statusTooltip.panel != null)
+            {
+                Vector2 panelPos = UnityEngine.UIElements.RuntimePanelUtils.ScreenToPanel(_statusTooltip.panel, target);
+                _statusTooltip.style.left = Mathf.Max(10, panelPos.x);
+                _statusTooltip.style.top = Mathf.Max(10, panelPos.y);
+            }
+        }
+
+        private void HideStatusTooltip()
+        {
+            if (_statusTooltip != null)
+            {
+                _statusTooltip.style.display = DisplayStyle.None;
             }
         }
 
@@ -601,10 +1070,11 @@ namespace TDG0407._prototype
                             if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
                         }
 
+                        cardViewInstance.userData = cardData;
                         var lblDesc = cardViewInstance.Q<Label>("CardDesc");
                         if (lblDesc != null)
                         {
-                            lblDesc.text = string.IsNullOrEmpty(cardData.description) ? "No description available." : cardData.description;
+                            lblDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(cardData, lifeView.Data, _isDetailedDescriptionMode);
                         }
 
                         // 침묵 시각적 피드백 (보라색 틴트 + 침묵 텍스트 오버레이)
@@ -895,6 +1365,34 @@ namespace TDG0407._prototype
                 VisualElement card = handCardViews[i];
                 card.style.left = startX + (i * spacing);
                 card.style.top = 10f; // 컨테이너 상단에서 약간 떨어뜨림
+            }
+        }
+
+        public void RefreshAllCardDescriptions()
+        {
+            _prototype_EntityView controlledEntityView = _prototype_PlayerController.Instance != null ? _prototype_PlayerController.Instance.ControlledEntityView : null;
+            _prototype_LifeData playerLife = (controlledEntityView is _prototype_LifeView lifeView) ? lifeView.Data : null;
+            if (playerLife == null && controlledEntityView != null)
+            {
+                playerLife = controlledEntityView.EntityData as _prototype_LifeData;
+            }
+
+            foreach (var cardView in handCardViews)
+            {
+                if (cardView == null) continue;
+                if (cardView.userData is _prototype_CardData cardData)
+                {
+                    var lblDesc = cardView.Q<Label>("CardDesc");
+                    if (lblDesc != null)
+                    {
+                        lblDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(cardData, playerLife, _isDetailedDescriptionMode);
+                    }
+                }
+            }
+
+            if (_currentTargetingCard != null && _tooltipCardDesc != null)
+            {
+                _tooltipCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(_currentTargetingCard, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
             }
         }
     }

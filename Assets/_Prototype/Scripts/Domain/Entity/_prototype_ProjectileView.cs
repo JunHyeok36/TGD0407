@@ -90,7 +90,7 @@ namespace TDG0407._prototype
 
                     if (Data.isTracking && Data.homingTarget != null)
                     {
-                        bool isDead = Data.homingTarget is _prototype_LifeData ld && ld.health.Current <= 0;
+                        bool isDead = Data.homingTarget.IsDead;
                         if (!isDead && Data.homingTarget.point != currentPoint)
                         {
                             shouldHoming = true;

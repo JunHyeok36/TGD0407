@@ -108,7 +108,7 @@ namespace TDG0407._prototype
             // Source가 적(Side.B)이고 아직 살아있는 경우 → 위협 발생으로 판단하여 전투 모드 복귀
             if (evt.Source is _prototype_LifeData lifeSource && lifeSource.side == _prototype_Side.B)
             {
-                if (lifeSource.health.Current > 0)
+                if (!lifeSource.IsDead)
                 {
                     Debug.Log($"[PlayModeManager] 탐색 모드 중 적의 공격 감지! 전투 모드로 전환합니다.");
                     TransitionTo(_prototype_PlayMode.Battle);
@@ -203,8 +203,8 @@ namespace TDG0407._prototype
 
                 if (lv.EntityData is _prototype_LifeData lifeData)
                 {
-                    // 적 사이드(Side.B)이고 체력이 남아있는 경우만 적 엔티티로 카운트
-                    if (lifeData.side == _prototype_Side.B && lifeData.health.Current > 0)
+                    // 적 사이드(Side.B)이고 사망하지 않은 경우만 적 엔티티로 카운트 (죽음의 문턱 상태 포함)
+                    if (lifeData.side == _prototype_Side.B && !lifeData.IsDead)
                     {
                         count++;
                     }

@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Cards_Table Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Cards_Table
+  m_TableCollectionNameGuidString: 91de48fa2b60d824e850b091491a1982
+  m_Entries:
+  - m_Id: 10317164544
+    m_Key: BasicAttack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496192
+    m_Key: BloodStrike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496193
+    m_Key: Claw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496194
+    m_Key: DashAway
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496195
+    m_Key: Earthquake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496196
+    m_Key: HolyNova
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496197
+    m_Key: knockback_test
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496198
+    m_Key: LaserBeamCard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496199
+    m_Key: PiercingThrust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496200
+    m_Key: ShootArrow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496201
+    m_Key: Snipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496202
+    m_Key: SplashAttack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496203
+    m_Key: StatusTestCard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496204
+    m_Key: ThrowStone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496205
+    m_Key: Chest_Open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496206
+    m_Key: InteractableTest_TurnOff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496207
+    m_Key: InteractableTest_TurnOn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496208
+    m_Key: Obstacle_Break
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496209
+    m_Key: TESTCOM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496210
+    m_Key: Trap_Detonate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10367496211
+    m_Key: Trap_Disarm
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8244398082370306145
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398082370306145
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1789709789492

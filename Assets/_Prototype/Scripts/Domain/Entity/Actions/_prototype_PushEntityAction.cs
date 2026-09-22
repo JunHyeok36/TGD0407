@@ -31,7 +31,7 @@ namespace TDG0407._prototype
             if (distance <= 0 || targets == null) return;
 
             var validTargets = targets
-                .Where(t => t != null && (includeSelf || t != source) && (source == null || !source.IsSameSide(t)) && t.health.Current > 0)
+                .Where(t => t != null && (includeSelf || t != source) && (source == null || !source.IsSameSide(t)) && !t.IsDead)
                 .ToList();
 
             if (validTargets.Count == 0) return;

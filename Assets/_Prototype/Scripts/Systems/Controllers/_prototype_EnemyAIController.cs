@@ -52,7 +52,7 @@ namespace TDG0407._prototype
             if (_entityView == null || evt.Entity != _entityView.EntityData) return;
             if (_entityView.EntityData is not _prototype_LifeData lifeData || lifeData.aiLogic == null) return;
 
-            if (lifeData.health.Current <= 0 || lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            if (lifeData.IsDead || lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
             {
                 CancelPlannedAttack();
                 return;
@@ -122,7 +122,7 @@ namespace TDG0407._prototype
             {
                 if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Silence)
                 {
-                    if (!_prototype_TickManager.IsTickProcessing && _entityView.EntityData?.health.Current > 0)
+                    if (!_prototype_TickManager.IsTickProcessing && _entityView.EntityData != null && !_entityView.EntityData.IsDead)
                     {
                         EvaluateInitialIntent();
                     }
@@ -173,7 +173,7 @@ namespace TDG0407._prototype
             };
 
             if (_entityView == null || _entityView.EntityData == null) return intent;
-            if (_entityView.EntityData.health.Current <= 0) 
+            if (_entityView.EntityData.IsDead) 
             {
                 _prototype_GridVisualManager.Instance.ClearAllHazards(_entityView);
                 return intent; // 죽었으면 행동 안 함

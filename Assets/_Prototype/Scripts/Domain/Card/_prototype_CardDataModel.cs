@@ -5,7 +5,8 @@ namespace TDG0407._prototype
     public abstract class _prototype_CardDataModel : ScriptableObject
     {
         public string id;
-        [TextArea(3, 5)] public string description;
+        [Tooltip("Unity Localization 테이블 키 (예: CARD_BASIC_ATTACK_DESC)")]
+        public string descriptionLocalizationKey;
 
         public abstract _prototype_CardData CreateCardData();
     }

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Stats_Table Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Stats_Table
+  m_TableCollectionNameGuidString: 616d83af5a9004c4295c060ec16b6fcf
+  m_Entries:
+  - m_Id: 1832087552
+    m_Key: Stat_RedPower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1915973632
+    m_Key: Stat_BluePower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1920167936
+    m_Key: Stat_Health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1920167937
+    m_Key: Stat_Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1920167938
+    m_Key: Stat_MagicResist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1920167939
+    m_Key: Stat_Stamina
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8244398082370306146
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398082370306146
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1789709791494

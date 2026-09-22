@@ -113,7 +113,7 @@ namespace TDG0407._prototype
             {
                 while (_controlledEntityView != null &&
                        _controlledEntityView.EntityData is _prototype_LifeData lifeData &&
-                       lifeData.health.Current > 0 &&
+                       !lifeData.IsDead &&
                        lifeData.HasStatusEffect(_prototype_StatusType.Stun))
                 {
                     if (_prototype_TickManager.IsTickProcessing)
@@ -123,7 +123,7 @@ namespace TDG0407._prototype
 
                     if (_controlledEntityView == null ||
                         !(_controlledEntityView.EntityData is _prototype_LifeData currentLife) ||
-                        currentLife.health.Current <= 0 ||
+                        currentLife.IsDead ||
                         !currentLife.HasStatusEffect(_prototype_StatusType.Stun))
                     {
                         break;
@@ -196,6 +196,17 @@ namespace TDG0407._prototype
 
             if (isStunned)
             {
+                _prototype_GridVisualManager.Instance?.HideMovementPath();
+                _prototype_GridVisualManager.Instance?.HighlightPoint(null);
+                return;
+            }
+
+            if (_prototype_PlayerUIView.Instance != null && _prototype_PlayerUIView.Instance.IsRewardModalOpen)
+            {
+                if (Keyboard.current != null && (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame))
+                {
+                    _prototype_PlayerUIView.Instance.HideRewardModal();
+                }
                 _prototype_GridVisualManager.Instance?.HideMovementPath();
                 _prototype_GridVisualManager.Instance?.HighlightPoint(null);
                 return;
@@ -475,6 +486,7 @@ namespace TDG0407._prototype
             _isMovable = true;
             _currentCastRange = null;
             _prototype_GridVisualManager.Instance?.ClearRanges();
+            _prototype_PlayerUIView.Instance?.UpdateTargetingHover(null);
             _prototype_PlayerUIView.Instance.HideTargetingUI();
             _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
         }
@@ -491,6 +503,10 @@ namespace TDG0407._prototype
 
             if (mousePoint.HasValue && _currentCastRange != null && _currentCastRange.Contains(mousePoint.Value))
             {
+                var ptView = _prototype_GridManager.Instance.GetPointView(mousePoint.Value);
+                var hoveredEntity = ptView?.PlacedEntityViews?.FirstOrDefault(v => v != null && v.EntityData != null && v.EntityData != _controlledEntityView?.EntityData)?.EntityData;
+                _prototype_PlayerUIView.Instance?.UpdateTargetingHover(hoveredEntity);
+
                 var lifeData = _controlledEntityView.EntityData as _prototype_LifeData;
                 if (lifeData != null)
                 {
@@ -499,7 +515,6 @@ namespace TDG0407._prototype
                     var fearEffect = lifeData.GetStatusEffect(_prototype_StatusType.Fear);
                     if (fearEffect != null && fearEffect.sourceEntity != null)
                     {
-                        var ptView = _prototype_GridManager.Instance.GetPointView(mousePoint.Value);
                         if (ptView != null && ptView.PlacedEntityViews.Exists(v => v.EntityData == fearEffect.sourceEntity))
                         {
                             return; // Cannot target feared entity
@@ -521,6 +536,7 @@ namespace TDG0407._prototype
             }
             else
             {
+                _prototype_PlayerUIView.Instance?.UpdateTargetingHover(null);
                 _prototype_GridVisualManager.Instance?.ShowTargetRange(null); // clear target range
 
                 // 맨땅 좌클릭 시 취소

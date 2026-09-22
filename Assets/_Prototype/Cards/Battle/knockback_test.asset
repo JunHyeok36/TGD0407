@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: knockback_test
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: knockback_test
-  description: knockback_test
+  descriptionLocalizationKey: knockback_test
+  description: "\uB300\uC0C1\uC744 1\uCE78 \uBC00\uCCD0\uB0C5\uB2C8\uB2E4."
   cardType: 2
   costValue:
     costType: 0
@@ -26,9 +27,9 @@ MonoBehaviour:
     rid: 8244398012911059139
   targetRange:
     rid: 8244398012911059140
+  targetAnchorType: 0
   actionList:
   - rid: 8244398012911059148
-  visibilityConditions: []
   references:
     version: 2
     RefIds:

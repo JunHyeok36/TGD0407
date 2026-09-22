@@ -17,6 +17,11 @@ namespace TDG0407._prototype
             return intent;
         }
 
+        public override void EvaluateIntent(_prototype_EntityView entityView)
+        {
+            CurrentIntent = _prototype_EnemyIntent.ForRest();
+        }
+
         public override UniTask ExecuteAction(_prototype_EntityView entityView)
         {
             // Do nothing

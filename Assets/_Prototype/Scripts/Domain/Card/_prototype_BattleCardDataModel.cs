@@ -19,14 +19,14 @@ namespace TDG0407._prototype
         {
             return new _prototype_BattleCardData(
                 id,
-                description,
                 cardType,
                 costValue,
                 coolTicks,
                 castRange,
                 targetRange,
                 actionList,
-                targetAnchorType
+                targetAnchorType,
+                descriptionLocalizationKey
             );
         }
     }

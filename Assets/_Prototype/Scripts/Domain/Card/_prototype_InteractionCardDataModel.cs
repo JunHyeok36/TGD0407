@@ -16,9 +16,9 @@ namespace TDG0407._prototype
         {
             return new _prototype_InteractionCardData(
                 id,
-                description,
                 interactionKey,
-                visibilityConditions
+                visibilityConditions,
+                descriptionLocalizationKey
             );
         }
     }

@@ -41,7 +41,7 @@ namespace TDG0407._prototype
             if (_currentIdleTicks > 0) return intent;
 
             var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.health.Current <= 0) return intent;
+            if (playerView == null || playerView.EntityData.IsDead) return intent;
 
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence)))
@@ -72,21 +72,28 @@ namespace TDG0407._prototype
             hasPlannedIntent = false;
             plannedCard = null;
             plannedTarget = entityView.Point;
+            CurrentIntent = _prototype_EnemyIntent.None();
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
 
-            if (_currentIdleTicks > 0) return;
+            if (_currentIdleTicks > 0) { CurrentIntent = _prototype_EnemyIntent.ForRest(); return; }
 
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
 
             if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
             {
+                CurrentIntent = _prototype_EnemyIntent.ForStunned();
                 return;
             }
 
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Fear))
+            {
+                CurrentIntent = _prototype_EnemyIntent.ForFlee();
+            }
+
             var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.health.Current <= 0) return;
+            if (playerView == null || playerView.EntityData.IsDead) return;
 
             _prototype_Point playerCurrentPoint = playerView.Point;
             _prototype_Point myPoint = entityView.Point;
@@ -118,6 +125,7 @@ namespace TDG0407._prototype
                     plannedCard = cardToPlay;
                     plannedTarget = playerCurrentPoint;
                     hasPlannedIntent = true;
+                    CurrentIntent = _prototype_EnemyIntent.ForAttack(cardToPlay, playerCurrentPoint, entityView.EntityData, playerView.EntityData);
 
                     bool showsHazard = false;
                     if (cardToPlay.actionList != null)
@@ -149,6 +157,16 @@ namespace TDG0407._prototype
                             _prototype_GridVisualManager.Instance.ShowHazard(plannedTarget, entityView);
                         }
                     }
+
+                    if (CurrentIntent != null && CurrentIntent.knockbackLandingPoint.HasValue)
+                    {
+                        _prototype_GridVisualManager.Instance.ShowKnockbackHazard(entityView, CurrentIntent.knockbackLandingPoint.Value);
+                    }
+                }
+                else
+                {
+                    // 공격할 카드가 없으면 이동 의도
+                    CurrentIntent = _prototype_EnemyIntent.ForMove();
                 }
             }
         }
@@ -162,7 +180,7 @@ namespace TDG0407._prototype
             }
 
             var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.health.Current <= 0) return;
+            if (playerView == null || playerView.EntityData.IsDead) return;
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
 

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Earthquake
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: Earthquake
-  description: "\uC790\uC2E0 \uC8FC\uBCC0\uC758 \uACE0\uB9AC \uBC94\uC704\uC5D0 \uC9C0\uC9C4\uC744
-    \uC77C\uC73C\uCF1C \uD0C0\uACA9\uD569\uB2C8\uB2E4."
+  descriptionLocalizationKey: Earthquake
+  description: "\uBB3C\uB9AC \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC8FC\uACE0
+    \uB300\uC0C1\uB4E4\uC744 \uAE30\uC808\uC2DC\uD0B5\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -27,6 +28,7 @@ MonoBehaviour:
     rid: 2475498181128356195
   targetRange:
     rid: 2475498181128356196
+  targetAnchorType: 0
   actionList:
   - rid: 2475498181128356197
   references:

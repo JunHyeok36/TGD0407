@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: StatusTestCard
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: StatusTestCard
-  description: StatusTestCard
+  descriptionLocalizationKey: StatusTestCard
+  description: "\uC0C1\uD0DC\uC774\uC0C1 \uD6A8\uACFC\uB97C \uC2DC\uD5D8\uD569\uB2C8\uB2E4."
   cardType: 2
   costValue:
     costType: 0

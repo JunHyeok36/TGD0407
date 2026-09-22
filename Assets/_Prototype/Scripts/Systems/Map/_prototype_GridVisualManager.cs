@@ -620,6 +620,47 @@ namespace TDG0407._prototype
         }
 
         private Dictionary<_prototype_EntityView, List<Transform>> _hazardIndicators = new();
+        private Dictionary<_prototype_EntityView, Transform> _knockbackIndicators = new();
+        private Material _knockbackLandingMaterial;
+
+        public void ShowKnockbackHazard(_prototype_EntityView owner, _prototype_Point landingPoint)
+        {
+            if (owner == null) return;
+            if (_prototype_GridManager.Instance != null && !_prototype_GridManager.Instance.IsWithinBounds(landingPoint)) return;
+
+            if (!_knockbackIndicators.TryGetValue(owner, out var indicator) || indicator == null)
+            {
+                indicator = CreateIndicatorQuad($"KnockbackLanding_{owner.name}");
+                _knockbackIndicators[owner] = indicator;
+            }
+
+            if (_knockbackLandingMaterial == null)
+            {
+                var shader = Shader.Find("Sprites/Default");
+                _knockbackLandingMaterial = new Material(shader)
+                {
+                    color = new Color(1f, 0.2f, 0.8f, 0.65f)
+                };
+            }
+
+            indicator.gameObject.SetActive(true);
+            indicator.localPosition = new Vector3(landingPoint.x, 0.016f, landingPoint.y);
+            indicator.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            indicator.localScale = new Vector3(0.85f, 0.85f, 1f);
+
+            if (indicator.TryGetComponent<Renderer>(out var r))
+            {
+                r.sharedMaterial = _knockbackLandingMaterial;
+            }
+        }
+
+        public void ClearKnockbackHazard(_prototype_EntityView owner)
+        {
+            if (owner != null && _knockbackIndicators.TryGetValue(owner, out var ind) && ind != null)
+            {
+                ind.gameObject.SetActive(false);
+            }
+        }
 
         public void ShowHazard(_prototype_Point pt, _prototype_EntityView owner)
         {
@@ -748,6 +789,8 @@ namespace TDG0407._prototype
                     }
                     _hazardIndicators.Remove(owner);
                 }
+
+                ClearKnockbackHazard(owner);
             }
         }
 
@@ -775,7 +818,7 @@ namespace TDG0407._prototype
                     continue;
                 }
 
-                if (owner.EntityData is _prototype_LifeData life && life.health.Current > 0)
+                if (owner.EntityData is _prototype_LifeData life && !life.IsDead)
                 {
                     if (life.HasStatusEffect(_prototype_StatusType.Stun) || life.HasStatusEffect(_prototype_StatusType.Silence))
                         continue;

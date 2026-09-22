@@ -5,7 +5,9 @@
             <ui:Label text="&gt; POS : (0,0)" name="Point" class="cmd-text"/>
             <ui:Label text="&gt; HP  : 100/100" name="Health" class="cmd-text"/>
             <ui:Label text="&gt; SP  : 10/10" name="Stamina" class="cmd-text"/>
+            <ui:VisualElement name="PlayerStatusTray" style="flex-direction: row; flex-wrap: wrap; margin-top: 8px; min-height: 28px;"/>
         </ui:VisualElement>
+        <ui:VisualElement name="AcquisitionToastContainer" picking-mode="Ignore" class="acquisition-toast-container" style="top: 250px; height: auto; bottom: auto; left: 10px;"/>
         <ui:VisualElement name="CardsInfo" style="flex-grow: 1; justify-content: flex-end;">
             <ui:VisualElement name="DrawDeck" class="deck-container" style="left: 40px;">
                 <ui:Label text="REMAIN" class="deck-title"/>
@@ -30,12 +32,27 @@
             <ui:Label name="WarningMessageText" text="WARNING!" style="color: rgb(255, 50, 50); background-color: rgba(50, 0, 0, 0.85); padding: 15px 30px; font-size: 28px; border-radius: 6px; border-width: 2px; border-color: rgb(255, 50, 50); -unity-font-style: bold;"/>
         </ui:VisualElement>
         <ui:VisualElement name="ModeIndicatorBanner" picking-mode="Ignore" style="position: absolute; top: 30px; right: 30px; align-items: flex-end;">
-            <ui:Label name="ModeIndicatorText" text="⚔ BATTLE" class="cmd-text" style="color: rgb(255, 80, 80); background-color: rgba(30, 0, 0, 0.80); padding: 8px 18px; font-size: 22px; border-radius: 4px; border-width: 1px; border-color: rgb(255, 80, 80);"/>
+            <ui:Label name="ModeIndicatorText" text="⚔ BATTLE" class="cmd-text" style="color: rgb(255, 80, 80); background-color: rgba(30, 0, 0, 0.8); padding: 8px 18px; font-size: 22px; border-radius: 4px; border-width: 1px; border-color: rgb(255, 80, 80);"/>
         </ui:VisualElement>
         <ui:VisualElement name="GameOverContainer" picking-mode="Position" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); align-items: center; justify-content: center; display: none;">
             <ui:Label text="GAME OVER" style="color: rgb(255, 0, 0); font-size: 80px; -unity-font-style: normal; margin-bottom: 30px; -unity-text-align: middle-center;"/>
             <ui:Label text="플레이어가 사망했습니다." style="color: rgb(255, 255, 255); font-size: 24px; -unity-text-align: middle-center;"/>
         </ui:VisualElement>
+        <ui:VisualElement name="RewardNotificationContainer" picking-mode="Position" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; display: none;">
+            <ui:VisualElement name="RewardModalPanel" class="cmd-panel" style="width: 540px; padding: 25px; align-items: center; border-width: 3px; border-color: rgb(255, 215, 0); background-color: rgba(10, 15, 10, 0.95); border-radius: 12px;">
+                <ui:Label text="★ REWARD ACQUIRED ★" name="RewardHeader" style="color: rgb(255, 215, 0); font-size: 32px; -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.9);"/>
+                <ui:VisualElement name="RewardDivider" style="width: 100%; height: 2px; background-color: rgb(100, 180, 100); margin-bottom: 16px;"/>
+                <ui:VisualElement name="RewardBadgeContainer" style="flex-direction: row; margin-bottom: 12px;">
+                    <ui:Label text="[전투 카드]" name="RewardBadge" style="color: rgb(50, 255, 50); background-color: rgba(0, 50, 0, 0.8); padding: 4px 12px; font-size: 18px; border-radius: 4px; border-width: 1px; border-color: rgb(50, 255, 50);"/>
+                    <ui:Label text="출처: 상자" name="RewardSource" style="color: rgb(180, 200, 180); font-size: 18px; margin-left: 10px; -unity-text-align: middle-left;"/>
+                </ui:VisualElement>
+                <ui:Label text="Card Name" name="RewardTitle" style="color: rgb(255, 255, 255); font-size: 34px; -unity-font-style: bold; margin-bottom: 14px; -unity-text-align: middle-center; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);"/>
+                <ui:VisualElement name="RewardDescriptionBox" style="width: 100%; background-color: rgba(0, 25, 0, 0.7); border-width: 1px; border-color: rgb(50, 120, 50); border-radius: 6px; padding: 15px; margin-bottom: 18px;">
+                    <ui:Label text="카드 효과 설명입니다." name="RewardDescription" style="color: rgb(200, 255, 200); font-size: 20px; white-space: pre-wrap; -unity-text-align: middle-center;"/>
+                </ui:VisualElement>
+                <ui:Label text="&gt; 덱(allCardDatas &amp; remainedCards)에 추가되었습니다." name="RewardDestinationHint" style="color: rgb(100, 255, 100); font-size: 18px; margin-bottom: 22px; -unity-text-align: middle-center;"/>
+                <ui:Button text="[ 확인 (ENTER / CLICK) ]" name="RewardConfirmButton" style="background-color: rgba(0, 60, 0, 0.9); border-width: 2px; border-color: rgb(50, 255, 50); border-radius: 6px; color: rgb(50, 255, 50); font-size: 24px; padding: 10px 30px; -unity-font-style: bold; cursor: link;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
-

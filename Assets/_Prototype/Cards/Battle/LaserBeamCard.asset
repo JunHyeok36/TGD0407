@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: LaserBeamCard
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: LaserBeam
-  description: "\uC804\uBC29 \uC77C\uC9C1\uC120 \uC0C1\uC758 \uBAA8\uB4E0 \uB300\uC0C1\uC5D0\uAC8C
-    \uB808\uC774\uC800\uB97C \uBC1C\uC0AC\uD558\uC5EC \uD53C\uD574\uB97C \uC785\uD799\uB2C8\uB2E4."
+  descriptionLocalizationKey: LaserBeamCard
+  description: "\uB9C8\uBC95 \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC90D\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -30,7 +30,6 @@ MonoBehaviour:
   targetAnchorType: 0
   actionList:
   - rid: 8244398056347533768
-  visibilityConditions: []
   references:
     version: 2
     RefIds:

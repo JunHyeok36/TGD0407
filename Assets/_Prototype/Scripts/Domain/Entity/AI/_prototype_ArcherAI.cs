@@ -47,6 +47,7 @@ namespace TDG0407._prototype
             hasPlannedIntent = false;
             plannedCard = null;
             plannedTarget = entityView.Point;
+            CurrentIntent = _prototype_EnemyIntent.None();
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
             
@@ -55,12 +56,19 @@ namespace TDG0407._prototype
 
             if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
             {
+                CurrentIntent = _prototype_EnemyIntent.ForStunned();
                 return;
+            }
+
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Fear))
+            {
+                CurrentIntent = _prototype_EnemyIntent.ForFlee();
             }
 
             _prototype_Point myPoint = entityView.EntityData.point;
             _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
             int distToPlayer = Math.Max(Math.Abs(myPoint.x - playerPoint.x), Math.Abs(myPoint.y - playerPoint.y));
+
 
             if (lifeData.cardDeck != null)
             {
@@ -190,6 +198,12 @@ namespace TDG0407._prototype
                 if (cardToPlay == dashCard)
                 {
                     abilityTargetPoint = bestDashPoint;
+                    CurrentIntent = _prototype_EnemyIntent.ForMove();
+                }
+                else
+                {
+                    var playerEntity = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData;
+                    CurrentIntent = _prototype_EnemyIntent.ForAttack(cardToPlay, playerPoint, entityView.EntityData, playerEntity);
                 }
                 
                 plannedTarget = abilityTargetPoint;
@@ -232,6 +246,7 @@ namespace TDG0407._prototype
             {
                 // Clear hazards if no intent
                 _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
+                CurrentIntent = _prototype_EnemyIntent.ForRest();
             }
         }
 

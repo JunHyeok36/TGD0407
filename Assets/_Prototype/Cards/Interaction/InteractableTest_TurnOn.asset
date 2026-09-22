@@ -12,24 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d1d8432a5345c4f8078bd2998edcb4, type: 3}
   m_Name: InteractableTest_TurnOn
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_InteractionCardDataModel
-  interactionKey: TurnOn
   id: "\uB808\uBC84 \uCF1C\uAE30 (Turn On)"
-  description: "InteractableTest \uC0C1\uD0DC\uB97C [On]\uC73C\uB85C \uBCC0\uACBD\uD569\uB2C8\uB2E4."
-  cardType: 6
-  costValue:
-    costType: 5
-    value: 0
-  coolTicks:
-    _min: 0
-    _max: 3
-    _cur: 0
-  castRange:
-    rid: 8244397920127025484
-  targetRange:
-    rid: 8244397920127025485
-  actionList:
-  - rid: 8244397920127025486
-  - rid: 8244397920127025487
+  descriptionLocalizationKey: InteractableTest_TurnOn
+  description: "\uC0C1\uD638\uC791\uC6A9 \uB300\uC0C1\uC744 \uD65C\uC131\uD654\uD569\uB2C8\uB2E4."
+  interactionKey: TurnOn
   visibilityConditions:
   - rid: 8244398012911059144
   - rid: 8244398012911059145
@@ -37,26 +23,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8244397920127025484
-      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data: 
-    - rid: 8244397920127025485
-      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeEmptyPoints: 1
-    - rid: 8244397920127025486
-      type: {class: _prototype_SetEntityStateAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeSelf: 0
-        actionTarget: 0
-        stateKey: Switch
-        newValue: On
-        toggleBool: 0
-    - rid: 8244397920127025487
-      type: {class: _prototype_TestInteractionEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeSelf: 0
-        message: "InteractableTest \uC0C1\uD0DC\uB97C [On]\uC73C\uB85C \uBCC0\uACBD\uD588\uC2B5\uB2C8\uB2E4!"
     - rid: 8244398012911059144
       type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
@@ -76,4 +42,3 @@ MonoBehaviour:
         checkTarget: 0
         stateKey: Switch
         expectedValue: Off
-

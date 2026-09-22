@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Snipe
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: Snipe
-  description: "\uBA40\uB9AC \uB5A8\uC5B4\uC9C4 \uC801 \uD558\uB098\uB97C \uC815\uBC00\uD558\uAC8C
-    \uC800\uACA9\uD569\uB2C8\uB2E4."
+  descriptionLocalizationKey: Snipe
+  description: "\uBB3C\uB9AC \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC90D\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -27,6 +27,7 @@ MonoBehaviour:
     rid: 2475498181128356186
   targetRange:
     rid: 2475498181128356187
+  targetAnchorType: 0
   actionList:
   - rid: 2475498181128356188
   references:

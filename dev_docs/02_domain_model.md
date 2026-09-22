@@ -144,7 +144,7 @@ PointData 위에 배치되는 모든 오브젝트의 공통 추상 데이터.
 | entityId | string | 모델 데이터 ID |
 | position | Point | 현재 위치 좌표 |
 | health | BoundedValue<int> | 체력 (최솟값~최댓값) |
-| stamina | BoundedValue<int> | 스테미나 (최솟값~최댓값) |
+| stamina | BoundedValue<int> | 스테미나 (최솟값~최댓값)<br>단순히 주요 카드 소모값이 아닌 엔티티의 강인함을 나타냄. 모두 소모되었을 때 **넉다운** 상태효과 획득(=그로기 상태) |
 | shields | Queue<Shield> | 보호막 목록 (FIFO 순으로 소모) |
 
 #### MovementType (배치 유형)
@@ -180,29 +180,33 @@ EntityData 의 모든 필드를 포함하며 추가로:
 
 | 카테고리 | 필드 | 설명 |
 |----------|------|------|
-| **공격력** | 
-edPower | 물리 공격력 |
+| **공격력** | redPower | 물리 공격력 |
 | | bluePower | 마법 공격력 |
 | | yellowPower | 부가 속성 공격력 |
 | | whitePower | 고정 공격력 |
-| **방어력** | 
-edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
+| **방어력** | redResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 | | blueResist | 마법 방어력 |
 | | yellowResist | 부가 속성 방어력 |
 | **덱 관련** | cardSlotCount | 핸드 카드 슬롯 수 (기본 4) |
 | | drawQuickness | 카드 쿨타임 추가 감소율 |
 | | curseResist | 저주 카드 획득 저항값 |
 | **이동** | speed | 틱당 행동 횟수 |
-| **회복** | healthRecoveryAmount | 대기 시 회복 체력 |
-| | staminaRecoveryAmount | 대기 시 회복 스테미나 |
+| **회복** | staminaRecoverAmount | 대기(휴식) 시 회복 스태미나 (방안 A: 체력은 대기로 회복되지 않음) |
 | **기타** | dodgeProb | 회피 확률 |
 | | criticalProb | 크리티컬 확률 (기본 5%) |
 | | criticalWeight | 크리티컬 배율 (기본 2.0) |
-| | deathResist | 사망 저항값 |
+| | deathResistProp | 죽음 저항 확률. 0보다 큰 경우 '죽음의 문턱' 메커니즘 활성화 (기본값 0.5) |
 | | knockbackResist | 넉백 저항값 |
-| **상태효과 저항** | bleedingResist, burningResist, poisoningResist, stunResist, freezeResist, silenceResist, fearResist, knockdownResist | 각 상태효과 저항값 |
+| **상태효과 저항** | bleedingResist |
+| | burningResist |
+| | poisoningResist |
+| | stunResist |
+| | freezeResist | 
+| | silenceResist | 
+| | fearResist | 
+| | knockdownResist | 
 
-> **저항 공식** : 감소율이나 확률로 사용되는 저항값은 v/(v+100) 으로 계산하여 100%에 도달하지 않도록 한다.
+> **저항 공식** : 감소율이나 확률로 사용되는 저항값은 v/(v+100) 으로 계산하여 100%에 도달하지 않도록 한다. (단, `deathResistProp` 등 0~1 float 확률 필드는 독립적 직접 확률 사용)
 
 #### 상태효과 (StatusEffect)
 
@@ -218,6 +222,7 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 | Burning | DoT | 해당 틱 동안 value의 **물리** 피해. 카드 캐스팅 시 확률적 소실. Freeze와 상호 배타 | **독립 인스턴스(병렬 유지)**. **Freeze와 상호 전소멸(All-Clear)** |
 | Poisoning | DoT | 해당 틱 동안 남은틱 × value의 **마법** 피해. 치유 효과 50% 감소 | **독립 인스턴스(병렬 유지)**. 각 인스턴스별 개별 피해 처리 |
 | Curse | 디버프 | 해당 틱 동안 curseResist가 value만큼 감소 | 단일 인스턴스. 지속시간은 `Mathf.Max`, value는 **누적 합산(`+=`)** |
+| DeathsDoor | 특수/디버프 | 체력 0 도달 시 사망 유예 및 디버프 상태. 스택당 사망 저항(-0.08f), 공격력(-12%), 최대 체력/스태미나(-10%), 대기 스태미나 회복량(-15%) 페널티 부여 | 최대 5스택 중첩. 0 HP에서 피격 시 사망 굴림(`Random.value < deathResistProp`) 성공 시 +1스택, 실패 시 최종 사망. 기본 최대 체력의 50% 이상 회복 시 전면 해제 및 스탯 원복 |
 
 ##### 상태효과 상세 규칙
 1. **군중 제어기(CC) & 버프**:
@@ -229,6 +234,20 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
    - Burning이 부여될 때 대상에게 Freeze가 있으면, 기존 Freeze를 모두 제거하고 신규 Burning도 상쇄 소멸합니다. (Freeze 부여 시 기존 Burning 제거도 동일)
 4. **Curse (스탯 디버프)**:
    - 지속시간은 `Mathf.Max`로 갱신되고, 저항 감소 수치(`value`)는 중첩 시 계속 누적 합산됩니다.
+5. **죽음의 문턱 (Death's Door) & 사망 굴림 (Deathblow Check)**:
+   - **대상**: `lifeStat.deathResistProp > 0f`인 엔티티 (플레이어 및 보스/네임드 몬스터). 일반 몬스터(`deathResistProp == 0f`)는 HP가 0 이하가 되면 즉시 사망합니다.
+   - **문턱 진입**: 치명 피해를 받아 체력이 0 이하가 되면 즉시 사망하지 않고 HP가 0으로 고정되며, `DeathsDoor` 1스택이 부여됩니다.
+   - **사망 굴림 (Deathblow Check)**: 0 HP 상태에서 추가 피해(직접 타격 및 출혈/화상/중독 등 모든 DoT 틱 피해)를 입을 때마다 유효 사망 저항률(`GetEffectiveDeathResistProp()`)에 기반하여 생사 판정(`Random.value < deathResistProp`)을 수행합니다.
+     - **저항 성공**: 사망하지 않고 생존하며 `DeathsDoor` 스택이 +1 증가합니다 (최대 5스택).
+     - **저항 실패**: 최종 사망(`Die()`) 처리되어 그리드에서 제거되고 게임오버 연출이 실행됩니다.
+   - **5스택 페널티 및 하한선(Floor) 보장**:
+     - 죽음 저항 확률: 스택당 `-0.08f` (-8%p) 차감 (5스택 시 **최소 0.10f / 10% 하한선** 보장).
+     - 공격력 (`RedPower`, `BluePower`): 스택당 `-12%` 차감 (5스택 시 -60%, 최소 25% 비율 및 최소 1 보장).
+     - 최대 체력 / 최대 스태미나: 스택당 `-10%` 차감 (5스택 시 -50%, **기본 최대치의 50% 하한선** 보장).
+     - 대기 시 스태미나 회복량: 스택당 `-15%` 차감 (최소 1 회복 보장).
+   - **문턱 극복 및 해제 조건**:
+     - HP를 $\ge 1$ 이상 회복하면 즉시 사망 굴림 대상에서 제외됩니다.
+     - 체력이 **기본 최대 체력(`BaseMaxHealth`)의 50% 이상**으로 회복되면 `DeathsDoor` 상태효과가 완전히 제거되고 깎였던 모든 기본 스탯이 원래 수치로 복구됩니다.
 
 #### TickDuration (지속 시간)
 상태효과 및 카드의 지속 시간 표현.
@@ -262,85 +281,135 @@ edResist | 물리 방어력 — 최종 피해: d × r/(r+100) |
 
 ## 카드 시스템
 
-### Card
-이동을 제외한 모든 행동 단위의 매개체.
+### Card 구조 개요
+이동을 제외한 모든 행동 및 상호작용 단위의 매개체.  
+기본 모델인 `CardData`를 추상화하고, 전투에서 쿨타임과 자원을 소모하는 **`BattleCardData`** 와 탐색 모드에서 엔티티와 상호작용하는 **`InteractionCardData`** 로 역할을 명확히 분리합니다.
+
+```
+_prototype_CardData (추상 기본 클래스)
+├── id, description, sourceProvider (제공 엔티티 참조)
+├── IsVisible(ConditionContext) (가시성 조건 평가)
+│
+├── _prototype_BattleCardData (전투 카드)
+│   ├── cardType, costValue, coolTicks, currentCoolTicks
+│   ├── castRange, targetRange
+│   ├── targetAnchorType (FollowCaster / FixedGround)
+│   └── actionList (List<_prototype_EntityAction>)
+│
+└── _prototype_InteractionCardData (상호작용 카드)
+    ├── interactionKey (상호작용 식별자)
+    ├── visibilityConditions (List<_prototype_Condition>)
+    └── ExecuteInteraction(caster) (상자/상인/포탈 등 실행)
+```
+
+---
+
+### CardData (추상 기본 클래스)
+| 필드/메서드 | 타입 | 설명 |
+|-------------|------|------|
+| `id` | `string` | 카드 식별자 |
+| `descriptionLocalizationKey` | `string` | Unity Localization 문자열 테이블(`Cards_Table`) 참조 키 |
+| `description` | `string` | 카드 설명 텍스트 (로컬라이제이션 미적용 시 Fallback 또는 기본 템플릿) |
+| `sourceProvider` | `_prototype_EntityData` | 카드를 제공한 주변 엔티티 (상호작용 카드 등에서 사용, 런타임 참조) |
+| `IsVisible(context)` | `bool` | 현재 컨텍스트(플레이 모드, 거리, 소지 아이템 등)에서 노출 가능한지 여부 반환 |
+| `Clone()` | `_prototype_CardData` | 런타임 덱 인스턴스 복제용 추상 메서드 |
+
+#### 카드 설명 포매터 및 다국어 지원 (`_prototype_CardDescriptionFormatter`)
+- **다국어(Localization) 지원**: Unity Localization의 `Cards_Table` 및 `Stats_Table`과 연동되어 현재 언어(`ko`, `en`)에 맞게 동적 텍스트 제공.
+- **수치 동적 계산 모드 (Default)**: 카드 액션의 기본 수치와 시전자(Life)의 스탯(공격력, 주문력 등)을 곱연산하여 최종 적용 데미지로 포매팅 (`{damage}` 토큰 치환).
+- **상세 계수 모드 (Alt/Shift 홀드)**: 계산 전 기본 피해량과 스탯 계수 분해 수식(`[10 + 공격력 100%]`)으로 변환 표기.
+- **Rich Text 색상 강조**: 물리/공격력(`#FF6B4A`), 마법/주문력(`#4AA8FF`), 체력/회복(`#4ADE80`) 등으로 자동 하이라이트.
+
+---
+
+### BattleCardData (전투 카드)
+전투 모드에서 쿨타임 및 코스트를 소모하여 행동(`EntityAction`)을 실행하는 카드.
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| instanceId | int | 카드 고유 번호 |
-| modelId | string | 기반 ModelData ID |
-| cardType | CardType | 카드 유형 |
-| cardCost | CostValue | 소비 자원 정보 |
-| coolTicks | int | 쿨타임 (틱 단위) |
-| followCaster | bool | 시전자 위치 추적 여부 (true 시 넉백 등 이동 후 공격 범위가 새 위치에서 재계산됨) |
-| castRangeSelector | ICastRangeSelector | 시전 범위 선택기 |
-| targetRangeSelector | ITargetRangeSelector | 목표 범위 선택기 |
-| cardActionList | List<ICardAction> | 실행 행동 목록 |
+| `cardType` | `_prototype_CardType` | 카드 유형 (Attack, Skill, Curse, Dash 등) |
+| `costValue` | `_prototype_CostValue` | 소비 자원 정보 (FixedHealth, FixedStamina 등) |
+| `coolTicks` | `BoundedValue<byte>` | 기본 쿨타임 범위 (Min=0, Max=기본 쿨타임) |
+| `currentCoolTicks` | `int` | 현재 남은 쿨타임 (0이 되어야 사용 가능) |
+| `castRange` | `_prototype_ICastRangeSelector` | 시전 가능 범위 선택기 |
+| `targetRange` | `_prototype_ITargetRangeSelector` | 목표 지정 범위 선택기 |
+| `targetAnchorType` | `_prototype_TargetAnchorType` | 조준점 앵커링 방식 (`FollowCaster` / `FixedGround`) |
+| `actionList` | `List<_prototype_EntityAction>` | 실행 행동 목록 (피해, 넉백, 상태이상, 투사체 등) |
 
-#### followCaster (시전자 추적 옵션)
-- **적용 대상**: 할퀴기(Claw)와 같은 시전자 기준 근접 공격 카드.
-- **동작 방식**:
-  - 적 AI가 공격을 예고(Planned Target)한 후, 플레이어가 해당 적을 넉백/밀치기로 밀어냈을 때 공격 목표 범위가 이동된 위치를 기준으로 실시간 재계산된다.
-  - 이를 통해 플레이어가 공격 예정인 적을 밀어내어 공격을 회피(Whiff)시키는 전술적 플레이가 가능하다.
-  - 고정 지점 공격(FixedGround, 예: 메테오 등) 카드는 `followCaster = false`로 설정하여 원래 조준 지점을 유지한다.
+#### TargetAnchorType (조준 앵커링)
+- **FollowCaster (기본값)**:
+  - 시전자가 밀려나거나(넉백) 이동하면 이동 변위만큼 조준점과 공격 범위가 함께 이동하여 새 위치에서 실시간 재계산됩니다.
+  - *전술적 활용*: 적이 공격을 예고(Planned Intent)한 상태에서 플레이어가 넉백/밀치기 카드로 적을 밀쳐내면 공격 목표 범위가 이동하여 공격을 회피(Whiff)시킬 수 있습니다.
+- **FixedGround**:
+  - 시전자가 이동하더라도 최초 조준된 바닥 좌표(월드 좌표)가 고정된 채 공격 범위가 계산됩니다 (바닥 설치기, 지점 폭격, 메테오 등).
 
-#### CardType
-| 값 | 설명 |
-|----|------|
-| Normal | 기본 카드 |
-| Attack | 공격 카드 |
-| Skill | 기술 카드 |
-| Curse | 저주 카드 |
-| Interaction | 상호작용 카드 (Exploration Mode 전용) |
+---
 
-#### CostType (소비 자원)
-| 값 | 설명 |
-|----|------|
-| None | 무료 |
-| FixedHealth | 고정 체력 소모 |
-| CurrentHealthRatio | 현재 체력 비율 소모 |
-| MaxHealthRatio | 최대 체력 비율 소모 |
-| FixedStamina | 고정 스테미나 소모 |
-| CurrentStaminaRatio | 현재 스테미나 비율 소모 |
-| MaxStaminaRatio | 최대 스테미나 비율 소모 |
-| Other | 기타 자원 |
+### InteractionCardData (상호작용 카드)
+탐색 모드(Exploration Mode)에서 주변 오브젝트(상자, NPC, 상인, 포탈 등)의 `CardProviderComponentData`를 통해 플레이어에게 제공되는 카드.
 
-#### 시전/목표 범위 선택기 (Prototype 구현)
-- **CastRangeSelector** : 시전 가능 범위
-    - **Self** : 시전자의 Point에만 시전 가능
-    - **AroundRect** : 시전자의 주변의 N칸만큼의 사각형 영역에 시전 가능
-    - **AroundCircle** : 시전자의 주변의 N칸만큼의 원 영역에 시전 가능
-    - **CrossLine** : 시전자를 지나는 직선 N칸만큼 시전 가능  
-    - **FrontArc** : 시전자 앞 호만큼 시전 가능 (반지름, 각도 설정 가능)
-- **TargetRangeSelector** : 목표 지정 범위
-    - **Single** : Point 하나 지정
-    - **Line** : 길이가 N인 라인 Point 집합 지정
-    - **PenetratedLine** : 길이 제한이 없는 라인 Point 집합 지정
-    - **RectSplash** : Point 주변 사각형 영역 집합 지정
-    - **CircleSplash** : Point 주변 원 영역 집합 지정
+| 필드/메서드 | 타입 | 설명 |
+|-------------|------|------|
+| `interactionKey` | `string` | 상호작용 식별 키 (예: "OpenChest", "Talk", "Warp") |
+| `visibilityConditions` | `List<_prototype_Condition>` | 카드 자체에 캡슐화된 노출 조건 목록 |
+| `IsVisible(context)` | `bool` | 모든 조건(`PlayModeCondition`, `DistanceCondition`, `RequiredItemCondition` 등)을 평가하여 만족할 때만 손패에 노출 |
+| `ExecuteInteraction(caster)` | `UniTask` | 상호작용 로직 실행 |
 
-#### CardAction 종류 (Prototype 구현)
-- DamageCardAction — 피해 적용
-- KnockbackCardAction — 넉백
-- ApplyStatusEffectCardAction — 상태효과 적용
-- MoveToPointCardAction — 위치 이동
-- SpawnDirectionalProjectileCardAction — 방향성 투사체 생성
-- SpawnTargetedProjectileCardAction — 추적 투사체 생성
-- ShootLaserCardAction — 레이저 발사
+#### 카드 제공자 (CardProviderComponentData) 및 가시성 평가
+- 탐색 모드 진행 시 플레이어 주변(반경 1칸 이내)의 엔티티를 검색하여 `CardProviderComponentData`가 제공하는 카드 목록을 취합합니다.
+- 외부 래퍼 구조 대신 카드 자체가 `visibilityConditions`를 캡슐화하여 보유하고, `IsVisible(targetContext)`를 스스로 평가하여 UI에 표기됩니다.
 
-### CardDeck / Deck
-여러 카드의 위치를 정의한 집합.
+---
+
+### CardDeck (덱 및 순환 관리)
+전투 중 덱의 5개 영역(All, Remained, Hand, Discarded, Destroyed)을 관리하고 쿨타임 흐름을 제어합니다.
 
 | 필드 | 설명 |
 |------|------|
-| allCards | 위치에 관계없는 모든 카드 목록 |
-| remainedCards (CardPosition.Remained) | 드로우 대기 카드 목록. 소진 시 discardedCards에서 셔플 후 복귀 |
-| handCards (CardPosition.Hand) | 드로우된 카드 목록 (슬롯 수 = cardSlotCount) |
-| discardedCards (CardPosition.Discarded) | 사용·버린 카드 목록 |
-| destroyedCards (CardPosition.Destoryed) | 이번 Battle에서 파괴되어 사용 불가한 카드 목록 |
+| `allCardDatas` | 위치에 관계없는 모든 카드 목록 |
+| `remainedCardDatas` | 드로우 대기 카드 목록. 소진 시 `discardedCardDatas`를 셔플 후 복귀 |
+| `handedCardDatas` | 손패 카드 목록 (슬롯 수 = `lifeStat.handCardSlotCount`) |
+| `discardedCardDatas` | 사용 및 버린 카드 목록 |
+| `destroyedCardDatas` | 이번 전투에서 파괴/소멸된 카드 목록 |
 
-> 처음 드로우된 카드는 해당 카드의 coolTicks 동안 사용 불가.  
-> 사용하지 않을 카드는 즉시 버려 다음 카드의 드로우 슬롯을 확보할 수 있다.
+#### 쿨타임(CoolTicks) 및 순환 상세 규칙
+1. **드로우 시 쿨타임 초기화**:
+   - 덱에서 카드가 손패(`handedCardDatas`)로 드로우될 때, 해당 카드의 `currentCoolTicks`는 기본 쿨타임(`coolTicks.Current`)으로 세팅되어 즉시 사용할 수 없습니다.
+2. **틱당 쿨타임 감소**:
+   - 매 틱마다 손패의 모든 전투 카드는 `currentCoolTicks`가 `1 + lifeStat.drawQuickness`만큼 감소하며, `0`에 도달하면 카드가 활성화되어 사용 가능합니다.
+3. **상태효과와 쿨타임의 상호작용**:
+   - **기절 (Stun)**: 플레이어가 스턴으로 인해 자동 틱이 진행될 때에도 쿨타임은 정상적으로 매 틱 감소합니다.
+   - **넘어짐 (Knockdown)**: 넘어짐 상태에서는 쿨타임이 감소하지 않고, 반대로 `currentCoolTicks`가 `1 + drawQuickness`만큼 **증가**하여 카드 사용이 지연되는 페널티를 받습니다.
+   - **침묵 (Silence)**: 손패 카드가 잠겨 비활성화 보라색 오버레이(`SilenceOverlay`)가 표시되며 클릭 및 드래그 사용이 완전히 차단됩니다. (쿨타임 감소는 정상 진행)
+4. **최장 쿨타임 카드 버리기 (`DiscardHighestCooldownCard`)**:
+   - 플레이어나 적 AI가 대기(휴식) 행동을 수행할 때 호출됩니다.
+   - 손패 중 잔여 쿨타임(`currentCoolTicks`)이 가장 길어 장기간 사용하기 어려운 카드를 자동으로 선별하여 버린 카드 더미(`discardedCardDatas`)로 이동시킵니다.
+   - 이를 통해 다음 드로우 슬롯을 확보하고 덱 순환을 유도합니다.
+
+---
+
+### 범위 선택기 (RangeSelector)
+- **CastRangeSelector (시전 가능 범위)**:
+  - `Self`: 시전자 위치에만 시전
+  - `AroundRect`: 시전자 주변 N칸 사각형 영역
+  - `Cross`: 시전자를 지나는 십자 방향 직선 N칸
+- **TargetRangeSelector (목표 적용 범위)**:
+  - `Single`: 단일 좌표 1칸
+  - `Line` / `PenetratedLine`: 직선 범위 / 관통 직선 범위
+  - `Arc`: 전방 호(부채꼴) 영역 (반지름 및 각도 지정)
+  - `RectSplash` / `CrossSplash` / `Ring`: 사각형 폭발 / 십자 폭발 / 도넛형 고리 범위
+
+---
+
+### EntityAction (행동 실행기)
+카드가 발동될 때 실행되는 세부 액션 단위로, 카드의 전유물이 아닌 엔티티·환경·트랩 공통 액션 체계로 사용됩니다.
+- `DamageEntityAction`: 물리/마법/고정 피해 적용 및 크리티컬 판정
+- `KnockbackEntityAction`: 타겟 밀치기 (경로 및 벽 충돌 검증)
+- `ApplyStatusEffectEntityAction`: 상태효과(CC, DoT, 디버프 등) 부여
+- `MoveToPointEntityAction`: 좌표 이동
+- `SpawnDirectionalProjectileEntityAction`: 방향성 투사체 생성
+- `SpawnTargetedProjectileEntityAction`: 추적 투사체 생성
+- `AreaEffectAction`: 지속 장판 및 범위 효과 생성
 
 ---
 

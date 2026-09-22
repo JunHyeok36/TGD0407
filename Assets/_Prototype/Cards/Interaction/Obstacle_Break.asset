@@ -12,23 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d1d8432a5345c4f8078bd2998edcb4, type: 3}
   m_Name: Obstacle_Break
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_InteractionCardDataModel
-  interactionKey: Break
   id: "\uBD80\uC218\uAE30 (Break)"
-  description: "\uC7A5\uC560\uBB3C\uC744 \uACF5\uACA9\uD558\uC5EC \uD30C\uAD34\uD569\uB2C8\uB2E4."
-  cardType: 6
-  costValue:
-    costType: 0
-    value: 0
-  coolTicks:
-    _min: 0
-    _max: 0
-    _cur: 0
-  castRange:
-    rid: 8244398012911059128
-  targetRange:
-    rid: 8244398012911059129
-  actionList:
-  - rid: 8244398012911059130
+  descriptionLocalizationKey: Obstacle_Break
+  description: "\uC7A5\uC560\uBB3C\uC744 \uD30C\uAD34\uD558\uC5EC \uAE38\uC744 \uC5FD\uB2C8\uB2E4."
+  interactionKey: Break
   visibilityConditions:
   - rid: 8244398012911059131
   - rid: 8244398012911059132
@@ -36,21 +23,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8244398012911059128
-      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data: 
-    - rid: 8244398012911059129
-      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeEmptyPoints: 0
-    - rid: 8244398012911059130
-      type: {class: _prototype_DamageEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeSelf: 0
-        damageType: 0
-        damageCoefficients:
-        - stat: 0
-          coefficient: 999
     - rid: 8244398012911059131
       type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:

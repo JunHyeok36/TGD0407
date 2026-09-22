@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612a39be3ae8e45449fcb6c4ed8f22cc, type: 3}
+  m_Name: CardChest
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_ObstacleDataModel
+  ename: CardChest
+  health:
+    _min: 0
+    _max: 100
+    _cur: 100
+  stamina:
+    _min: 0
+    _max: 0
+    _cur: 0
+  point:
+    x: 0
+    y: 0
+  size:
+    x: 1
+    y: 1
+  movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
+  components:
+  - rid: 8244398080309330017
+  - rid: 8244398080309330018
+  isKnockbackImmune: 1
+  isDestructible: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 8244398080309330017
+      type: {class: _prototype_ChestComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        storedCards:
+        - {fileID: 11400000, guid: 431dee964b91d7a4e87194b5302a1c91, type: 2}
+        storedItems: []
+        isOpened: 0
+    - rid: 8244398080309330018
+      type: {class: _prototype_CardProviderComponentDataModel, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        providedCards:
+        - {fileID: 11400000, guid: f430d130f49ca834a9bc11b38367f200, type: 2}

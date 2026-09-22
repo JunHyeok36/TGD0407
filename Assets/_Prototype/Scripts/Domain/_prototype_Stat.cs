@@ -16,6 +16,9 @@ namespace TDG0407._prototype
         Avoidance,
         CriticalProb,
         CriticalWeight,
+        CurrentHealth,
+        MaxHealth,
+        MissingHealth,
 
     }
 

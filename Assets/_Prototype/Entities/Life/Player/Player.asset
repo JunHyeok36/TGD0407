@@ -33,9 +33,9 @@ MonoBehaviour:
     _max: 1.8
   components: []
   lifeStat:
-    redPower: 10
+    redPower: 32
     bluePower: 0
-    redResist: 12
+    redResist: 14
     blueResist: 0
     handCardSlotCount: 5
     drawQuickness: 0
@@ -52,7 +52,7 @@ MonoBehaviour:
     knockbackResist: 10
     deathResistProp: 0.5
     dodgeProb: 0
-    criticalProb: 0.05
+    criticalProb: 0.15
     criticalWeight: 100
   cardDeck:
     allCardDatas:

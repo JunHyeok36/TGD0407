@@ -19,15 +19,15 @@ namespace TDG0407._prototype
 
         public _prototype_BattleCardData(
             string id,
-            string description,
             _prototype_CardType cardType,
             _prototype_CostValue costValue,
             _prototype_BoundedValue<byte> coolTicks,
             _prototype_ICastRangeSelector castRange,
             _prototype_ITargetRangeSelector targetRange,
             List<_prototype_EntityAction> actionList,
-            _prototype_TargetAnchorType targetAnchorType = _prototype_TargetAnchorType.FollowCaster
-        ) : base(id, description)
+            _prototype_TargetAnchorType targetAnchorType = _prototype_TargetAnchorType.FollowCaster,
+            string descriptionLocalizationKey = ""
+        ) : base(id, descriptionLocalizationKey)
         {
             this.cardType = cardType;
             this.costValue = costValue;

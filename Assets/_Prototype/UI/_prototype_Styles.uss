@@ -122,21 +122,151 @@
 }
 
 .hand-container {
-    height: 380px;
+    height: 480px;
     width: auto;
     position: absolute;
     left: 280px;
     right: 280px;
     align-items: center;
-    bottom: -320px;
+    bottom: -400px;
     transition-property: bottom;
     transition-duration: 0.3s;
     transition-timing-function: ease-out;
 }
 
 .hand-container-active {
-    bottom: -150px;
+    bottom: -160px;
 }
 
 .unity-label {
+}
+
+/* ─── 좌측 획득 토스트 알림 (TYPE A: CMD 레트로 터미널) ─── */
+.acquisition-toast-container {
+    position: absolute;
+    left: 30px;
+    top: 180px;
+    width: 360px;
+    pointer-events: none;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cmd-toast-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 330px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background-color: rgba(0, 20, 0, 0.92);
+    border-width: 2px;
+    border-color: rgb(50, 255, 50);
+    border-radius: 6px;
+    transition-property: translate, opacity;
+    transition-duration: 0.25s, 0.3s;
+    transition-timing-function: ease-out;
+    translate: -360px 0;
+    opacity: 0;
+}
+
+.cmd-toast-item-show {
+    translate: 0 0;
+    opacity: 1;
+}
+
+.cmd-toast-item-hide {
+    translate: -360px 0;
+    opacity: 0;
+}
+
+.cmd-toast-icon-box {
+    width: 42px;
+    height: 42px;
+    border-width: 1px;
+    border-color: rgb(50, 255, 50);
+    border-radius: 4px;
+    background-color: rgba(0, 35, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.cmd-toast-icon {
+    width: 34px;
+    height: 34px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cmd-toast-fallback-icon {
+    font-size: 22px;
+    color: rgb(50, 255, 50);
+    -unity-text-align: middle-center;
+}
+
+.cmd-toast-content {
+    flex-grow: 1;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cmd-toast-tag {
+    font-size: 13px;
+    color: rgb(80, 220, 80);
+    margin-bottom: 2px;
+}
+
+.cmd-toast-name {
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.cmd-toast-badge {
+    background-color: rgba(0, 50, 0, 0.85);
+    border-width: 1px;
+    border-color: rgb(50, 255, 50);
+    border-radius: 4px;
+    padding: 3px 8px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.cmd-toast-badge-text {
+    font-size: 16px;
+    color: rgb(50, 255, 50);
+    -unity-font-style: bold;
+    text-shadow: 1px 1px 0 rgb(0, 0, 0);
+}
+
+/* ─── 플레이어 및 UI 상태효과 뱃지 ─── */
+.status-badge {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 6px;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    background-color: rgba(0, 25, 0, 0.85);
+    border-width: 1px;
+    border-color: rgb(50, 200, 50);
+    border-radius: 4px;
+}
+
+.status-badge-symbol {
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.status-badge-text {
+    font-size: 14px;
+    color: rgb(220, 255, 220);
+    -unity-font-style: bold;
 }

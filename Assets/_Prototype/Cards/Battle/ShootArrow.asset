@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ShootArrow
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: card_shoot_arrow
-  description: Shoots an arrow.
+  descriptionLocalizationKey: ShootArrow
+  description: "\uBB3C\uB9AC \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC90D\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -26,6 +27,7 @@ MonoBehaviour:
     rid: 8244397704902606951
   targetRange:
     rid: 8244397704902606952
+  targetAnchorType: 0
   actionList:
   - rid: 8244397786603454640
   references:

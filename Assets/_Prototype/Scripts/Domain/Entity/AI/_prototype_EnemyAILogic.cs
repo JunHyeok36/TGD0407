@@ -16,6 +16,11 @@ namespace TDG0407._prototype
         [NonSerialized] public _prototype_Point plannedTarget;
         [NonSerialized] public bool hasPlannedIntent;
 
+        /// <summary>
+        /// 현재 턴에 의도하는 행동을 나타냅니다. EvaluateIntent()에서 갱신되며, LifeHUD가 읽어서 머리 위 배지로 표시합니다.
+        /// </summary>
+        [NonSerialized] public _prototype_EnemyIntent CurrentIntent = _prototype_EnemyIntent.None();
+
         public virtual void EvaluateIntent(_prototype_EntityView entityView) { }
         public virtual UniTask ExecuteAction(_prototype_EntityView entityView) { return UniTask.CompletedTask; }
         public abstract UniTask<_prototype_TickIntent> PlanAction(_prototype_EntityView entityView);

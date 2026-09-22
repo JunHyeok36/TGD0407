@@ -40,8 +40,18 @@
   - DoT (Bleeding, Burning, Poisoning) 독립 인스턴스 병렬 유지
   - Burning vs Freeze 상호 전소멸(All-Clear)
   - Curse 단일 인스턴스 + 지속시간 갱신 및 `value` 누적 합산
+- [x] **죽음의 문턱 (Death's Door) & 죽음 저항 (deathResistProp) 시스템**
+  - 다키스트 던전 스타일 사망 유예 및 사망 굴림(Deathblow Check)
+  - `deathResistProp` (0.0f ~ 1.0f) 기반 생사 판정 (`Random.value < deathResistProp`) 및 0 HP 유지
+  - 직접 타격 및 DoT(출혈, 화상, 중독) 틱 피해 피격 시에도 사망 굴림 적용
+  - 최대 5스택 중첩 디버프 및 하한선(최소 저항 10%, 최대 체력/SP 50%, 공격력 40% 등) 보장
+  - 기본 최대 체력의 50% 이상 회복 시 문턱 극복 및 스탯 전면 원복
+  - 전용 이벤트(`EntityDeathsDoorEnteredEvent`, `EntityDeathResistedEvent`, `EntityDeathsDoorClearedEvent`) 및 상태별 연출/플로팅 텍스트
+- [x] **대기(휴식) 시스템 개선 및 일원화 (방안 A)**
+  - 대기 시 스태미나만 회복(`Rest()`), 체력 자동 회복 분리(`Heal()`)
+  - AI 공통 휴식 루틴(`ExecuteEnemyRest`) 및 최장 쿨타임 카드 버리기(`DiscardHighestCooldownCard`) 캡슐화
 - [x] **LifeView**
-  - 체력바(HUD), 사망 처리
+  - 체력바(HUD), 사망 처리 (사망 애니메이션 후 타일 분리 및 Destroy)
   - DoT 인스턴스별 개별 데미지 처리 및 0.8배 축소 FloatingText 연속 팝업
   - FloatingText 발생 대상을 오직 `Life` 엔티티로 제한 (Projectile/Obstacle 제외)
   - 넉백(Knockback) 시 바라보는 방향 유지(밀려나는 연출)
@@ -50,19 +60,32 @@
 - [x] **LaserProjectileData / LaserProjectileView** — 레이저 투사체
 
 ### 카드 시스템
-- [x] **CardData** — 카드 데이터 모델 (비용·쿨타임·범위·행동 목록)
-- [x] **followCaster (시전자 추적 옵션)** — 넉백 등으로 시전자가 밀려났을 때 공격 범위 실시간 재계산
-- [x] **CardDeck** — 드로우/버리기/소멸 로직 (_prototype_CardDeck)
-- [x] **CardAction 구현 목록**
-  - DamageCardAction — 물리/마법/고정 피해
-  - KnockbackCardAction — 넉백 (경로 검증 포함)
-  - ApplyStatusEffectCardAction — 상태효과 적용
-  - MoveToPointCardAction — 즉시 이동
-  - SpawnDirectionalProjectileCardAction — 방향성 투사체 생성
-  - SpawnTargetedProjectileCardAction — 추적 투사체 생성
-  - ShootLaserCardAction — 레이저 발사
+- [x] **CardData 구조 개편 및 다형성 분리**
+  - 추상 기본 클래스 `_prototype_CardData`
+  - 전투 전용 `_prototype_BattleCardData` (쿨타임, 코스트, 범위, 앵커링, 액션 목록)
+  - 탐색 상호작용 전용 `_prototype_InteractionCardData` (상호작용 키, 가시성 조건, 실행 로직)
+- [x] **TargetAnchorType (조준 앵커링)**
+  - `FollowCaster`: 시전자 피격/넉백 이동 시 공격 범위 실시간 재계산 (공격 회피/헛치기 전술 가능)
+  - `FixedGround`: 시전자 이동과 무관하게 바닥 좌표 고정
+- [x] **카드 가시성(Visibility) 및 제공자(CardProvider) 시스템**
+  - 카드 내부에 `visibilityConditions` 직접 캡슐화 및 `IsVisible(context)` 자체 평가
+  - 탐색 모드 시 인접 엔티티의 `_prototype_CardProviderComponentData`를 통한 상호작용 카드 동적 수급
+- [x] **CardDeck 순환 & 쿨타임 메커니즘 고도화**
+  - 드로우 시 쿨타임 초기화 및 틱당 쿨타임 감소 (`1 + drawQuickness`)
+  - 기절(`Stun`) 시 자동 틱 중에도 정상 쿨타임 감소
+  - 넘어짐(`Knockdown`) 시 쿨타임 감소 대신 반대로 쿨타임 증가(지연 페널티)
+  - 침묵(`Silence`) 시 손패 잠금 오버레이 및 사용 차단
+  - 대기(휴식) 시 잔여 쿨타임이 가장 긴 카드를 버리는 `DiscardHighestCooldownCard` 로직
+- [x] **EntityAction 체계 (구 CardAction)**
+  - DamageEntityAction — 물리/마법/고정 피해 및 크리티컬
+  - KnockbackEntityAction — 넉백 (경로 및 벽 충돌 검증)
+  - ApplyStatusEffectEntityAction — 상태효과 부여
+  - MoveToPointEntityAction — 즉시 이동
+  - SpawnDirectionalProjectileEntityAction — 방향성 투사체 생성
+  - SpawnTargetedProjectileEntityAction — 추적 투사체 생성
+  - AreaEffectAction — 지속 장판/지역 효과 생성
 - [x] **CastRangeSelector** : Self, AroundRect, Cross
-- [x] **TargetRangeSelector** : Single, Line, PenetratedLine, CrossSplash, RectSplash, Ring
+- [x] **TargetRangeSelector** : Single, Line, PenetratedLine, Arc(호/부채꼴), CrossSplash, RectSplash, Ring
 
 ### 샘플 카드 (ScriptableObject)
 | 카드 | 설명 |
@@ -91,6 +114,17 @@
 - [x] **PlayerUIView** — 핸드 카드, 체력/스테미나, 카드 사용 인터페이스
   - 침묵 상태 시 손패 카드 보라색 오버레이(`SilenceOverlay`) 표시 및 클릭/드래그 차단
   - 경고 메시지(`ShowWarning`) 팝업 연출
+  - **카드 설명 동적 수치 및 상세 계수 모드 (Alt/Shift 홀드)**
+    - 기본 모드: 시전자(플레이어)의 스탯(공격력, 주문력 등)을 반영한 최종 계산 수치 표기 (예: `물리 피해를 35만큼 줍니다.`)
+    - 상세 모드(Alt/Shift): 기본 피해량 및 스탯 반영 비율을 분해한 수식 형태 표기 (예: `물리 피해를 [10 + 공격력 100%]만큼 줍니다.`)
+    - 데미지 및 스탯 타입별 Rich Text 색상 강조 (물리/공격력: `#FF6B4A`, 마법/주문력: `#4AA8FF`, 체력: `#4ADE80`)
+    - Alt / Shift 키 실시간 감지하여 손패 카드 설명 동적 리프레시
+  - **다국어 현지화(Localization) 지원 (Unity Localization)**
+    - Unity Localization 패키지 연동 (`Cards_Table`, `Stats_Table`)
+    - 전체 21종 카드(전투 14종, 상호작용 7종)에 대한 한국어(`ko`) / 영어(`en`) 템플릿 및 스탯 용어 등록
+    - `_prototype_CardDescriptionFormatter` 기반 런타임 다국어 자동 전환 및 내장 카탈로그 사전 Fallback
+  - **획득 알림 모달 & 좌측 획득 토스트 UI**
+    - 카드/아이템 획득 시 팝업 모달 (`_prototype_RewardNotification.uxml`) 및 좌측 누적 토스트 UI (TYPE A)
 - [x] **LifeHUD** — 체력/스테미나/쉴드 바 (월드 스페이스)
   - 상태효과 그룹화 표시 (DoT 중첩 수 `[Bleeding x2 (5t)]`, 저주 누적치 `[Curse -55 (4t)]`, CC 잔여 틱 `[Stun 2]`)
 - [x] **DamageText / FloatingText** — 피해량 및 상태이상 팝업 텍스트 (Life 엔티티 전용)

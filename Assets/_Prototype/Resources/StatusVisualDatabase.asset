@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8671b834ab87e614889f995679a32c19, type: 3}
+  m_Name: StatusVisualDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_StatusVisualDatabase
+  _entries:
+  - type: 1
+    displayName: "스턴"
+    symbolChar: "⚡"
+    icon: {fileID: 0}
+    themeColor: {r: 1, g: 0.9, b: 0, a: 1}
+    description: "행동 불능 상태입니다. 모든 행동 및 카드 시전이 차단됩니다."
+  - type: 2
+    displayName: "녹다운"
+    symbolChar: "💫"
+    icon: {fileID: 0}
+    themeColor: {r: 0.8, g: 0.5, b: 1, a: 1}
+    description: "스태미나 고갈로 쓰러져 있습니다. 받는 피해가 50% 증가합니다."
+  - type: 3
+    displayName: "침묵"
+    symbolChar: "🔇"
+    icon: {fileID: 0}
+    themeColor: {r: 0.5, g: 0.5, b: 0.8, a: 1}
+    description: "카드를 사용할 수 없습니다. 이동 및 기본 대기만 가능합니다."
+  - type: 4
+    displayName: "공포"
+    symbolChar: "😱"
+    icon: {fileID: 0}
+    themeColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
+    description: "두려움에 사로잡혀 반대 방향으로 강제 도주합니다."
+  - type: 5
+    displayName: "저주"
+    symbolChar: "☠"
+    icon: {fileID: 0}
+    themeColor: {r: 0.4, g: 0, b: 0.6, a: 1}
+    description: "어두운 기운에 잠식되어 최대 체력 및 주요 스탯이 감소합니다."
+  - type: 6
+    displayName: "출혈"
+    symbolChar: "🩸"
+    icon: {fileID: 0}
+    themeColor: {r: 0.9, g: 0.1, b: 0.1, a: 1}
+    description: "상처가 벌어져 턴 종료 시 지속 물리 피해를 입습니다."
+  - type: 7
+    displayName: "화상"
+    symbolChar: "🔥"
+    icon: {fileID: 0}
+    themeColor: {r: 1, g: 0.4, b: 0, a: 1}
+    description: "화염에 휩싸여 지속 화염 피해를 입으며 카드 파괴 위험에 노출됩니다."
+  - type: 8
+    displayName: "빙결"
+    symbolChar: "❄"
+    icon: {fileID: 0}
+    themeColor: {r: 0.4, g: 0.7, b: 1, a: 1}
+    description: "몸이 꽁꽁 얼어붙어 이동할 수 없습니다."
+  - type: 9
+    displayName: "중독"
+    symbolChar: "☣"
+    icon: {fileID: 0}
+    themeColor: {r: 0.3, g: 0.7, b: 0.2, a: 1}
+    description: "맹독에 중독되어 방어력을 무시하는 지속 피해를 입습니다."
+  - type: 10
+    displayName: "슈퍼아머"
+    symbolChar: "🛡"
+    icon: {fileID: 0}
+    themeColor: {r: 0.9, g: 0.7, b: 0.1, a: 1}
+    description: "모든 군중 제어(CC) 및 넉백 효과에 완전 면역 상태가 됩니다."
+  - type: 11
+    displayName: "죽음의 문턱"
+    symbolChar: "💀"
+    icon: {fileID: 0}
+    themeColor: {r: 0.8, g: 0.05, b: 0.05, a: 1}
+    description: "체력이 0에 도달하여 치명적인 위험에 처했습니다. 한 번 더 피격되면 사망합니다."

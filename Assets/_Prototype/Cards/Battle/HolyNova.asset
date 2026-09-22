@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: HolyNova
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: HolyNova
-  description: "\uC790\uC2E0\uC744 \uC911\uC2EC\uC73C\uB85C \uC2ED\uC790 \uD615\uD0DC\uC758
-    \uD3ED\uBC1C\uC744 \uC77C\uC73C\uD0B5\uB2C8\uB2E4."
+  descriptionLocalizationKey: HolyNova
+  description: "\uB9C8\uBC95 \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC90D\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -27,6 +27,7 @@ MonoBehaviour:
     rid: 2475498181128356192
   targetRange:
     rid: 2475498181128356193
+  targetAnchorType: 0
   actionList:
   - rid: 2475498181128356194
   references:

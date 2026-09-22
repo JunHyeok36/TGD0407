@@ -243,7 +243,7 @@ namespace TDG0407._prototype
                     {
                         if (!chainTraps.Contains(otherTrap)) chainTraps.Add(otherTrap);
                     }
-                    else if (ev.EntityData is _prototype_LifeData life && life.health.Current > 0)
+                    else if (ev.EntityData is _prototype_LifeData life && !life.IsDead)
                     {
                         var ctx = new _prototype_DamageContext(_owner.EntityData,
                             life,

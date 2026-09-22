@@ -15,10 +15,10 @@ namespace TDG0407._prototype
 
         public _prototype_InteractionCardData(
             string id,
-            string description,
             string interactionKey,
-            List<_prototype_Condition> visibilityConditions = null
-        ) : base(id, description)
+            List<_prototype_Condition> visibilityConditions = null,
+            string descriptionLocalizationKey = ""
+        ) : base(id, descriptionLocalizationKey)
         {
             this.interactionKey = interactionKey;
             if (visibilityConditions != null)

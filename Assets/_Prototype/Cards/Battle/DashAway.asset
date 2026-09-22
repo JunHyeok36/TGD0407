@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: DashAway
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: DashAway
-  description: Move to a selected location within range.
+  descriptionLocalizationKey: DashAway
+  description: "\uD6C4\uBC29\uC73C\uB85C 1\uCE78 \uB3C4\uC8FC\uD558\uC5EC \uAC70\uB9AC\uB97C
+    \uBC8C\uB9BD\uB2C8\uB2E4."
   cardType: 2
   costValue:
     costType: 5
@@ -26,6 +28,7 @@ MonoBehaviour:
     rid: 8244397704902606961
   targetRange:
     rid: 8244397704902606959
+  targetAnchorType: 0
   actionList:
   - rid: 8244397704902606960
   references:

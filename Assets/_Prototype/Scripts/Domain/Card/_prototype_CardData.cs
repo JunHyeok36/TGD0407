@@ -6,24 +6,24 @@ namespace TDG0407._prototype
     public abstract class _prototype_CardData
     {
         public string id;
-        public string description;
+        public string descriptionLocalizationKey;
 
         [NonSerialized]
         public _prototype_EntityData sourceProvider;
 
         public _prototype_CardData() { }
 
-        public _prototype_CardData(string id, string description)
+        public _prototype_CardData(string id, string descriptionLocalizationKey = "")
         {
             this.id = id;
-            this.description = description;
+            this.descriptionLocalizationKey = descriptionLocalizationKey;
         }
 
         public _prototype_CardData(_prototype_CardData other)
         {
             if (other == null) return;
             this.id = other.id;
-            this.description = other.description;
+            this.descriptionLocalizationKey = other.descriptionLocalizationKey;
             this.sourceProvider = other.sourceProvider;
         }
 

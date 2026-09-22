@@ -14,6 +14,29 @@ namespace TDG0407._prototype
         public _prototype_DamageType damageType = _prototype_DamageType.Physical;
         public _prototype_CoefficientValue[] damageCoefficients;
 
+        public static float GetStatValue(_prototype_EntityData entity, _prototype_Stat stat)
+        {
+            if (entity == null) return 0f;
+            var life = entity as _prototype_LifeData;
+            return stat switch
+            {
+                _prototype_Stat.RedPower => life != null ? life.RedPower : 0f,
+                _prototype_Stat.BluePower => life != null ? life.BluePower : 0f,
+                _prototype_Stat.Health => entity.health != null ? entity.health.Max : 0f,
+                _prototype_Stat.MaxHealth => entity.health != null ? entity.health.Max : 0f,
+                _prototype_Stat.CurrentHealth => entity.health != null ? entity.health.Current : 0f,
+                _prototype_Stat.MissingHealth => entity.health != null ? Mathf.Max(0, entity.health.Max - entity.health.Current) : 0f,
+                _prototype_Stat.Stamina => entity.stamina != null ? entity.stamina.Current : 0f,
+                _prototype_Stat.Shield => 0f,
+                _prototype_Stat.Avoidance => (life != null && life.lifeStat != null) ? life.lifeStat.dodgeProb : 0f,
+                _prototype_Stat.CriticalProb => (life != null && life.lifeStat != null) ? life.lifeStat.criticalProb : 0f,
+                _prototype_Stat.CriticalWeight => (life != null && life.lifeStat != null) ? life.lifeStat.criticalWeight : 0,
+                _prototype_Stat.RedResist => (life != null && life.lifeStat != null) ? life.lifeStat.redResist : 0,
+                _prototype_Stat.BlueResist => (life != null && life.lifeStat != null) ? life.lifeStat.blueResist : 0,
+                _ => 1f
+            };
+        }
+
         public override async UniTask ExecuteAction(
             _prototype_EntityData source,
             IEnumerable<_prototype_EntityData> targets,
@@ -21,37 +44,29 @@ namespace TDG0407._prototype
         {
             if (source == null) return;
             var sourceLife = source as _prototype_LifeData;
-            float calculatedDamage = 0f;
 
+            // 1. 시전자(Caster) 및 고정 계수 피해량 사전 계산
+            float casterCalculatedDamage = 0f;
             if (damageCoefficients != null && damageCoefficients.Length > 0)
             {
                 foreach (var coeff in damageCoefficients)
                 {
-                    float statValue = 1f;
-                    if (sourceLife != null)
+                    if (coeff == null) continue;
+                    if (coeff.source == _prototype_StatSource.Caster)
                     {
-                        switch (coeff.stat)
-                        {
-                            case _prototype_Stat.RedPower:
-                                statValue = sourceLife.RedPower;
-                                break;
-                            case _prototype_Stat.BluePower:
-                                statValue = sourceLife.BluePower;
-                                break;
-                            case _prototype_Stat.Health: statValue = sourceLife.health.Current; break;
-                            case _prototype_Stat.Stamina: statValue = sourceLife.stamina.Current; break;
-                            default: break; // fallback
-                        }
+                        float statValue = (coeff.stat == _prototype_Stat.None || coeff.stat == _prototype_Stat.NULL)
+                            ? 1f
+                            : GetStatValue(source, coeff.stat);
+                        casterCalculatedDamage += statValue * coeff.coefficient;
                     }
-                    calculatedDamage += statValue * coeff.coefficient;
                 }
             }
-            int baseDamage = (int)calculatedDamage;
+            int baseCasterDamage = Mathf.RoundToInt(casterCalculatedDamage);
 
             var sourceView = _prototype_GridManager.Instance?.GetPointView(source.point)?.PlacedEntityViews.Find(v => v.EntityData == source);
             var cardParams = @params as _prototype_CardActionParams;
 
-            // 1. 공격 시도(Action Execution)에 따른 공격 모션 및 방향 회전 (피해 유무와 무관하게 실행)
+            // 2. 공격 시도(Action Execution)에 따른 공격 모션 및 방향 회전 (피해 유무와 무관하게 실행)
             UniTask attackAnimTask = UniTask.CompletedTask;
             if (cardParams != null && sourceView != null)
             {
@@ -133,7 +148,7 @@ namespace TDG0407._prototype
                 }
             }
 
-            // 2. 피격 대상들에 대한 데미지 적용
+            // 3. 피격 대상들에 대한 데미지 적용 (타겟별 계수 합산)
             List<UniTask> damageTasks = new();
             if (targets != null)
             {
@@ -147,17 +162,34 @@ namespace TDG0407._prototype
                         continue;
                     }
 
+                    // 대상(Target) 기준 계수 추가 계산
+                    float targetCalculatedBonus = 0f;
+                    if (damageCoefficients != null && damageCoefficients.Length > 0)
+                    {
+                        foreach (var coeff in damageCoefficients)
+                        {
+                            if (coeff != null && coeff.source == _prototype_StatSource.Target)
+                            {
+                                float statValue = (coeff.stat == _prototype_Stat.None || coeff.stat == _prototype_Stat.NULL)
+                                    ? 1f
+                                    : GetStatValue(target, coeff.stat);
+                                targetCalculatedBonus += statValue * coeff.coefficient;
+                            }
+                        }
+                    }
+
+                    int finalBaseDamage = baseCasterDamage + Mathf.RoundToInt(targetCalculatedBonus);
+
                     // 크리티컬 판정 및 데미지 계산
                     bool isCritical = false;
-                    int currentDamage = baseDamage;
+                    int currentDamage = finalBaseDamage;
                     if (sourceLife != null && sourceLife.lifeStat.criticalProb > .0f)
                     {
                         if (UnityEngine.Random.value < sourceLife.lifeStat.criticalProb)
                         {
                             isCritical = true;
-                            float critMultiplier = 1.5f;
-                            critMultiplier = 1f + sourceLife.lifeStat.criticalWeight / 100f;
-                            currentDamage = UnityEngine.Mathf.RoundToInt(baseDamage * critMultiplier);
+                            float critMultiplier = 1f + sourceLife.lifeStat.criticalWeight / 100f;
+                            currentDamage = UnityEngine.Mathf.RoundToInt(finalBaseDamage * critMultiplier);
                         }
                     }
 
@@ -165,7 +197,7 @@ namespace TDG0407._prototype
                         source,
                         target,
                         damageType,
-                        baseDamage,
+                        finalBaseDamage,
                         currentDamage,
                         isCritical
                     );
@@ -173,7 +205,7 @@ namespace TDG0407._prototype
                 }
             }
 
-            // 3. 공격 모션과 데미지 태스크 모두 완료될 때까지 대기
+            // 4. 공격 모션과 데미지 태스크 모두 완료될 때까지 대기
             if (damageTasks.Count > 0)
             {
                 await UniTask.WhenAll(attackAnimTask, UniTask.WhenAll(damageTasks));
@@ -184,6 +216,32 @@ namespace TDG0407._prototype
             }
         }
 
+        public int CalculateEstimatedDamage(_prototype_EntityData source, _prototype_EntityData target)
+        {
+            float casterTotal = 0f;
+            if (damageCoefficients != null && damageCoefficients.Length > 0)
+            {
+                foreach (var coeff in damageCoefficients)
+                {
+                    if (coeff == null) continue;
+                    if (coeff.source == _prototype_StatSource.Caster)
+                    {
+                        float statValue = (coeff.stat == _prototype_Stat.None || coeff.stat == _prototype_Stat.NULL)
+                            ? 1f
+                            : GetStatValue(source, coeff.stat);
+                        casterTotal += statValue * coeff.coefficient;
+                    }
+                    else if (coeff.source == _prototype_StatSource.Target && target != null)
+                    {
+                        float statValue = (coeff.stat == _prototype_Stat.None || coeff.stat == _prototype_Stat.NULL)
+                            ? 1f
+                            : GetStatValue(target, coeff.stat);
+                        casterTotal += statValue * coeff.coefficient;
+                    }
+                }
+            }
+            return Mathf.RoundToInt(casterTotal);
+        }
     }
 
 }

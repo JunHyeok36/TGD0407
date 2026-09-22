@@ -35,6 +35,7 @@ MonoBehaviour:
   - rid: 8244398056347533735
   - rid: 8244398056347533736
   isKnockbackImmune: 1
+  isDestructible: 0
   references:
     version: 2
     RefIds:
@@ -58,16 +59,3 @@ MonoBehaviour:
         explosionRadius: 1
         knockbackDistance: 1
         hazardDurationTicks: 2
-    - rid: 8244398056347533737
-      type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        requiredMode: 1
-    - rid: 8244398056347533738
-      type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        castRange:
-          rid: 8244398056347533739
-    - rid: 8244398056347533739
-      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        _range: 1

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BasicAttack
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: BasicAttack
-  description: "\uAC00\uC7A5 \uAE30\uBCF8\uC774 \uB418\uB294 \uB2E8\uC77C \uD0C0\uAC9F
-    \uADFC\uC811 \uACF5\uACA9\uC785\uB2C8\uB2E4."
+  descriptionLocalizationKey: BasicAttack
+  description: "\uBB3C\uB9AC \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC90D\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 5
@@ -27,6 +27,7 @@ MonoBehaviour:
     rid: 2475498181128356177
   targetRange:
     rid: 2475498181128356178
+  targetAnchorType: 0
   actionList:
   - rid: 2475498181128356179
   references:

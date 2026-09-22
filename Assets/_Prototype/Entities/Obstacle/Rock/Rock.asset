@@ -24,4 +24,16 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
+  components: []
+  isKnockbackImmune: 1
+  isDestructible: 1
+  references:
+    version: 2
+    RefIds: []

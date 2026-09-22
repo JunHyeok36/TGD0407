@@ -2,7 +2,6 @@ using System;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace TDG0407._prototype
 {

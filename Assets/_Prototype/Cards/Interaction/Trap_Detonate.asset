@@ -12,47 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d1d8432a5345c4f8078bd2998edcb4, type: 3}
   m_Name: Trap_Detonate
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_InteractionCardDataModel
-  interactionKey: Detonate
   id: "\uC6D0\uAC70\uB9AC \uACA9\uBC1C (Detonate)"
-  description: "\uC6D0\uAC70\uB9AC\uC5D0\uC11C \uB3CC\uC744 \uB358\uC838 \uD654\uC57D\uD1B5\uC744
-    \uC989\uC2DC \uD3ED\uBC1C\uC2DC\uD0B5\uB2C8\uB2E4. (\uD3ED\uBC1C \uBC18\uACBD
-    \uC8FC\uC758)"
-  cardType: 6
-  costValue:
-    costType: 5
-    value: 0
-  coolTicks:
-    _min: 0
-    _max: 0
-    _cur: 0
-  castRange:
-    rid: 8244398056347533585
-  targetRange:
-    rid: 8244398056347533586
-  targetAnchorType: 0
-  actionList:
-  - rid: 8244398056347533587
+  descriptionLocalizationKey: Trap_Detonate
+  description: "\uD568\uC815\uC744 \uAC15\uC81C\uB85C \uACA9\uBC1C\uC2DC\uD0B5\uB2C8\uB2E4."
+  interactionKey: Detonate
   visibilityConditions:
   - rid: 8244398056347533588
   - rid: 8244398056347533589
   references:
     version: 2
     RefIds:
-    - rid: 8244398056347533585
-      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data: 
-    - rid: 8244398056347533586
-      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeEmptyPoints: 1
-    - rid: 8244398056347533587
-      type: {class: _prototype_DamageEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeSelf: 0
-        damageType: 0
-        damageCoefficients:
-        - stat: 4
-          coefficient: 1
     - rid: 8244398056347533588
       type: {class: _prototype_PlayModeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:

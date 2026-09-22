@@ -24,10 +24,18 @@ MonoBehaviour:
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
   components:
   - rid: 8244397920127025596
   - rid: 8244397920127025597
+  isKnockbackImmune: 1
+  isDestructible: 0
   references:
     version: 2
     RefIds:
@@ -43,33 +51,3 @@ MonoBehaviour:
         providedCards:
         - {fileID: 11400000, guid: dda85fe7f00aee44596cadb673c63c2c, type: 2}
         - {fileID: 11400000, guid: 7c64b6bc6d5077b49ad1c67f175ae5fa, type: 2}
-    - rid: 8244397920127025598
-      type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        castRange:
-          rid: 8244397920127025602
-    - rid: 8244397920127025599
-      type: {class: _prototype_EntityStateCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        checkTarget: 0
-        stateKey: Switch
-        expectedValue: Off
-    - rid: 8244397920127025600
-      type: {class: _prototype_WithinCastRangeCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        castRange:
-          rid: 8244397920127025603
-    - rid: 8244397920127025601
-      type: {class: _prototype_EntityStateCondition, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        checkTarget: 0
-        stateKey: Switch
-        expectedValue: On
-    - rid: 8244397920127025602
-      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        _range: 1
-    - rid: 8244397920127025603
-      type: {class: _prototype_AroundRectCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        _range: 1

@@ -12,36 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d1d8432a5345c4f8078bd2998edcb4, type: 3}
   m_Name: TESTCOM
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_InteractionCardDataModel
-  interactionKey: Test
   id: TESTCOM
-  description: TESTCOMTESTCOMTESTCOMTESTCOM
-  cardType: 6
-  costValue:
-    costType: 0
-    value: 0
-  coolTicks:
-    _min: 0
-    _max: 3
-    _cur: 3
-  castRange:
-    rid: 8244397920127025473
-  targetRange:
-    rid: 8244397920127025474
-  actionList:
-  - rid: 8244397920127025475
+  descriptionLocalizationKey: TESTCOM
+  description: "\uD14C\uC2A4\uD2B8 \uC0C1\uD638\uC791\uC6A9\uC744 \uC218\uD589\uD569\uB2C8\uB2E4."
+  interactionKey: Test
+  visibilityConditions: []
   references:
     version: 2
-    RefIds:
-    - rid: 8244397920127025473
-      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data: 
-    - rid: 8244397920127025474
-      type: {class: _prototype_RectSplashTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeEmptyPoints: 0
-        _range: 1
-    - rid: 8244397920127025475
-      type: {class: _prototype_TestInteractionEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
-      data:
-        includeSelf: 1
-        message: Interactable action executed.
+    RefIds: []

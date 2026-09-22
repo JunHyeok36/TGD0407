@@ -73,7 +73,13 @@ namespace TDG0407._prototype
 
                 bool isTracking = (targetingType == _prototype_ProjectileTargetingType.Tracking) && (homingTarget != null);
                 bool stopAtTargetPoint = (endCondition == _prototype_ProjectileEndCondition.StopAtTargetPoint);
-                int travelDist = (endCondition == _prototype_ProjectileEndCondition.MaxDistance) ? maxDistance : -1;
+                
+                int travelDist = -1;
+                if (endCondition == _prototype_ProjectileEndCondition.MaxDistance)
+                {
+                    int distToTarget = Math.Max(Math.Abs(dx), Math.Abs(dy));
+                    travelDist = Math.Max(maxDistance, distToTarget + 2);
+                }
 
                 var projectileData = projectileModel.CreateProjectileData(
                     mySide, direction, speed, source, onHitActions, 
