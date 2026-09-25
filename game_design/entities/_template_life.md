@@ -30,7 +30,7 @@
 | | `fearResistProb` | 공포 저항률 | 0.0% |
 | | `provocationResistProb` | 도발 저항률 | 0.0% |
 | | `airborneResistProb` | 에어본 저항률 | 0.0% |
-| | `knockdownResistProb` | 넉다운 저항률 | 0.0% |
+| | `groggyResistProb` | 그로기 저항률 | 0.0% |
 | | `deathResistProb` | 죽음 저항률 | 0.0% |
 | **덱/행동** | `cardSlotCount` | 핸드 카드 슬롯 | 0 |
 | | `drawQuickness` | 카드 쿨타임 감소 | 0 |

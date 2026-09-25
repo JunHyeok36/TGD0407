@@ -3,7 +3,7 @@
     "com.antigravity.editor": "https://github.com/hohollala/Antigravity.git",
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
-    "com.ivanmurzak.unity.mcp": "0.91.0",
+    "com.ivanmurzak.unity.mcp": "0.93.0",
     "com.ivanmurzak.unity.mcp.animation": "1.2.32",
     "com.ivanmurzak.unity.mcp.cinemachine": "1.0.17",
     "com.ivanmurzak.unity.mcp.inputsystem": "1.0.17",

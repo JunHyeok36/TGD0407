@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef97ce57c1968b44a72198f2b9ec150, type: 3}
+  m_Name: Ren
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_LifeDataModel
+  ename: Ren
+  health:
+    _min: 0
+    _max: 170
+    _cur: 170
+  stamina:
+    _min: 0
+    _max: 100
+    _cur: 100
+  point:
+    x: 0
+    y: 0
+  size:
+    x: 1
+    y: 1
+  movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
+  components: []
+  lifeStat:
+    redPower: 25
+    bluePower: 0
+    speed: 1
+    redResist: 10
+    blueResist: 5
+    poise: 10
+    handCardSlotCount: 4
+    drawQuickness: 0
+    curseResist: 0
+    bleedingResist: 0
+    burningResist: 0
+    poisoningResist: 0
+    stunResist: 0
+    freezeResist: 0
+    silenceResist: 0
+    fearResist: 0
+    groggyResist: 0
+    provocationResist: 0
+    airborneResist: 0
+    staminaRecoverAmount: 25
+    knockbackResist: 10
+    deathResistProp: 0.5
+    dodgeProb: 0.125
+    criticalProb: 0.05
+    criticalWeight: 100
+  cardDeck:
+    allCardDatas:
+    - {fileID: 11400000, guid: 8a111111111111111111111111111111, type: 2}
+    - {fileID: 11400000, guid: 8a111111111111111111111111111111, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a333333333333333333333333333333, type: 2}
+    - {fileID: 11400000, guid: 8a444444444444444444444444444444, type: 2}
+    - {fileID: 11400000, guid: 8a444444444444444444444444444444, type: 2}
+    - {fileID: 11400000, guid: 8a555555555555555555555555555555, type: 2}
+    - {fileID: 11400000, guid: 8a555555555555555555555555555555, type: 2}
+    remainedCardDatas: []
+    handedCardDatas: []
+    discardedCardDatas: []
+    destroyedCardDatas: []
+  inventoryModel: {fileID: 11400000, guid: 07d5e412e05b9a8438cb807c18f7c7dc, type: 2}
+  aiLogic:
+    rid: -2
+  uniquePassive:
+    rid: 900000000000000001
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 900000000000000001
+      type: {class: _prototype_FlowGaugePassiveData, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data: 

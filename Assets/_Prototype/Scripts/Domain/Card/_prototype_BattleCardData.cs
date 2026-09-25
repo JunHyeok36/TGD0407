@@ -14,6 +14,8 @@ namespace TDG0407._prototype
         public _prototype_ITargetRangeSelector targetRange;
         public _prototype_TargetAnchorType targetAnchorType = _prototype_TargetAnchorType.FollowCaster;
         public List<_prototype_EntityAction> actionList;
+        public bool isDestroyOnUse = false;
+        public bool isDestroyOnDiscard = false;
 
         public _prototype_BattleCardData() : base() { }
 
@@ -26,7 +28,9 @@ namespace TDG0407._prototype
             _prototype_ITargetRangeSelector targetRange,
             List<_prototype_EntityAction> actionList,
             _prototype_TargetAnchorType targetAnchorType = _prototype_TargetAnchorType.FollowCaster,
-            string descriptionLocalizationKey = ""
+            string descriptionLocalizationKey = "",
+            bool isDestroyOnUse = false,
+            bool isDestroyOnDiscard = false
         ) : base(id, descriptionLocalizationKey)
         {
             this.cardType = cardType;
@@ -36,6 +40,8 @@ namespace TDG0407._prototype
             this.targetRange = targetRange;
             this.actionList = actionList;
             this.targetAnchorType = targetAnchorType;
+            this.isDestroyOnUse = isDestroyOnUse;
+            this.isDestroyOnDiscard = isDestroyOnDiscard;
         }
 
         public _prototype_BattleCardData(_prototype_BattleCardData other) : base(other)
@@ -49,6 +55,8 @@ namespace TDG0407._prototype
             this.targetRange = other.targetRange;
             this.actionList = other.actionList;
             this.targetAnchorType = other.targetAnchorType;
+            this.isDestroyOnUse = other.isDestroyOnUse;
+            this.isDestroyOnDiscard = other.isDestroyOnDiscard;
         }
 
         public override _prototype_CardData Clone()

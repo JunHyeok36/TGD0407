@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TDG0407.Domain;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -33,17 +34,24 @@ namespace TDG0407._prototype
         private Label _label_point;
         private Label _label_health;
         private Label _label_stamina;
+        private Label _label_actionPoints;
         private VisualElement _playerStatusTray;
         private Label _label_remainsCount;
         private Label _label_discardedCount;
+        private Label _label_destroyedCount;
         private VisualElement _cardDragArea;
         private VisualElement _handCardContainer;
+
+        // Play Mode UI Layers
+        private VisualElement _battleModeUI;
+        private VisualElement _explorationModeUI;
 
         // Status Tooltip UI Elements
         private VisualElement _statusTooltip;
         private Label _statusTooltipTitle;
         private Label _statusTooltipDesc;
         private System.IDisposable _playerStatusChangeSub;
+        private System.IDisposable _playerShieldChangeSub;
 
         // Targeting UI Elements
         private VisualElement _targetingHint;
@@ -94,14 +102,27 @@ namespace TDG0407._prototype
         private _prototype_CardData _currentTargetingCard;
         private _prototype_EntityData _currentHoveredTarget;
 
+        private VisualElement _cardFxContainer;
         public bool IsCardHovered { get; private set; }
 
+        // Active Card Wide Banner UI Elements (방안 A)
+        private VisualElement _activeCardWideBanner;
+        private Label _wideCardCost;
+        private Label _wideCardName;
+        private Label _wideCardType;
+        private Label _wideCardDestroyBadge;
+        private Label _wideCardDesc;
+
         private List<VisualElement> handCardViews = new();
+
+        public GameObject LifeHudPrefab => _lifeHudPrefab;
 
         private void Awake()
         {
             if (_instance == null) _instance = this;
             else if (_instance != this) Destroy(gameObject);
+
+            RegisterFloatingUIPrefabs();
         }
 
         private void Update()
@@ -173,6 +194,17 @@ namespace TDG0407._prototype
                 }
             });
 
+            // 플레이어 보호막변화 이벤트 리스너 구독
+            _playerShieldChangeSub?.Dispose();
+            _playerShieldChangeSub = _prototype_EventBus.Listen<EntityShieldChangedEvent>(evt =>
+            {
+                var playerView = _prototype_PlayerController.Instance?.ControlledEntityView;
+                if (playerView != null && evt.Entity == playerView.EntityData)
+                {
+                    UpdatePlayerInfo();
+                }
+            });
+
             // 초기 UI 갱신
             UpdatePlayerInfo();
             UpdatePlayerCardDeck();
@@ -193,6 +225,7 @@ namespace TDG0407._prototype
             _cardAcquiredSub?.Dispose();
             _itemAcquiredSub?.Dispose();
             _playerStatusChangeSub?.Dispose();
+            _playerShieldChangeSub?.Dispose();
         }
 
         private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
@@ -200,18 +233,44 @@ namespace TDG0407._prototype
             _label_point = root.Q<Label>("Point");
             _label_health = root.Q<Label>("Health");
             _label_stamina = root.Q<Label>("Stamina");
+            _label_actionPoints = root.Q<Label>("ActionPoints");
             _playerStatusTray = root.Q<VisualElement>("PlayerStatusTray");
             _label_remainsCount = root.Q<Label>("RemainsCount");
             _label_discardedCount = root.Q<Label>("DiscardedCount");
+            _label_destroyedCount = root.Q<Label>("DestroyedCount");
 
             _cardDragArea = root.Q<VisualElement>("CardDragArea");
             _handCardContainer = root.Q<VisualElement>("HandCardContainer");
+            _battleModeUI = root.Q<VisualElement>("BattleModeUI");
+            _explorationModeUI = root.Q<VisualElement>("ExplorationModeUI");
+
+            if (_cardFxContainer != null && _cardFxContainer.parent != null)
+            {
+                _cardFxContainer.RemoveFromHierarchy();
+            }
+            _cardFxContainer = new VisualElement();
+            _cardFxContainer.name = "CardFxContainer";
+            _cardFxContainer.pickingMode = PickingMode.Ignore;
+            _cardFxContainer.style.position = Position.Absolute;
+            _cardFxContainer.style.left = 0;
+            _cardFxContainer.style.top = 0;
+            _cardFxContainer.style.right = 0;
+            _cardFxContainer.style.bottom = 0;
+            root.Add(_cardFxContainer);
 
             _targetingHint = root.Q<VisualElement>("TargetingHint");
             _targetingTooltip = root.Q<VisualElement>("TargetingTooltip");
             _tooltipCardName = root.Q<Label>("TooltipCardName");
             _tooltipCardCost = root.Q<Label>("TooltipCardCost");
             _tooltipCardDesc = root.Q<Label>("TooltipCardDescription");
+
+            // Active Card Wide Banner 바인딩
+            _activeCardWideBanner = root.Q<VisualElement>("ActiveCardWideBanner");
+            _wideCardCost = root.Q<Label>("WideCardCost");
+            _wideCardName = root.Q<Label>("WideCardName");
+            _wideCardType = root.Q<Label>("WideCardType");
+            _wideCardDestroyBadge = root.Q<Label>("WideCardDestroyBadge");
+            _wideCardDesc = root.Q<Label>("WideCardDesc");
 
             _warningMessageContainer = root.Q<VisualElement>("WarningMessageContainer");
             _warningMessageText = root.Q<Label>("WarningMessageText");
@@ -493,6 +552,16 @@ namespace TDG0407._prototype
                 _modeIndicatorBanner.style.display = DisplayStyle.Flex;
             }
 
+            // 모드별 전용 UI 레이어 분리 제어 (전투 모드: REMAIN/DISCARD 덱 박스 표시, 탐색 모드: 덱 박스 은닉)
+            if (_battleModeUI != null)
+            {
+                _battleModeUI.style.display = (mode == _prototype_PlayMode.Battle) ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+            if (_explorationModeUI != null)
+            {
+                _explorationModeUI.style.display = (mode == _prototype_PlayMode.Exploration) ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+
             if (_modeIndicatorText == null) return;
 
             if (mode == _prototype_PlayMode.Battle)
@@ -521,23 +590,66 @@ namespace TDG0407._prototype
         {
             _currentTargetingCard = cardData;
             _currentHoveredTarget = null;
+            SetHandTargetingLock(true);
             if (_targetingHint != null) _targetingHint.style.display = DisplayStyle.Flex;
             if (_targetingTooltip != null)
             {
-                _targetingTooltip.style.display = DisplayStyle.Flex;
-                if (_tooltipCardName != null) _tooltipCardName.text = cardData.id;
-                if (_tooltipCardCost != null)
+                _targetingTooltip.style.display = DisplayStyle.None;
+            }
+
+            // 가로형 와이드 Active 카드 HUD 바 표시 (방안 A)
+            if (_activeCardWideBanner != null)
+            {
+                var playerLife = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData as _prototype_LifeData;
+                
+                if (_wideCardName != null) _wideCardName.text = cardData.id;
+                if (_wideCardCost != null)
                 {
                     if (cardData is _prototype_BattleCardData battleCard)
-                        _tooltipCardCost.text = $"Cost: {battleCard.costValue?.value ?? 0}";
+                        _wideCardCost.text = $"{battleCard.costValue?.value ?? 0}";
                     else
-                        _tooltipCardCost.text = "Cost: -";
+                        _wideCardCost.text = "-";
                 }
-                if (_tooltipCardDesc != null)
+                if (_wideCardType != null)
                 {
-                    var playerLife = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData as _prototype_LifeData;
-                    _tooltipCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(cardData, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+                    if (cardData is _prototype_BattleCardData battleCard)
+                        _wideCardType.text = $"[{battleCard.cardType}]";
+                    else
+                        _wideCardType.text = "[Interaction]";
                 }
+
+                bool isDestroyCard = false;
+                if (cardData is _prototype_BattleCardData bCard)
+                {
+                    isDestroyCard = bCard.isDestroyOnUse || bCard.isDestroyOnDiscard;
+                }
+                if (_wideCardDestroyBadge != null)
+                {
+                    _wideCardDestroyBadge.style.display = isDestroyCard ? DisplayStyle.Flex : DisplayStyle.None;
+                }
+
+                if (_wideCardDesc != null)
+                {
+                    _wideCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(cardData, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+                }
+
+                // 배너 초기화 및 부드러운 슬라이드 업 등장
+                _activeCardWideBanner.style.display = DisplayStyle.Flex;
+                _activeCardWideBanner.style.backgroundColor = new StyleColor(new Color(0.05f, 0.07f, 0.10f, 0.95f));
+                _activeCardWideBanner.style.borderTopColor = new StyleColor(new Color(0.2f, 1f, 0.2f, 1f));
+                _activeCardWideBanner.style.borderBottomColor = new StyleColor(new Color(0.2f, 1f, 0.2f, 1f));
+                _activeCardWideBanner.style.borderLeftColor = new StyleColor(new Color(0.2f, 1f, 0.2f, 1f));
+                _activeCardWideBanner.style.borderRightColor = new StyleColor(new Color(0.2f, 1f, 0.2f, 1f));
+                _activeCardWideBanner.style.scale = new StyleScale(Vector2.one);
+                _activeCardWideBanner.style.rotate = new Rotate(Angle.Degrees(0f));
+                _activeCardWideBanner.style.translate = new Translate(0, 30, 0);
+                _activeCardWideBanner.style.opacity = 0f;
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.translate = new Translate(0, 0, 0);
+                    _activeCardWideBanner.style.opacity = 1f;
+                }).ExecuteLater(16);
             }
         }
 
@@ -545,41 +657,173 @@ namespace TDG0407._prototype
         {
             _currentTargetingCard = null;
             _currentHoveredTarget = null;
+            SetHandTargetingLock(false);
+            if (_activeCardWideBanner != null)
+            {
+                _activeCardWideBanner.style.display = DisplayStyle.None;
+            }
             if (_targetingHint != null) _targetingHint.style.display = DisplayStyle.None;
             if (_targetingTooltip != null) _targetingTooltip.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// 타겟팅 중 핸드 바를 화면 아래로 완전히 접고, 카드들의 마우스 호버 팝업 간섭을 원천 차단합니다.
+        /// </summary>
+        private void SetHandTargetingLock(bool isTargeting)
+        {
+            if (_handCardContainer != null)
+            {
+                _handCardContainer.pickingMode = isTargeting ? PickingMode.Ignore : PickingMode.Position;
+                if (isTargeting)
+                {
+                    _handCardContainer.RemoveFromClassList("hand-container-active");
+                    _handCardContainer.AddToClassList("hand-container-targeting");
+                }
+                else
+                {
+                    _handCardContainer.RemoveFromClassList("hand-container-targeting");
+                }
+            }
+
+            if (handCardViews != null)
+            {
+                foreach (var c in handCardViews)
+                {
+                    if (c != null)
+                    {
+                        c.pickingMode = isTargeting ? PickingMode.Ignore : PickingMode.Position;
+                        if (isTargeting)
+                        {
+                            c.style.translate = new Translate(0, 0, 0); // 돌출된 호버 애니메이션 리셋
+                        }
+                    }
+                }
+            }
+
+            IsCardHovered = false;
         }
 
         public void UpdateTargetingHover(_prototype_EntityData hoveredEntity)
         {
             if (_currentHoveredTarget == hoveredEntity) return;
             _currentHoveredTarget = hoveredEntity;
-            if (_currentTargetingCard != null && _tooltipCardDesc != null)
+            if (_currentTargetingCard != null)
             {
                 var playerLife = _prototype_PlayerController.Instance?.ControlledEntityView?.EntityData as _prototype_LifeData;
-                _tooltipCardDesc.text = _prototype_CardDescriptionFormatter.FormatDescription(_currentTargetingCard, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+                string formattedDesc = _prototype_CardDescriptionFormatter.FormatDescription(_currentTargetingCard, playerLife, _isDetailedDescriptionMode, _currentHoveredTarget);
+                if (_wideCardDesc != null) _wideCardDesc.text = formattedDesc;
             }
         }
 
         public void UpdateTargetingTooltipPosition(Vector2 screenPosition)
         {
-            if (_targetingTooltip != null && _targetingTooltip.style.display == DisplayStyle.Flex)
+            // 마우스 커서 툴팁은 와이드 HUD 바로 대체되었으므로 항상 숨김 처리
+            if (_targetingTooltip != null && _targetingTooltip.style.display != DisplayStyle.None)
             {
-                if (_targetingTooltip.panel != null)
-                {
-                    // Convert Mouse Position (Bottom-Left origin) to Screen Position (Top-Left origin) expected by ScreenToPanel
-                    Vector2 screenTopLeft = new Vector2(screenPosition.x, Screen.height - screenPosition.y);
-                    Vector2 panelPos = UnityEngine.UIElements.RuntimePanelUtils.ScreenToPanel(_targetingTooltip.panel, screenTopLeft);
+                _targetingTooltip.style.display = DisplayStyle.None;
+            }
+        }
 
-                    _targetingTooltip.style.left = panelPos.x;
-                    _targetingTooltip.style.top = panelPos.y;
-                }
-                else
+        public Vector2 GetPanelResolution()
+        {
+            if (_cardDragArea != null && _cardDragArea.panel != null)
+            {
+                var root = _cardDragArea.panel.visualTree;
+                if (root != null && !float.IsNaN(root.resolvedStyle.width) && root.resolvedStyle.width > 0)
                 {
-                    // Fallback
-                    float y = Screen.height - screenPosition.y;
-                    _targetingTooltip.style.left = screenPosition.x;
-                    _targetingTooltip.style.top = y;
+                    return new Vector2(root.resolvedStyle.width, root.resolvedStyle.height);
                 }
+            }
+            return new Vector2(1920f, 1080f);
+        }
+
+        /// <summary>
+        /// 카드가 사용되어 사라질 때 가로형 와이드 HUD 바에서 시각적 애니메이션을 재생합니다.
+        /// - 기존의 카드를 공중에 띄우던 연출은 삭제되고, 가로형 와이드 HUD 바에서 일원화되어 재생됩니다.
+        /// - isDestroyed == false: 일반 소멸 (청록빛 테두리, 부드럽게 아래로 슬라이드 다운 및 페이드아웃)
+        /// - isDestroyed == true: 파괴 소멸 (강렬한 자주/보랏빛 발광, "✦ 파괴 ✦" 뱃지 펄스 확대, 좌우 진동 후 중심으로 수축/소멸)
+        /// </summary>
+        public void PlayCardCastDisappearAnimation(_prototype_CardData cardData, bool isDestroyed)
+        {
+            if (_activeCardWideBanner == null || _activeCardWideBanner.style.display == DisplayStyle.None)
+            {
+                SetHandTargetingLock(false);
+                return;
+            }
+
+            if (isDestroyed)
+            {
+                // [파괴 소멸 연출]: 짙은 보라색 배경, 핫핑크 테두리, 파괴 뱃지 펄스, 좌우 진동 후 중심으로 급격히 수축 소멸
+                _activeCardWideBanner.style.backgroundColor = new StyleColor(new Color(0.22f, 0.04f, 0.28f, 0.98f));
+                _activeCardWideBanner.style.borderTopColor = new StyleColor(new Color(0.96f, 0.25f, 0.86f, 1f));
+                _activeCardWideBanner.style.borderBottomColor = new StyleColor(new Color(0.96f, 0.25f, 0.86f, 1f));
+                _activeCardWideBanner.style.borderLeftColor = new StyleColor(new Color(0.96f, 0.25f, 0.86f, 1f));
+                _activeCardWideBanner.style.borderRightColor = new StyleColor(new Color(0.96f, 0.25f, 0.86f, 1f));
+
+                if (_wideCardDestroyBadge != null)
+                {
+                    _wideCardDestroyBadge.style.display = DisplayStyle.Flex;
+                    _wideCardDestroyBadge.style.scale = new StyleScale(new Vector2(1.3f, 1.3f));
+                }
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.rotate = new Rotate(Angle.Degrees(-3f));
+                    _activeCardWideBanner.style.scale = new StyleScale(new Vector2(1.04f, 1.04f));
+                }).ExecuteLater(16);
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.rotate = new Rotate(Angle.Degrees(3f));
+                }).ExecuteLater(100);
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.transitionDuration = new List<TimeValue> {
+                        new TimeValue(0.28f, TimeUnit.Second),
+                        new TimeValue(0.28f, TimeUnit.Second),
+                        new TimeValue(0.28f, TimeUnit.Second),
+                        new TimeValue(0.28f, TimeUnit.Second),
+                        new TimeValue(0.28f, TimeUnit.Second)
+                    };
+                    _activeCardWideBanner.style.rotate = new Rotate(Angle.Degrees(0f));
+                    _activeCardWideBanner.style.scale = new StyleScale(new Vector2(0.05f, 0.05f));
+                    _activeCardWideBanner.style.opacity = 0f;
+                }).ExecuteLater(180);
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.display = DisplayStyle.None;
+                    SetHandTargetingLock(false);
+                }).ExecuteLater(480);
+            }
+            else
+            {
+                // [일반 소멸 연출]: 청록빛 테두리, 부드럽게 아래로 슬라이드 다운되며 페이드아웃
+                _activeCardWideBanner.style.backgroundColor = new StyleColor(new Color(0.05f, 0.08f, 0.12f, 0.95f));
+                _activeCardWideBanner.style.borderTopColor = new StyleColor(new Color(0.25f, 0.75f, 1f, 1f));
+                _activeCardWideBanner.style.borderBottomColor = new StyleColor(new Color(0.25f, 0.75f, 1f, 1f));
+                _activeCardWideBanner.style.borderLeftColor = new StyleColor(new Color(0.25f, 0.75f, 1f, 1f));
+                _activeCardWideBanner.style.borderRightColor = new StyleColor(new Color(0.25f, 0.75f, 1f, 1f));
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.transitionDuration = new List<TimeValue> {
+                        new TimeValue(0.25f, TimeUnit.Second),
+                        new TimeValue(0.25f, TimeUnit.Second),
+                        new TimeValue(0.25f, TimeUnit.Second),
+                        new TimeValue(0.25f, TimeUnit.Second),
+                        new TimeValue(0.25f, TimeUnit.Second)
+                    };
+                    _activeCardWideBanner.style.translate = new Translate(0, 35, 0);
+                    _activeCardWideBanner.style.opacity = 0f;
+                }).ExecuteLater(16);
+
+                _activeCardWideBanner.schedule.Execute(() =>
+                {
+                    _activeCardWideBanner.style.display = DisplayStyle.None;
+                    SetHandTargetingLock(false);
+                }).ExecuteLater(280);
             }
         }
 
@@ -806,6 +1050,23 @@ namespace TDG0407._prototype
         {
             if (_handCardContainer == null) return;
 
+            // active 상태인 카드가 있을 때(타겟팅 모드 중)만 핸드 컨테이너를 화면 아래로 완전히 내림
+            if (_currentTargetingCard != null)
+            {
+                _handCardContainer.RemoveFromClassList("hand-container-active");
+                if (!_handCardContainer.ClassListContains("hand-container-targeting"))
+                {
+                    _handCardContainer.AddToClassList("hand-container-targeting");
+                }
+                return;
+            }
+
+            // 일반적인 상태: 타겟팅 클래스 해제 후 이전 상태 그대로 마우스 호버에 따라 노출/수납 동작
+            if (_handCardContainer.ClassListContains("hand-container-targeting"))
+            {
+                _handCardContainer.RemoveFromClassList("hand-container-targeting");
+            }
+
             if (isActive)
             {
                 _handCardContainer.AddToClassList("hand-container-active");
@@ -826,10 +1087,25 @@ namespace TDG0407._prototype
                 {
                     int displayHp = Mathf.Max(0, entityData.health.Current);
                     int displaySp = Mathf.Max(0, entityData.stamina.Current);
+                    int currentShield = (entityData is _prototype_LifeData pld) ? pld.CurrentShield : 0;
+                    string shieldSuffix = currentShield > 0 ? $" (+{currentShield})" : "";
 
                     if (_label_point != null) _label_point.text = $"> POS : {controlledEntityView.Point}";
-                    if (_label_health != null) _label_health.text = $"> HP  : {displayHp}/{entityData.health.Max}";
+                    if (_label_health != null) _label_health.text = $"> HP  : {displayHp}/{entityData.health.Max}{shieldSuffix}";
                     if (_label_stamina != null) _label_stamina.text = $"> SP  : {displaySp}/{entityData.stamina.Max}";
+
+                    if (_label_actionPoints != null)
+                    {
+                        if (entityData is _prototype_LifeData playerLifeData && playerLifeData.Speed >= 2)
+                        {
+                            _label_actionPoints.style.display = DisplayStyle.Flex;
+                            _label_actionPoints.text = $"> AP  : {playerLifeData.remainingActions}/{playerLifeData.Speed}";
+                        }
+                        else
+                        {
+                            _label_actionPoints.style.display = DisplayStyle.None;
+                        }
+                    }
 
                     UpdatePlayerStatusTray(entityData as _prototype_LifeData);
                 }
@@ -838,6 +1114,7 @@ namespace TDG0407._prototype
                     if (_label_point != null) _label_point.text = string.Empty;
                     if (_label_health != null) _label_health.text = string.Empty;
                     if (_label_stamina != null) _label_stamina.text = string.Empty;
+                    if (_label_actionPoints != null) _label_actionPoints.style.display = DisplayStyle.None;
                     _playerStatusTray?.Clear();
                 }
 
@@ -905,7 +1182,10 @@ namespace TDG0407._prototype
             {
                 var type = group.Key;
                 int count = group.Count();
-                int maxTicks = group.Max(s => s.durationTicks);
+                // Forever 타입은 배지에 지속 틱을 표시하지 않음 (TickBased 효과의 남은 틱만 계산)
+                var tickBased = group.Where(s => s.duration.TickDurationType == TickDurationType.TickBased && s.duration.Value != null).ToList();
+                int maxTicks = tickBased.Count > 0 ? tickBased.Max(s => s.duration.Value.Current) : 0;
+                bool isForever = group.Any(s => s.duration.TickDurationType == TickDurationType.Forever);
 
                 string sym = "?";
                 Color color = Color.white;
@@ -959,6 +1239,8 @@ namespace TDG0407._prototype
                 string tooltipTitle = count > 1 ? $"{dName} x{count}" : dName;
                 string tooltipBody = string.IsNullOrEmpty(dDesc) ? $"{type}" : dDesc;
                 if (maxTicks > 0) tooltipBody += $"\n지속시간: {maxTicks}턴 남음";
+                else if (isForever) tooltipBody += "\n지속시간: 영구";
+
 
                 badge.RegisterCallback<PointerEnterEvent>(evt =>
                 {
@@ -1031,6 +1313,7 @@ namespace TDG0407._prototype
                 {
                     if (_label_remainsCount != null) _label_remainsCount.text = lifeData.cardDeck.remainedCardDatas.Count.ToString();
                     if (_label_discardedCount != null) _label_discardedCount.text = lifeData.cardDeck.discardedCardDatas.Count.ToString();
+                    if (_label_destroyedCount != null) _label_destroyedCount.text = lifeData.cardDeck.destroyedCardDatas.Count.ToString();
 
                     bool isSilenced = lifeData.HasStatusEffect(_prototype_StatusType.Silence);
 
@@ -1068,6 +1351,25 @@ namespace TDG0407._prototype
                             if (lblCost != null) lblCost.text = "-";
                             if (lblType != null) lblType.text = "Interact";
                             if (cooldownOverlay != null) cooldownOverlay.style.display = DisplayStyle.None;
+                        }
+
+                        bool isEmpowered = cardData.IsEmpowered(lifeData);
+                        if (!isEmpowered && lifeData.uniquePassive != null)
+                        {
+                            isEmpowered = lifeData.uniquePassive.IsCardEmpowered(lifeData, cardData);
+                        }
+                        if (!isEmpowered && lifeData.Passives != null)
+                        {
+                            isEmpowered = lifeData.Passives.Any(p => p.IsCardEmpowered(lifeData, cardData));
+                        }
+
+                        if (isEmpowered)
+                        {
+                            cardViewInstance.AddToClassList("card-empowered");
+                        }
+                        else
+                        {
+                            cardViewInstance.RemoveFromClassList("card-empowered");
                         }
 
                         cardViewInstance.userData = cardData;
@@ -1112,6 +1414,11 @@ namespace TDG0407._prototype
                         }
 
                         cardViewInstance.style.position = Position.Absolute;
+                        cardViewInstance.AddToClassList("card-container-item");
+                        cardViewInstance.style.transitionProperty = new List<StylePropertyName> { new StylePropertyName("translate") };
+                        cardViewInstance.style.transitionDuration = new List<TimeValue> { new TimeValue(0.18f, TimeUnit.Second) };
+                        cardViewInstance.style.transitionTimingFunction = new List<EasingFunction> { new EasingFunction(EasingMode.EaseOut) };
+
                         // 드래그 기능 등록
                         RegisterDragEvents(cardViewInstance, cardData);
 
@@ -1152,29 +1459,61 @@ namespace TDG0407._prototype
 
                     if (_prototype_PlayerController.Instance != null)
                     {
-                        // 1. Play Burn Animation
-                        card.style.transitionProperty = new List<StylePropertyName> {
-                            new StylePropertyName("scale"),
-                            new StylePropertyName("opacity"),
-                            new StylePropertyName("background-color")
-                        };
-                        card.style.transitionDuration = new List<TimeValue> {
-                            new TimeValue(0.3f, TimeUnit.Second),
-                            new TimeValue(0.3f, TimeUnit.Second),
-                            new TimeValue(0.3f, TimeUnit.Second)
-                        };
-
-                        card.style.scale = new StyleScale(new Vector2(0.1f, 0.1f));
-                        card.style.opacity = 0f;
-                        card.style.backgroundColor = new StyleColor(new Color(1f, 0.2f, 0.2f, 1f));
+                        bool isDestroyOnDiscard = (cardData is _prototype_BattleCardData bCard && bCard.isDestroyOnDiscard);
                         card.pickingMode = PickingMode.Ignore;
 
-                        // 2. Execute Burn after animation
-                        card.schedule.Execute(() =>
+                        if (isDestroyOnDiscard)
                         {
-                            // 우클릭으로 카드 버리기
-                            _prototype_PlayerController.Instance.DiscardCard(cardData);
-                        }).ExecuteLater(300);
+                            // 파괴 버리기 애니메이션: 보라빛 발광 + 위로 솟구치며 회전 축소/소멸
+                            card.style.transitionProperty = new List<StylePropertyName> {
+                                new StylePropertyName("translate"),
+                                new StylePropertyName("scale"),
+                                new StylePropertyName("opacity"),
+                                new StylePropertyName("background-color"),
+                                new StylePropertyName("rotate")
+                            };
+                            card.style.transitionDuration = new List<TimeValue> {
+                                new TimeValue(0.35f, TimeUnit.Second),
+                                new TimeValue(0.35f, TimeUnit.Second),
+                                new TimeValue(0.35f, TimeUnit.Second),
+                                new TimeValue(0.35f, TimeUnit.Second),
+                                new TimeValue(0.35f, TimeUnit.Second)
+                            };
+
+                            card.style.translate = new Translate(0, -60, 0);
+                            card.style.scale = new StyleScale(new Vector2(0.05f, 0.05f));
+                            card.style.rotate = new Rotate(Angle.Degrees(15f));
+                            card.style.opacity = 0f;
+                            card.style.backgroundColor = new StyleColor(new Color(0.6f, 0.1f, 0.7f, 1f));
+
+                            card.schedule.Execute(() =>
+                            {
+                                _prototype_PlayerController.Instance.DiscardCard(cardData);
+                            }).ExecuteLater(350);
+                        }
+                        else
+                        {
+                            // 일반 소각/버리기 애니메이션
+                            card.style.transitionProperty = new List<StylePropertyName> {
+                                new StylePropertyName("scale"),
+                                new StylePropertyName("opacity"),
+                                new StylePropertyName("background-color")
+                            };
+                            card.style.transitionDuration = new List<TimeValue> {
+                                new TimeValue(0.3f, TimeUnit.Second),
+                                new TimeValue(0.3f, TimeUnit.Second),
+                                new TimeValue(0.3f, TimeUnit.Second)
+                            };
+
+                            card.style.scale = new StyleScale(new Vector2(0.1f, 0.1f));
+                            card.style.opacity = 0f;
+                            card.style.backgroundColor = new StyleColor(new Color(1f, 0.2f, 0.2f, 1f));
+
+                            card.schedule.Execute(() =>
+                            {
+                                _prototype_PlayerController.Instance.DiscardCard(cardData);
+                            }).ExecuteLater(300);
+                        }
                     }
                     evt.StopPropagation();
                     return;
@@ -1233,6 +1572,10 @@ namespace TDG0407._prototype
 
                 originalIndex = _handCardContainer.IndexOf(card);
 
+                // 드래그 중에는 애니메이션 끄기 및 translate 리셋
+                card.style.transitionDuration = new List<TimeValue> { new TimeValue(0f, TimeUnit.Second) };
+                card.style.translate = new Translate(0, 0, 0);
+
                 // 드래그 시 부모(FlexContainer)를 떠나 드래그 영역으로 이동
                 var worldPos = card.worldBound;
                 card.style.position = Position.Absolute;
@@ -1269,11 +1612,9 @@ namespace TDG0407._prototype
                 float thresholdY = _handCardContainer.worldBound.yMin - 50f;
                 if (evt.position.y < thresholdY)
                 {
+                    // 카드는 화면에 띄우지 않고 숨김 처리 (가로형 와이드 HUD 바가 내용을 표시함)
                     card.style.display = DisplayStyle.None;
-
-                    // 남은 핸드 카드들을 재정렬
-                    handCardViews.Remove(card);
-                    LayoutCardViews();
+                    card.pickingMode = PickingMode.Ignore;
 
                     if (_prototype_PlayerController.Instance != null)
                     {
@@ -1284,6 +1625,7 @@ namespace TDG0407._prototype
                 }
 
                 card.style.translate = new Translate(0, 0, 0);
+                card.style.transitionDuration = new List<TimeValue> { new TimeValue(0.18f, TimeUnit.Second) };
 
                 int safeIndex = Mathf.Clamp(originalIndex, 0, _handCardContainer.childCount);
                 _handCardContainer.Insert(safeIndex, card);
@@ -1297,10 +1639,15 @@ namespace TDG0407._prototype
 
             card.RegisterCallback<PointerEnterEvent>(evt =>
             {
+                // 타겟팅 모드 중일 때는 호버 팝업을 발생시키지 않음
+                if (_currentTargetingCard != null) return;
+
                 if (!isDragging)
                 {
                     IsCardHovered = true;
-                    card.style.translate = new Translate(0, Length.Percent(-50), 100);
+                    // 하단에 빈공간(갭)이 생기지 않도록 -125px만큼 부드럽게 팝업 (바닥 모서리가 화면 하단선 아래 15px에 머묾)
+                    card.style.transitionDuration = new List<TimeValue> { new TimeValue(0.18f, TimeUnit.Second) };
+                    card.style.translate = new Translate(0, -125, 0);
                     UpdateZOrder(card);
                 }
             });
@@ -1310,6 +1657,7 @@ namespace TDG0407._prototype
                 IsCardHovered = false; // 드래그 중이든 아니든 호버 상태는 해제해야 함
                 if (!isDragging)
                 {
+                    card.style.transitionDuration = new List<TimeValue> { new TimeValue(0.18f, TimeUnit.Second) };
                     card.style.translate = new Translate(0, 0, 0);
                     UpdateZOrder(null);
                 }

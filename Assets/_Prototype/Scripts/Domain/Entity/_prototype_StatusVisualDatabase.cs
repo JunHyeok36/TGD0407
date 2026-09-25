@@ -98,17 +98,21 @@ namespace TDG0407._prototype
         private static readonly Dictionary<_prototype_StatusType, (string symbol, Color color, string name, string desc)> s_defaults
             = new()
             {
-                { _prototype_StatusType.Stun,        ("⚡", new Color(1f,0.9f,0f),   "스턴",   "행동 불능 상태입니다.") },
-                { _prototype_StatusType.Knockdown,   ("💫", new Color(0.8f,0.5f,1f), "녹다운", "스태미나 고갈로 쓰러져 있습니다.") },
-                { _prototype_StatusType.Silence,     ("🔇", new Color(0.5f,0.5f,0.8f),"침묵",  "카드를 사용할 수 없습니다.") },
-                { _prototype_StatusType.Fear,        ("😱", new Color(0.6f,0.2f,0.8f),"공포",  "두려움에 도망칩니다.") },
-                { _prototype_StatusType.Curse,       ("☠",  new Color(0.4f,0f,0.6f), "저주",   "최대 HP가 감소합니다.") },
-                { _prototype_StatusType.Bleeding,    ("🩸", new Color(0.9f,0.1f,0.1f),"출혈",  "매 턴 체력이 감소합니다.") },
-                { _prototype_StatusType.Burning,     ("🔥", new Color(1f,0.4f,0f),   "화상",   "매 턴 화염 피해를 받습니다.") },
-                { _prototype_StatusType.Freeze,      ("❄",  new Color(0.4f,0.7f,1f), "빙결",   "이동할 수 없습니다.") },
-                { _prototype_StatusType.Poisoning,   ("☣",  new Color(0.3f,0.7f,0.2f),"중독", "매 턴 독 피해를 받습니다.") },
-                { _prototype_StatusType.SuperArmor,  ("🛡",  new Color(0.9f,0.7f,0.1f),"슈아머","모든 CC를 무시합니다.") },
-                { _prototype_StatusType.DeathsDoor,  ("💀", new Color(0.6f,0f,0f),   "빈사",   "치명적으로 위험한 상태입니다. 한 번만 더 피격되면 즉사합니다.") },
+                { _prototype_StatusType.Stun,        ("기", new Color(1f,0.9f,0f),   "스턴",   "행동 불능 상태입니다.") },
+                { _prototype_StatusType.Groggy,      ("그", new Color(0.8f,0.5f,1f), "그로기", "스태미나가 고갈되어 그로기 상태에 빠졌습니다. 행동이 불가하며 받는 피해가 50% 증가합니다.") },
+                { _prototype_StatusType.Silence,     ("침", new Color(0.5f,0.5f,0.8f),"침묵",  "카드를 사용할 수 없습니다.") },
+                { _prototype_StatusType.Fear,        ("공", new Color(0.6f,0.2f,0.8f),"공포",  "두려움에 도망칩니다.") },
+                { _prototype_StatusType.Curse,       ("저", new Color(0.4f,0f,0.6f), "저주",   "최대 HP가 감소합니다.") },
+                { _prototype_StatusType.Bleeding,    ("출", new Color(0.9f,0.1f,0.1f),"출혈",  "매 턴 체력이 감소합니다.") },
+                { _prototype_StatusType.Burning,     ("화", new Color(1f,0.4f,0f),   "화상",   "매 턴 화염 피해를 받습니다.") },
+                { _prototype_StatusType.Freeze,      ("빙", new Color(0.4f,0.7f,1f), "빙결",   "이동할 수 없습니다.") },
+                { _prototype_StatusType.Poisoning,   ("독", new Color(0.3f,0.7f,0.2f),"중독", "매 턴 독 피해를 받습니다.") },
+                { _prototype_StatusType.Unstoppable, ("불", new Color(0.9f,0.7f,0.1f),"저지 불가","모든 군중 제어(CC) 및 넉백 효과를 완전히 무시합니다.") },
+                { _prototype_StatusType.DeathsDoor,  ("사", new Color(0.6f,0f,0f),   "사경",   "치명적으로 위험한 상태입니다. 한 번만 더 피격되면 즉사합니다.") },
+                { _prototype_StatusType.Provocation, ("도", new Color(1f,0.3f,0.1f), "도발",   "도발 시전자에게 시선이 고정되어 도발자만을 공격하거나 추격합니다.") },
+                { _prototype_StatusType.Airborne,    ("에", new Color(0.4f,0.85f,1f),"에어본", "공중에 띄워져 행동이 불가하며, 진행 중인 스킬과 정신 집중이 강제 캔슬됩니다.") },
+                { _prototype_StatusType.Invincible,  ("무", new Color(1f,0.95f,0.4f),"무적",   "모든 피해를 0으로 무효화합니다. (군중 제어 효과는 적용됩니다.)") },
+                { _prototype_StatusType.EnhanceStab, ("찌", new Color(1f,0.5f,0.1f), "찌르기 강화", "'삼연격: 찌르기'의 피해가 50% 증가하고 1칸 넉백 및 벽 충돌 기절을 추가합니다.") },
             };
 
         public static (string symbol, Color color, string name, string desc) GetDefaultEntry(_prototype_StatusType type)

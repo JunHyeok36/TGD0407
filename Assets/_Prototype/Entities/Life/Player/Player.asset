@@ -15,12 +15,12 @@ MonoBehaviour:
   ename: Player
   health:
     _min: 0
-    _max: 500
-    _cur: 500
+    _max: 210
+    _cur: 210
   stamina:
     _min: 0
-    _max: 15
-    _cur: 15
+    _max: 150
+    _cur: 150
   point:
     x: 0
     y: 0
@@ -33,11 +33,13 @@ MonoBehaviour:
     _max: 1.8
   components: []
   lifeStat:
-    redPower: 32
+    redPower: 25
     bluePower: 0
-    redResist: 14
-    blueResist: 0
-    handCardSlotCount: 5
+    speed: 1
+    redResist: 15
+    blueResist: 5
+    poise: 10
+    handCardSlotCount: 4
     drawQuickness: 0
     curseResist: 0
     bleedingResist: 0
@@ -47,24 +49,27 @@ MonoBehaviour:
     freezeResist: 0
     silenceResist: 0
     fearResist: 0
-    knockdownResist: 0
-    staminaRecoverAmount: 3
+    groggyResist: 0
+    provocationResist: 0
+    airborneResist: 0
+    staminaRecoverAmount: 25
     knockbackResist: 10
     deathResistProp: 0.5
-    dodgeProb: 0
-    criticalProb: 0.15
+    dodgeProb: 0.125
+    criticalProb: 0.05
     criticalWeight: 100
   cardDeck:
     allCardDatas:
-    - {fileID: 11400000, guid: 7ae1ac854d50e674a86d3867261c4478, type: 2}
-    - {fileID: 11400000, guid: 315489b14a960f14686dea372ac6377f, type: 2}
-    - {fileID: 11400000, guid: 4cbf50d9d50548644900ca740e919982, type: 2}
-    - {fileID: 11400000, guid: 441618306f178aa44ac0548834b3a2c4, type: 2}
-    - {fileID: 11400000, guid: 0e40d90891df1bc4cae765edcc9be143, type: 2}
-    - {fileID: 11400000, guid: 85e6330b9719fba47bf2a8fa9e5134b3, type: 2}
-    - {fileID: 11400000, guid: 11c1eaa21cc5da44f938925d0e4d1c49, type: 2}
-    - {fileID: 11400000, guid: 23c85482a6fd6f74c9b3f2920a9caf3f, type: 2}
-    - {fileID: 11400000, guid: 7a0f21675c444024f9c72eb94be6f65d, type: 2}
+    - {fileID: 11400000, guid: 8a111111111111111111111111111111, type: 2}
+    - {fileID: 11400000, guid: 8a111111111111111111111111111111, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a222222222222222222222222222222, type: 2}
+    - {fileID: 11400000, guid: 8a333333333333333333333333333333, type: 2}
+    - {fileID: 11400000, guid: 8a444444444444444444444444444444, type: 2}
+    - {fileID: 11400000, guid: 8a444444444444444444444444444444, type: 2}
+    - {fileID: 11400000, guid: 8a555555555555555555555555555555, type: 2}
+    - {fileID: 11400000, guid: 8a555555555555555555555555555555, type: 2}
     remainedCardDatas: []
     handedCardDatas: []
     discardedCardDatas: []
@@ -72,8 +77,13 @@ MonoBehaviour:
   inventoryModel: {fileID: 11400000, guid: 07d5e412e05b9a8438cb807c18f7c7dc, type: 2}
   aiLogic:
     rid: -2
+  uniquePassive:
+    rid: 900000000000000001
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 900000000000000001
+      type: {class: _prototype_FlowGaugePassiveData, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data: 

@@ -109,7 +109,7 @@ namespace TDG0407._prototype
             var pointView = _prototype_GridManager.Instance.GetPointView(evt.Target.point);
             if (pointView != null)
             {
-                string statusName = $"{evt.Effect.type}!";
+                string statusName = GetStatusEffectName(evt.Effect.type);
                 Color statusColor = GetStatusEffectColor(evt.Effect.type);
                 var targetView = pointView.PlacedEntityViews?.Find(v => v.EntityData == evt.Target);
                 if (targetView != null)
@@ -123,13 +123,43 @@ namespace TDG0407._prototype
             }
         }
 
+        private static string GetStatusEffectName(_prototype_StatusType type)
+        {
+            var db = _prototype_StatusVisualDatabase.Instance;
+            if (db != null)
+            {
+                var entry = db.GetEntry(type);
+                if (entry != null && !string.IsNullOrEmpty(entry.displayName))
+                    return $"{entry.displayName}!";
+            }
+            return type switch
+            {
+                _prototype_StatusType.Stun => "스턴!",
+                _prototype_StatusType.Groggy => "그로기!",
+                _prototype_StatusType.Silence => "침묵!",
+                _prototype_StatusType.Fear => "공포!",
+                _prototype_StatusType.Curse => "저주!",
+                _prototype_StatusType.Bleeding => "출혈!",
+                _prototype_StatusType.Burning => "화상!",
+                _prototype_StatusType.Freeze => "빙결!",
+                _prototype_StatusType.Poisoning => "중독!",
+                _prototype_StatusType.Unstoppable => "저지 불가!",
+                _prototype_StatusType.DeathsDoor => "사경!",
+                _prototype_StatusType.Provocation => "도발!",
+                _prototype_StatusType.Airborne => "에어본!",
+                _prototype_StatusType.Invincible => "무적!",
+                _prototype_StatusType.EnhanceStab => "찌르기 강화!",
+                _ => $"{type}!"
+            };
+        }
+
         private static Color GetStatusEffectColor(_prototype_StatusType type)
         {
             switch (type)
             {
                 case _prototype_StatusType.Stun:
                     return new Color(1f, 0.9f, 0.2f); // Yellow
-                case _prototype_StatusType.Knockdown:
+                case _prototype_StatusType.Groggy:
                     return new Color(1f, 0.5f, 0.1f); // Orange
                 case _prototype_StatusType.Silence:
                     return new Color(0.6f, 0.6f, 0.8f); // Light slate/gray-blue
@@ -145,8 +175,16 @@ namespace TDG0407._prototype
                     return new Color(0.3f, 0.85f, 1f); // Ice cyan
                 case _prototype_StatusType.Poisoning:
                     return new Color(0.3f, 0.9f, 0.3f); // Toxic green
-                case _prototype_StatusType.SuperArmor:
+                case _prototype_StatusType.Unstoppable:
                     return new Color(0.9f, 0.85f, 0.4f); // Golden amber
+                case _prototype_StatusType.Provocation:
+                    return new Color(1f, 0.3f, 0.1f); // Crimson-orange
+                case _prototype_StatusType.Airborne:
+                    return new Color(0.4f, 0.85f, 1f); // Sky blue
+                case _prototype_StatusType.Invincible:
+                    return new Color(1f, 0.95f, 0.4f); // Brilliant Gold
+                case _prototype_StatusType.EnhanceStab:
+                    return new Color(1f, 0.55f, 0.1f); // Vivid orange
                 default:
                     return Color.white;
             }

@@ -33,7 +33,16 @@ namespace TDG0407._prototype
         private float targetYRotation = 0f;
         private bool isRotating = false;
 
+        private float shakeDuration = 0f;
+        private float shakeIntensity = 0f;
+
         public Camera MainCamera { get { return mainCamera; } }
+
+        public void ShakeCamera(float duration = 0.2f, float intensity = 0.15f)
+        {
+            shakeDuration = duration;
+            shakeIntensity = intensity;
+        }
 
         private void Awake()
         {
@@ -48,6 +57,14 @@ namespace TDG0407._prototype
             HandleCameraLookToggle();
             HandleCameraMovement();
             HandleCameraRotation();
+
+            if (shakeDuration > 0)
+            {
+                shakeDuration -= Time.unscaledDeltaTime;
+                Vector3 shakeOffset = UnityEngine.Random.insideUnitSphere * shakeIntensity;
+                shakeOffset.y = 0; // xz 평면 흔들림 유지
+                transform.position += shakeOffset;
+            }
         }
 
         private void HandleCameraLookToggle()

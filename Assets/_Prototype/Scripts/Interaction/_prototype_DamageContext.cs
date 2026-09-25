@@ -17,10 +17,12 @@ namespace TDG0407._prototype
         public bool isArmorBreakable = false;
 
         public bool isCritical = false;
+        public float spDamageMultiplier = 0.5f;
 
         public int? finalDamage; // if finalDamage is null, damage has not been applied yet. 
+        public int spDamage = 0; 
 
-        public _prototype_DamageContext(_prototype_EntityData source, _prototype_EntityData target, _prototype_DamageType damageType, int baseDamage, int modifiedDamage, bool isCritical = false)
+        public _prototype_DamageContext(_prototype_EntityData source, _prototype_EntityData target, _prototype_DamageType damageType, int baseDamage, int modifiedDamage, bool isCritical = false, float spDamageMultiplier = 0.5f)
         {
             this.source = source;
             this.target = target;
@@ -30,6 +32,7 @@ namespace TDG0407._prototype
             this.baseDamage = baseDamage;
             this.modifiedDamage = modifiedDamage;
             this.isCritical = isCritical;
+            this.spDamageMultiplier = spDamageMultiplier;
 
             this.finalDamage = null;
         }

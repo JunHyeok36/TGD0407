@@ -6,7 +6,7 @@ namespace TDG0407._prototype
     {
         None = 0,
         Stun = 1,
-        Knockdown = 2,
+        Groggy = 2,
         Silence = 3,
         Fear = 4,
         Curse = 5,
@@ -14,7 +14,11 @@ namespace TDG0407._prototype
         Burning = 7,
         Freeze = 8,
         Poisoning = 9,
-        SuperArmor = 10,
-        DeathsDoor = 11
+        Unstoppable = 10,
+        DeathsDoor = 11,
+        Provocation = 12,
+        Airborne = 13,
+        Invincible = 14,
+        EnhanceStab = 15,
     }
 }

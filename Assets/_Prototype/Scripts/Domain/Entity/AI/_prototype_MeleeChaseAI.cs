@@ -40,11 +40,13 @@ namespace TDG0407._prototype
 
             if (_currentIdleTicks > 0) return intent;
 
-            var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.IsDead) return intent;
+            var targetEntity = GetTargetEntity(entityView);
+            if (targetEntity == null || targetEntity.IsDead) return intent;
 
             var lifeData = entityView.EntityData as _prototype_LifeData;
-            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence)))
+            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) ||
+                                     lifeData.HasStatusEffect(_prototype_StatusType.Silence) ||
+                                     lifeData.HasStatusEffect(_prototype_StatusType.Airborne)))
             {
                 hasPlannedIntent = false;
                 plannedCard = null;
@@ -58,7 +60,7 @@ namespace TDG0407._prototype
                     ? plannedBattleCard.targetRange.GetValidTargetPoints(entityView.Point, plannedTarget) 
                     : new List<_prototype_Point> { plannedTarget };
                 
-                if (targetPoints.Contains(playerView.Point))
+                if (targetPoints.Contains(targetEntity.point))
                 {
                     intent.TargetsPlayer = true;
                 }
@@ -81,7 +83,9 @@ namespace TDG0407._prototype
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
 
-            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) ||
+                lifeData.HasStatusEffect(_prototype_StatusType.Silence) ||
+                lifeData.HasStatusEffect(_prototype_StatusType.Airborne))
             {
                 CurrentIntent = _prototype_EnemyIntent.ForStunned();
                 return;
@@ -92,10 +96,10 @@ namespace TDG0407._prototype
                 CurrentIntent = _prototype_EnemyIntent.ForFlee();
             }
 
-            var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.IsDead) return;
+            var targetEntity = GetTargetEntity(entityView);
+            if (targetEntity == null || targetEntity.IsDead) return;
 
-            _prototype_Point playerCurrentPoint = playerView.Point;
+            _prototype_Point targetCurrentPoint = targetEntity.point;
             _prototype_Point myPoint = entityView.Point;
 
             if (lifeData.cardDeck != null)
@@ -110,7 +114,7 @@ namespace TDG0407._prototype
                     {
                         if (CanAffordCard(lifeData, battleCard, allowMistake: true))
                         {
-                            bool inRange = IsInRangeOfTarget(entityView, playerCurrentPoint, battleCard);
+                            bool inRange = IsInRangeOfTarget(entityView, targetCurrentPoint, battleCard);
                             if (inRange)
                             {
                                 cardToPlay = battleCard;
@@ -123,9 +127,9 @@ namespace TDG0407._prototype
                 if (cardToPlay != null)
                 {
                     plannedCard = cardToPlay;
-                    plannedTarget = playerCurrentPoint;
+                    plannedTarget = targetCurrentPoint;
                     hasPlannedIntent = true;
-                    CurrentIntent = _prototype_EnemyIntent.ForAttack(cardToPlay, playerCurrentPoint, entityView.EntityData, playerView.EntityData);
+                    CurrentIntent = _prototype_EnemyIntent.ForAttack(cardToPlay, targetCurrentPoint, entityView.EntityData, targetEntity);
 
                     bool showsHazard = false;
                     if (cardToPlay.actionList != null)
@@ -179,8 +183,8 @@ namespace TDG0407._prototype
                 return;
             }
 
-            var playerView = _prototype_PlayerController.Instance.ControlledEntityView;
-            if (playerView == null || playerView.EntityData.IsDead) return;
+            var targetEntity = GetTargetEntity(entityView);
+            if (targetEntity == null || targetEntity.IsDead) return;
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
 
@@ -191,10 +195,10 @@ namespace TDG0407._prototype
                 return;
             }
 
-            _prototype_Point playerCurrentPoint = playerView.Point;
-            _prototype_Point targetPoint = playerCurrentPoint;
+            _prototype_Point targetCurrentPoint = targetEntity.point;
+            _prototype_Point targetPoint = targetCurrentPoint;
             _prototype_Point myPoint = entityView.Point;
-            int distToPlayer = Math.Max(Math.Abs(myPoint.x - playerCurrentPoint.x), Math.Abs(myPoint.y - playerCurrentPoint.y));
+            int distToPlayer = Math.Max(Math.Abs(myPoint.x - targetCurrentPoint.x), Math.Abs(myPoint.y - targetCurrentPoint.y));
 
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
@@ -209,7 +213,7 @@ namespace TDG0407._prototype
                 }
             }
 
-            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Airborne))
             {
                 hasPlannedIntent = false;
                 plannedCard = null;
@@ -236,12 +240,12 @@ namespace TDG0407._prototype
                 {
                     if (plannedCard is _prototype_BattleCardData battleCardToPlay)
                     {
-                        bool destroyed = false;
+                        bool forceDestroy = false;
                         var burning = lifeData.GetStatusEffect(_prototype_StatusType.Burning);
                         if (burning != null)
                         {
                             float destroyProb = burning.value / (burning.value + 200f);
-                            if (UnityEngine.Random.value < destroyProb) destroyed = true;
+                            if (UnityEngine.Random.value < destroyProb) forceDestroy = true;
                         }
 
                         var cost = battleCardToPlay.costValue;
@@ -254,12 +258,10 @@ namespace TDG0407._prototype
 
                         if (battleCardToPlay.sourceProvider == null)
                         {
-                            lifeData.cardDeck.handedCardDatas.Remove(battleCardToPlay);
-                            if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(battleCardToPlay);
-                            else lifeData.cardDeck.discardedCardDatas.Add(battleCardToPlay);
+                            lifeData.cardDeck.MoveCardOnCast(battleCardToPlay, forceDestroy);
                         }
 
-                        if (!destroyed && battleCardToPlay.actionList != null)
+                        if (!forceDestroy && battleCardToPlay.actionList != null)
                         {
                             List<_prototype_Point> targetRange = battleCardToPlay.targetRange != null 
                                 ? battleCardToPlay.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
@@ -330,9 +332,10 @@ namespace TDG0407._prototype
                         bool isRestMistake = RollMistake();
                         int safeSpNeeded = Math.Min(isRestMistake ? minSpNeeded : minSpNeeded + 1, lifeData.stamina.Max);
 
-                        if (minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < safeSpNeeded)
+                        if ((minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < safeSpNeeded) ||
+                            (lifeData.stamina.Current <= lifeData.stamina.Max * 0.2f && !isRestMistake))
                         {
-                            shouldRest = true; // 가장 싼 카드라도 안전하게 쓰기 위해 휴식
+                            shouldRest = true; // 카드 코스트 부족 또는 체간(SP) 위험으로 휴식
                         }
                     }
                 }
@@ -351,11 +354,11 @@ namespace TDG0407._prototype
                     }
                 }
 
-                // Check if already in melee range of player
-                bool isAdjacentToPlayer = IsInRangeOfTarget(entityView, playerCurrentPoint, null);
-                if (isAdjacentToPlayer)
+                // Check if already in melee range of target
+                bool isAdjacentToTarget = IsInRangeOfTarget(entityView, targetCurrentPoint, null);
+                if (isAdjacentToTarget)
                 {
-                    // Already in range! Do not move closer (prevents bumping/overlapping player)
+                    // Already in range! Do not move closer (prevents bumping/overlapping target)
                     shouldRest = true;
                 }
 
@@ -371,7 +374,7 @@ namespace TDG0407._prototype
                     var entitySize = entityView.EntityData != null ? entityView.EntityData.size : _prototype_Point.one;
                     if (entitySize.x > 1 || entitySize.y > 1)
                     {
-                        var candidates = GetAdjacentPlacementsForTarget(playerCurrentPoint, entitySize);
+                        var candidates = GetAdjacentPlacementsForTarget(targetCurrentPoint, entitySize);
                         var validCandidates = candidates.Where(c => _prototype_GridManager.Instance != null && _prototype_GridManager.Instance.CanPlaceEntityFootprint(entityView.EntityData, c)).ToList();
                         if (validCandidates.Count > 0)
                         {

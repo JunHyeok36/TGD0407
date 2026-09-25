@@ -12,6 +12,7 @@ namespace TDG0407._prototype
         [SerializeField] private _prototype_Side side;
 
         public _prototype_LifeData Data => _entityData as _prototype_LifeData;
+        public _prototype_ChannelingController ChannelingController { get; private set; }
 
         public override void Initialize(
             _prototype_EntityData entityData,
@@ -24,6 +25,13 @@ namespace TDG0407._prototype
                 hud = gameObject.AddComponent<_prototype_LifeHUD>();
             }
             hud.Initialize();
+
+            if (!TryGetComponent<_prototype_ChannelingController>(out var chCtrl))
+            {
+                chCtrl = gameObject.AddComponent<_prototype_ChannelingController>();
+            }
+            ChannelingController = chCtrl;
+            ChannelingController.Initialize(this);
 
             // 카드 덱 초기화 (플레이어 및 적 AI 공통)
             if (Data != null && Data.cardDeck != null)
@@ -40,8 +48,9 @@ namespace TDG0407._prototype
             {
                 Data.side = side;
                 Data.health.OnValueChanged += CheckDeath;
-                Data.stamina.OnValueChanged += CheckStaminaForKnockdown;
+                Data.stamina.OnValueChanged += CheckStaminaForGroggy;
                 Data.OnDied += HandleDeath;
+                Data.OnChannelCancelRequested += OnChannelCancelRequested;
             }
 
             _deathsDoorEnteredSub = _prototype_EventBus.Listen<EntityDeathsDoorEnteredEvent>(evt =>
@@ -68,32 +77,55 @@ namespace TDG0407._prototype
                 }
             });
 
+            _statusChangedSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(evt =>
+            {
+                if (evt.Target == Data && evt.Effect.type == _prototype_StatusType.Airborne)
+                {
+                    if (evt.IsAdded)
+                    {
+                        transform.DOLocalMoveY(0.6f, 0.2f).SetEase(Ease.OutQuad).SetLink(gameObject);
+                    }
+                    else
+                    {
+                        transform.DOLocalMoveY(0f, 0.25f).SetEase(Ease.OutBounce).SetLink(gameObject);
+                    }
+                }
+            });
+
             _prototype_TickManager.RegisterTick(ProcessLifeTick);
         }
 
         private IDisposable _deathsDoorEnteredSub;
         private IDisposable _deathResistedSub;
         private IDisposable _deathsDoorClearedSub;
+        private IDisposable _statusChangedSub;
+
+        private void OnChannelCancelRequested(string reason)
+        {
+            ChannelingController?.CancelChanneling(reason);
+        }
 
         protected override void OnDestroy()
         {
             if (Data != null)
             {
                 Data.health.OnValueChanged -= CheckDeath;
-                Data.stamina.OnValueChanged -= CheckStaminaForKnockdown;
+                Data.stamina.OnValueChanged -= CheckStaminaForGroggy;
                 Data.OnDied -= HandleDeath;
+                Data.OnChannelCancelRequested -= OnChannelCancelRequested;
             }
             _deathsDoorEnteredSub?.Dispose();
             _deathResistedSub?.Dispose();
             _deathsDoorClearedSub?.Dispose();
+            _statusChangedSub?.Dispose();
             _prototype_TickManager.UnregisterTick(ProcessLifeTick);
         }
 
-        private void CheckStaminaForKnockdown()
+        private void CheckStaminaForGroggy()
         {
-            if (Data.stamina.Current <= 0)
+            if (Data != null)
             {
-                Data.ApplyStatusEffect(new _prototype_StatusEffect(_prototype_StatusType.Knockdown, 5));
+                Data.CheckStaminaForGroggy();
             }
         }
 
@@ -114,7 +146,7 @@ namespace TDG0407._prototype
             if (Data != null)
             {
                 Data.health.OnValueChanged -= CheckDeath;
-                Data.stamina.OnValueChanged -= CheckStaminaForKnockdown;
+                Data.stamina.OnValueChanged -= CheckStaminaForGroggy;
                 Data.OnDied -= HandleDeath;
 
                 // 전리품 드랍 이벤트 발행 (보유한 아이템이 있을 경우)
@@ -152,13 +184,13 @@ namespace TDG0407._prototype
                     {
                         if (Data.cardDeck != null)
                         {
-                            bool hasKnockdown = Data.HasStatusEffect(_prototype_StatusType.Knockdown);
+                            bool hasGroggy = Data.HasStatusEffect(_prototype_StatusType.Groggy);
                             foreach (var card in Data.cardDeck.handedCardDatas)
                             {
                                 if (card is _prototype_BattleCardData battleCard)
                                 {
                                     int reduction = 1 + Data.lifeStat.drawQuickness;
-                                    if (hasKnockdown)
+                                    if (hasGroggy)
                                     {
                                         battleCard.currentCoolTicks = Mathf.Min(battleCard.coolTicks.Max, battleCard.currentCoolTicks + reduction);
                                     }
@@ -170,11 +202,25 @@ namespace TDG0407._prototype
                             }
                         }
 
+                        if (ChannelingController != null && ChannelingController.IsChanneling)
+                        {
+                            await ChannelingController.ProcessTick();
+                            if (Data.IsDead) return;
+                        }
+
                         if (Data.statusEffects != null)
                         {
                             for (int i = Data.statusEffects.Count - 1; i >= 0; i--)
                             {
                                 var effect = Data.statusEffects[i];
+
+                                // 도발 시전자가 사망했거나 없는 경우 도발 자동 해제
+                                if (effect.type == _prototype_StatusType.Provocation && (effect.sourceEntity == null || effect.sourceEntity.IsDead))
+                                {
+                                    Data.statusEffects.RemoveAt(i);
+                                    _prototype_EventBus.Fire(new EntityStatusChangedEvent(Data, effect, false));
+                                    continue;
+                                }
 
                                 if (_prototype_TickManager.CurrentTick > effect.appliedTick)
                                 {
@@ -209,15 +255,18 @@ namespace TDG0407._prototype
                                         }
                                     }
 
-                                    effect.durationTicks--;
-                                    if (effect.durationTicks <= 0)
+                                    effect.duration.OnTick();
+                                    if (effect.IsExpired)
                                     {
                                         Data.statusEffects.RemoveAt(i);
                                         _prototype_EventBus.Fire(new EntityStatusChangedEvent(Data, effect, false));
                                     }
+
                                 }
                             }
                         }
+
+                        Data.TickShields();
                     }
                     await UniTask.Yield();
                 }

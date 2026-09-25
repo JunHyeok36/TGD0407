@@ -29,6 +29,8 @@ namespace TDG0407._prototype
 
         public virtual bool IsVisible(_prototype_ConditionContext context) => true;
 
+        public virtual bool IsEmpowered(_prototype_LifeData caster) => false;
+
         public abstract _prototype_CardData Clone();
     }
 }

@@ -52,7 +52,7 @@ namespace TDG0407._prototype
             if (_entityView == null || evt.Entity != _entityView.EntityData) return;
             if (_entityView.EntityData is not _prototype_LifeData lifeData || lifeData.aiLogic == null) return;
 
-            if (lifeData.IsDead || lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            if (lifeData.IsDead || lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Groggy) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
             {
                 CancelPlannedAttack();
                 return;
@@ -113,14 +113,14 @@ namespace TDG0407._prototype
 
             if (evt.IsAdded)
             {
-                if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Silence)
+                if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Groggy || evt.Effect.type == _prototype_StatusType.Silence)
                 {
                     CancelPlannedAttack();
                 }
             }
             else
             {
-                if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Silence)
+                if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Groggy || evt.Effect.type == _prototype_StatusType.Silence)
                 {
                     if (!_prototype_TickManager.IsTickProcessing && _entityView.EntityData != null && !_entityView.EntityData.IsDead)
                     {
@@ -182,7 +182,21 @@ namespace TDG0407._prototype
             var lifeData = _entityView.EntityData as _prototype_LifeData;
             if (lifeData != null)
             {
-                if (lifeData.statusEffects.Find(s => s.type == _prototype_StatusType.Stun) != null)
+                // Speed <= 0 인 경우 턴 스킵 (아무런 행동을 하지 않고 대기)
+                if (lifeData.Speed <= 0)
+                {
+                    CancelPlannedAttack();
+                    intent.Execute = async () =>
+                    {
+                        if (_entityView != null)
+                        {
+                            await _entityView.transform.DOShakePosition(0.2f, 0.05f, 6, 90f, false, true).AsyncWaitForCompletion();
+                        }
+                    };
+                    return intent;
+                }
+
+                if (lifeData.statusEffects.Find(s => s.type == _prototype_StatusType.Stun || s.type == _prototype_StatusType.Groggy) != null)
                 {
                     CancelPlannedAttack();
                     intent.Execute = async () => 
@@ -204,10 +218,31 @@ namespace TDG0407._prototype
 
                 if (lifeData.aiLogic != null)
                 {
-                    var plannedIntent = await lifeData.aiLogic.PlanAction(_entityView);
-                    if (plannedIntent != null)
+                    if (lifeData.Speed > 1)
                     {
-                        return plannedIntent;
+                        // Speed > 1 인 경우: 틱 내에서 AI 결정을 Speed 횟수만큼 순차 반복 실행
+                        int actionCount = lifeData.Speed;
+                        intent.Execute = async () =>
+                        {
+                            for (int i = 0; i < actionCount; i++)
+                            {
+                                if (_entityView == null || _entityView.EntityData.IsDead) break;
+                                var stepIntent = await lifeData.aiLogic.PlanAction(_entityView);
+                                if (stepIntent != null && stepIntent.Execute != null)
+                                {
+                                    await stepIntent.Execute();
+                                }
+                            }
+                        };
+                        return intent;
+                    }
+                    else
+                    {
+                        var plannedIntent = await lifeData.aiLogic.PlanAction(_entityView);
+                        if (plannedIntent != null)
+                        {
+                            return plannedIntent;
+                        }
                     }
                 }
             }

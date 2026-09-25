@@ -134,12 +134,13 @@ namespace TDG0407._prototype
                     switch (statusAction.statusType)
                     {
                         case _prototype_StatusType.Stun: statusName = "기절"; break;
+                        case _prototype_StatusType.Groggy: statusName = "그로기"; break;
                         case _prototype_StatusType.Silence: statusName = "침묵"; break;
                         case _prototype_StatusType.Bleeding: statusName = "출혈"; break;
                         case _prototype_StatusType.Burning: statusName = "화상"; break;
                         case _prototype_StatusType.Freeze: statusName = "빙결"; break;
                         case _prototype_StatusType.Curse: statusName = "저주"; break;
-                        case _prototype_StatusType.SuperArmor: statusName = "슈퍼아머"; break;
+                        case _prototype_StatusType.Unstoppable: statusName = "저지 불가"; break;
                     }
 
                     if (statusAction.value > 0)

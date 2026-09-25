@@ -44,6 +44,7 @@ namespace TDG0407._prototype
             remainedCardDatas.Clear();
             handedCardDatas.Clear();
             discardedCardDatas.Clear();
+            destroyedCardDatas.Clear();
 
             remainedCardDatas.AddRange(allCardDatas);
             ShuffleRemained();
@@ -95,10 +96,65 @@ namespace TDG0407._prototype
             }
         }
 
+        /// <summary>
+        /// 카드가 사용되었을 때 핸드에서 제거하고 파괴(소멸) 또는 버린 카드 더미로 이동합니다.
+        /// </summary>
+        /// <returns>카드가 파괴(destroyedCardDatas)로 이동했으면 true, 일반 버림(discardedCardDatas)이면 false</returns>
+        public bool MoveCardOnCast(_prototype_CardData card, bool forceDestroy = false)
+        {
+            if (card == null) return false;
+            handedCardDatas.Remove(card);
+
+            bool isDestroy = forceDestroy;
+            if (!isDestroy && card is _prototype_BattleCardData battleCard)
+            {
+                isDestroy = battleCard.isDestroyOnUse;
+            }
+
+            if (isDestroy)
+            {
+                destroyedCardDatas.Add(card);
+            }
+            else
+            {
+                discardedCardDatas.Add(card);
+            }
+            return isDestroy;
+        }
+
+        /// <summary>
+        /// 카드가 버려졌을 때 핸드에서 제거하고 파괴(소멸) 또는 버린 카드 더미로 이동합니다.
+        /// </summary>
+        /// <returns>카드가 파괴(destroyedCardDatas)로 이동했으면 true, 일반 버림(discardedCardDatas)이면 false</returns>
+        public bool MoveCardOnDiscard(_prototype_CardData card, bool forceDestroy = false)
+        {
+            if (card == null) return false;
+            handedCardDatas.Remove(card);
+
+            bool isDestroy = forceDestroy;
+            if (!isDestroy && card is _prototype_BattleCardData battleCard)
+            {
+                isDestroy = battleCard.isDestroyOnDiscard;
+            }
+
+            if (isDestroy)
+            {
+                destroyedCardDatas.Add(card);
+            }
+            else
+            {
+                discardedCardDatas.Add(card);
+            }
+            return isDestroy;
+        }
+
         public void DiscardHand()
         {
-            discardedCardDatas.AddRange(handedCardDatas);
-            handedCardDatas.Clear();
+            var cards = new List<_prototype_CardData>(handedCardDatas);
+            foreach (var card in cards)
+            {
+                MoveCardOnDiscard(card);
+            }
         }
 
         public _prototype_CardData DiscardHighestCooldownCard()
@@ -116,8 +172,7 @@ namespace TDG0407._prototype
                     maxCool = cCool;
                 }
             }
-            handedCardDatas.Remove(worstCard);
-            discardedCardDatas.Add(worstCard);
+            MoveCardOnDiscard(worstCard);
             return worstCard;
         }
 

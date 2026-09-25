@@ -14,6 +14,18 @@ namespace TDG0407._prototype
         [Tooltip("시전자가 밀리거나 이동할 때 공격 영역 재계산 방식 (FollowCaster: 시전자 추종 및 방향 유지, FixedGround: 바닥 좌표 고정)")]
         public _prototype_TargetAnchorType targetAnchorType = _prototype_TargetAnchorType.FollowCaster;
         [SerializeReference, SubclassSelector] public List<_prototype_EntityAction> actionList;
+        [Tooltip("사용 시 이번 전투 동안 덱에서 파괴(소멸)되는지 여부 (Power 카드는 기본 true)")]
+        public bool isDestroyOnUse = false;
+        [Tooltip("수동/턴 종료로 버려질 때 이번 전투 동안 덱에서 파괴(소멸)되는지 여부")]
+        public bool isDestroyOnDiscard = false;
+
+        private void OnValidate()
+        {
+            if (cardType == _prototype_CardType.Power && !isDestroyOnUse)
+            {
+                isDestroyOnUse = true;
+            }
+        }
 
         public override _prototype_CardData CreateCardData()
         {
@@ -26,7 +38,9 @@ namespace TDG0407._prototype
                 targetRange,
                 actionList,
                 targetAnchorType,
-                descriptionLocalizationKey
+                descriptionLocalizationKey,
+                isDestroyOnUse,
+                isDestroyOnDiscard
             );
         }
     }

@@ -162,19 +162,40 @@ namespace TDG0407._prototype
 
         // ─── HUD 표시용 데이터 ───
 
-        /// <summary>현재 intentType에 맞는 심볼 문자를 반환합니다.</summary>
+        /// <summary>
+        /// HUD 의도 배지에 표시할 단일 라인 텍스트를 반환합니다. (예: "공격 14", "원거리 12", "이동", "대기")
+        /// neodgm 등 픽셀 폰트에서도 깨지지 않는 안전한 한글/숫자 조합을 제공합니다.
+        /// </summary>
+        public string GetIntentDisplayText()
+        {
+            string dmgText = estimatedDamage > 0 ? $" {estimatedDamage}" : "";
+            return intentType switch
+            {
+                _prototype_EnemyIntentType.AttackMelee => $"공격{dmgText}",
+                _prototype_EnemyIntentType.AttackRanged => $"원거리{dmgText}",
+                _prototype_EnemyIntentType.AttackKnockback => $"넉백{dmgText}",
+                _prototype_EnemyIntentType.AttackDebuff => $"약화{dmgText}",
+                _prototype_EnemyIntentType.Move => "이동",
+                _prototype_EnemyIntentType.Rest => "",
+                _prototype_EnemyIntentType.Stunned => "기절",
+                _prototype_EnemyIntentType.Flee => "도주",
+                _ => ""
+            };
+        }
+
+        /// <summary>현재 intentType에 맞는 약어 심볼 문자를 반환합니다.</summary>
         public string GetSymbol()
         {
             return intentType switch
             {
-                _prototype_EnemyIntentType.AttackMelee => "⚔",
-                _prototype_EnemyIntentType.AttackRanged => "🏹",
-                _prototype_EnemyIntentType.AttackKnockback => "💢",
-                _prototype_EnemyIntentType.AttackDebuff => "☣",
-                _prototype_EnemyIntentType.Move => "👣",
-                _prototype_EnemyIntentType.Rest => "💤",
-                _prototype_EnemyIntentType.Stunned => "💫",
-                _prototype_EnemyIntentType.Flee => "🏃",
+                _prototype_EnemyIntentType.AttackMelee => "공",
+                _prototype_EnemyIntentType.AttackRanged => "원",
+                _prototype_EnemyIntentType.AttackKnockback => "넉",
+                _prototype_EnemyIntentType.AttackDebuff => "약",
+                _prototype_EnemyIntentType.Move => "이",
+                _prototype_EnemyIntentType.Rest => "대",
+                _prototype_EnemyIntentType.Stunned => "기",
+                _prototype_EnemyIntentType.Flee => "도",
                 _ => ""
             };
         }
@@ -184,14 +205,14 @@ namespace TDG0407._prototype
         {
             return intentType switch
             {
-                _prototype_EnemyIntentType.AttackMelee => new Color(1f, 0.3f, 0.3f),
-                _prototype_EnemyIntentType.AttackRanged => new Color(1f, 0.6f, 0.1f),
-                _prototype_EnemyIntentType.AttackKnockback => new Color(1f, 0.2f, 0.8f),
-                _prototype_EnemyIntentType.AttackDebuff => new Color(0.4f, 0.9f, 0.2f),
-                _prototype_EnemyIntentType.Move => new Color(0.4f, 0.8f, 1f),
-                _prototype_EnemyIntentType.Rest => new Color(0.6f, 0.8f, 0.6f),
-                _prototype_EnemyIntentType.Stunned => new Color(1f, 0.9f, 0.1f),
-                _prototype_EnemyIntentType.Flee => new Color(0.7f, 0.4f, 1f),
+                _prototype_EnemyIntentType.AttackMelee => new Color(1f, 0.35f, 0.35f),
+                _prototype_EnemyIntentType.AttackRanged => new Color(1f, 0.65f, 0.2f),
+                _prototype_EnemyIntentType.AttackKnockback => new Color(0.9f, 0.4f, 1f),
+                _prototype_EnemyIntentType.AttackDebuff => new Color(0.4f, 0.9f, 0.3f),
+                _prototype_EnemyIntentType.Move => new Color(0.35f, 0.85f, 1f),
+                _prototype_EnemyIntentType.Rest => new Color(0.75f, 0.85f, 0.75f),
+                _prototype_EnemyIntentType.Stunned => new Color(1f, 0.9f, 0.2f),
+                _prototype_EnemyIntentType.Flee => new Color(0.8f, 0.5f, 1f),
                 _ => Color.clear
             };
         }
@@ -204,10 +225,10 @@ namespace TDG0407._prototype
                 _prototype_EnemyIntentType.AttackMelee => "근접 공격",
                 _prototype_EnemyIntentType.AttackRanged => "원거리 공격",
                 _prototype_EnemyIntentType.AttackKnockback => "넉백 공격",
-                _prototype_EnemyIntentType.AttackDebuff => "디버프 공격",
+                _prototype_EnemyIntentType.AttackDebuff => "약화 공격",
                 _prototype_EnemyIntentType.Move => "이동",
                 _prototype_EnemyIntentType.Rest => "대기",
-                _prototype_EnemyIntentType.Stunned => "스턴",
+                _prototype_EnemyIntentType.Stunned => "기절",
                 _prototype_EnemyIntentType.Flee => "도주",
                 _ => ""
             };

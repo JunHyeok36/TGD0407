@@ -32,7 +32,9 @@ namespace TDG0407._prototype
             };
 
             var lifeData = entityView.EntityData as _prototype_LifeData;
-            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence)))
+            if (lifeData != null && (lifeData.HasStatusEffect(_prototype_StatusType.Stun) ||
+                                     lifeData.HasStatusEffect(_prototype_StatusType.Silence) ||
+                                     lifeData.HasStatusEffect(_prototype_StatusType.Airborne)))
             {
                 hasPlannedIntent = false;
                 plannedCard = null;
@@ -54,7 +56,9 @@ namespace TDG0407._prototype
             var lifeData = entityView.EntityData as _prototype_LifeData;
             if (lifeData == null) return;
 
-            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Silence))
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) ||
+                lifeData.HasStatusEffect(_prototype_StatusType.Silence) ||
+                lifeData.HasStatusEffect(_prototype_StatusType.Airborne))
             {
                 CurrentIntent = _prototype_EnemyIntent.ForStunned();
                 return;
@@ -65,8 +69,11 @@ namespace TDG0407._prototype
                 CurrentIntent = _prototype_EnemyIntent.ForFlee();
             }
 
+            var targetEntity = GetTargetEntity(entityView);
+            if (targetEntity == null || targetEntity.IsDead) return;
+
             _prototype_Point myPoint = entityView.EntityData.point;
-            _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
+            _prototype_Point playerPoint = targetEntity.point;
             int distToPlayer = Math.Max(Math.Abs(myPoint.x - playerPoint.x), Math.Abs(myPoint.y - playerPoint.y));
 
 
@@ -257,7 +264,7 @@ namespace TDG0407._prototype
 
             _prototype_GridVisualManager.Instance.ClearAllHazards(entityView);
 
-            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+            if (lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Airborne))
             {
                 hasPlannedIntent = false;
                 plannedCard = null;
@@ -277,8 +284,11 @@ namespace TDG0407._prototype
                 return;
             }
 
+            var targetEntity = GetTargetEntity(entityView);
+            if (targetEntity == null || targetEntity.IsDead) return;
+
             _prototype_Point myPoint = entityView.EntityData.point;
-            _prototype_Point playerPoint = _prototype_PlayerController.Instance.ControlledEntityLastPoint;
+            _prototype_Point playerPoint = targetEntity.point;
             int distToPlayer = Math.Max(Math.Abs(myPoint.x - playerPoint.x), Math.Abs(myPoint.y - playerPoint.y));
 
             bool hasActed = false;
@@ -295,18 +305,16 @@ namespace TDG0407._prototype
                 else
                 {
                     var burning = lifeData.GetStatusEffect(_prototype_StatusType.Burning);
-                    bool destroyed = false;
+                    bool forceDestroy = false;
                     if (burning != null)
                     {
                         float destroyProb = burning.value / (burning.value + 200f);
-                        if (UnityEngine.Random.value < destroyProb) destroyed = true;
+                        if (UnityEngine.Random.value < destroyProb) forceDestroy = true;
                     }
 
                     if (battleCard.sourceProvider == null)
                     {
-                        lifeData.cardDeck.handedCardDatas.Remove(battleCard);
-                        if (destroyed) lifeData.cardDeck.destroyedCardDatas.Add(battleCard);
-                        else lifeData.cardDeck.discardedCardDatas.Add(battleCard);
+                        lifeData.cardDeck.MoveCardOnCast(battleCard, forceDestroy);
                     }
 
                     var cost = battleCard.costValue;
@@ -316,7 +324,7 @@ namespace TDG0407._prototype
                         else if (cost.costType == _prototype_CostType.FixedHealth) lifeData.health.Current -= (int)cost.value;
                     }
 
-                    if (!destroyed && battleCard.actionList != null)
+                    if (!forceDestroy && battleCard.actionList != null)
                     {
                         List<_prototype_Point> targetRange = battleCard.targetRange != null 
                             ? battleCard.targetRange.GetValidTargetPoints(myPoint, plannedTarget) 
@@ -382,7 +390,8 @@ namespace TDG0407._prototype
                         bool isRestMistake = RollMistake();
                         int safeSpNeeded = isRestMistake ? minSpNeeded : minSpNeeded + 1;
 
-                        if (minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < safeSpNeeded)
+                        if ((minSpNeeded > 0 && minSpNeeded != 999 && lifeData.stamina.Current < safeSpNeeded) ||
+                            (lifeData.stamina.Current <= lifeData.stamina.Max * 0.2f && !isRestMistake))
                             shouldRest = true;
                     }
                 }

@@ -55,9 +55,10 @@ namespace TDG0407.Domain
 
         public readonly void OnTick()
         {
-            if(IsExpired == false)
+            if (_tickDurationType == TickDurationType.TickBased && _value != null && IsExpired == false)
                 _value.Current--;
         }
+
 
         #endregion
         #region Operators

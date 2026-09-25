@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
   id: BloodStrike
   descriptionLocalizationKey: BloodStrike
-  description: "\uBB3C\uB9AC \uD53C\uD574\uB97C {damage}\uB9CC\uD07C \uC8FC\uACE0
-    \uB300\uC0C1\uC5D0\uAC8C \uCD9C\uD608\uC744 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
   cardType: 1
   costValue:
     costType: 2
@@ -32,6 +30,8 @@ MonoBehaviour:
   actionList:
   - rid: 2475498181128356185
   - rid: 8244398036531806306
+  isDestroyOnUse: 0
+  isDestroyOnDiscard: 0
   references:
     version: 2
     RefIds:
@@ -44,11 +44,14 @@ MonoBehaviour:
       data:
         includeSelf: 0
         damageType: 0
+        spDamageMultiplier: 0.5
         damageCoefficients:
-        - stat: 0
+        - source: 0
+          stat: 0
           coefficient: 25
-        - stat: 4
-          coefficient: 1.5
+        - source: 0
+          stat: 4
+          coefficient: 1
     - rid: 8244398012911059042
       type: {class: _prototype_RectSplashTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:
@@ -60,4 +63,4 @@ MonoBehaviour:
         includeSelf: 0
         statusType: 6
         durationTicks: 5
-        value: 25
+        value: 5

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
@@ -72,6 +73,13 @@ namespace TDG0407._prototype
 
             { "knockback_test", ("대상을 1칸 밀쳐냅니다.", "Knocks back target by 1 tile.") },
             { "CARD_KNOCKBACK_TEST_DESC", ("대상을 1칸 밀쳐냅니다.", "Knocks back target by 1 tile.") },
+
+            // ─── 렌 기본 덱 (Ren Basic Deck - 5종) ───
+            { "icd_ren_windwalk", ("3칸 이내의 영역으로 순간이동합니다.", "Teleports to an area within 3 tiles.") },
+            { "icd_ren_slash", ("전방 2칸에 {damage}의 물리 피해를 입히고, 적중 시 '삼연격: 찌르기 강화' 효과를 5틱 동안 얻습니다.", "Deals {damage} physical damage to front 2 tiles, granting 'Triple Strike: Stab Enhance' for 5 ticks on hit.") },
+            { "icd_ren_stab", ("전방 3x3 영역에 {damage}의 물리 피해를 입히며 투사체에게는 500% 피해를 줍니다. 강화 시 피해 50% 증가 및 넉백 충돌 기절을 추가합니다.", "Deals {damage} physical damage in a 3x3 front area, dealing 500% damage to projectiles. When enhanced, deals 50% more damage and adds knockback wall-collision stun.") },
+            { "icd_ren_windwall", ("3틱간 [10 + 최대 체력 4%]의 보호막을 획득하고, 1틱간 저지 불가 효과를 획득합니다.", "Gains [10 + 4% Max HP] shield for 3 ticks and Unstoppable for 1 tick.") },
+            { "icd_ren_breathe", ("카드 1장을 드로우하고, 기류 축적 1스택을 추가합니다.", "Draws 1 card and gains 1 stack of Flow Gauge.") },
 
             // ─── 상호작용 카드 (Interaction Cards - 7종) ───
             { "Chest_Open", ("상자를 열어 내용물을 확인하고 카드를 획득합니다.", "Opens the chest to inspect its contents and acquire cards.") },
@@ -154,10 +162,7 @@ namespace TDG0407._prototype
             }
 
             string rawTemplate = GetRawTemplate(locKey, isEnglish);
-            if (string.IsNullOrEmpty(rawTemplate))
-            {
-                return string.Empty;
-            }
+            if (rawTemplate == null) rawTemplate = string.Empty;
 
             // 3. 시전자 컨텍스트 확인 (없을 경우 플레이어 기본 대입)
             if (caster == null)
@@ -175,6 +180,21 @@ namespace TDG0407._prototype
             {
                 string formattedDamage = BuildDamageString(card, caster, isDetailedMode, isEnglish, target);
                 rawTemplate = rawTemplate.Replace("{damage}", formattedDamage);
+            }
+
+            // 5. [파괴] 태그 접두사 처리
+            if (card is _prototype_BattleCardData battleCard)
+            {
+                if (battleCard.isDestroyOnUse)
+                {
+                    string destroyTag = isEnglish ? "<color=#E066FF><b>[Destroy]</b></color> " : "<color=#E066FF><b>[파괴]</b></color> ";
+                    rawTemplate = destroyTag + rawTemplate;
+                }
+                else if (battleCard.isDestroyOnDiscard)
+                {
+                    string destroyTag = isEnglish ? "<color=#E066FF><b>[Destroy on Discard]</b></color> " : "<color=#E066FF><b>[버릴 시 파괴]</b></color> ";
+                    rawTemplate = destroyTag + rawTemplate;
+                }
             }
 
             return rawTemplate;
@@ -275,6 +295,27 @@ namespace TDG0407._prototype
             if (card is _prototype_BattleCardData battleCard && battleCard.actionList != null)
             {
                 dmgAction = FindDamageAction(battleCard.actionList);
+
+                // 렌 전용 Slash/Stab 액션 동적 피해 지원
+                var slashAction = battleCard.actionList.OfType<_prototype_SlashAttackEntityAction>().FirstOrDefault();
+                if (slashAction != null)
+                {
+                    int casterAtk = caster != null ? caster.RedPower : 0;
+                    int calculated = slashAction.baseDamage + Mathf.RoundToInt(casterAtk * slashAction.redPowerRatio);
+                    return isDetailedMode
+                        ? $"<color={COLOR_PHYSICAL}>[{slashAction.baseDamage} + 공격력 {Mathf.RoundToInt(slashAction.redPowerRatio * 100)}%]</color>"
+                        : $"<color={COLOR_PHYSICAL}>{calculated}</color>";
+                }
+
+                var stabAction = battleCard.actionList.OfType<_prototype_StabAttackEntityAction>().FirstOrDefault();
+                if (stabAction != null)
+                {
+                    int casterAtk = caster != null ? caster.RedPower : 0;
+                    int calculated = stabAction.baseDamage + Mathf.RoundToInt(casterAtk * stabAction.redPowerRatio);
+                    return isDetailedMode
+                        ? $"<color={COLOR_PHYSICAL}>[{stabAction.baseDamage} + 공격력 {Mathf.RoundToInt(stabAction.redPowerRatio * 100)}%]</color>"
+                        : $"<color={COLOR_PHYSICAL}>{calculated}</color>";
+                }
             }
 
             if (dmgAction == null || dmgAction.damageCoefficients == null || dmgAction.damageCoefficients.Length == 0)

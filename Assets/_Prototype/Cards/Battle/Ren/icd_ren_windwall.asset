@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5fe3716fa3c7047a013d937acdaaf4, type: 3}
+  m_Name: icd_ren_windwall
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
+  id: icd_ren_windwall
+  descriptionLocalizationKey: icd_ren_windwall
+  description: "3틱간 [10 + 최대 체력 4%]의 보호막을 획득하고, 1틱간 저지 불가 효과를 얻습니다."
+  cardType: 2
+  costValue:
+    costType: 5
+    value: 15
+  coolTicks:
+    _min: 0
+    _max: 2
+    _cur: 2
+  castRange:
+    rid: 540000000000000001
+  targetRange:
+    rid: 540000000000000002
+  targetAnchorType: 0
+  actionList:
+  - rid: 540000000000000003
+  references:
+    version: 2
+    RefIds:
+    - rid: 540000000000000001
+      type: {class: _prototype_SelfCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data: {}
+    - rid: 540000000000000002
+      type: {class: _prototype_SingleTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeEmptyPoints: 1
+    - rid: 540000000000000003
+      type: {class: _prototype_WindwallEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 1
+        baseShield: 10
+        maxHealthRatio: 0.04
+        shieldDuration: 3
+        unstoppableDuration: 1

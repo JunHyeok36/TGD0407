@@ -12,7 +12,13 @@ namespace TDG0407._prototype
         public _prototype_CardDeckModel cardDeck = null;
         public _prototype_InventoryDataModel inventoryModel = null;
         [SerializeReference, SubclassSelector] public _prototype_EnemyAILogic aiLogic = new _prototype_MeleeChaseAI();
-        
+
+        /// <summary>
+        /// 캐릭터 고유 패시브. 항상 활성화되며 직렬화되지 않습니다.
+        /// [SerializeReference, SubclassSelector]로 Inspector에서 설정하세요.
+        /// </summary>
+        [SerializeReference, SubclassSelector] public _prototype_LifePassiveData uniquePassive = null;
+
         public _prototype_LifeData CreateLifeData()
         {
             return new()
@@ -30,8 +36,10 @@ namespace TDG0407._prototype
                 statusEffects = new(),
                 movementType = movementType,
                 heightBounds = heightBounds,
+                uniquePassive = uniquePassive?.Clone(),
             };
         }
+
 
 
         public override _prototype_EntityData CreateData(_prototype_EntityData source = null)

@@ -133,8 +133,13 @@ namespace TDG0407.Core.Value
         #endregion
         #region Operators
 
-        public static bool operator ==(BoundedValue<T> left, BoundedValue<T> right) => left.Current.Equals(right.Current);
-        public static bool operator !=(BoundedValue<T> left, BoundedValue<T> right) => !left.Current.Equals(right.Current);
+        public static bool operator ==(BoundedValue<T> left, BoundedValue<T> right)
+        {
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.Current.Equals(right.Current);
+        }
+        public static bool operator !=(BoundedValue<T> left, BoundedValue<T> right) => !(left == right);
 
         public static implicit operator T(BoundedValue<T> boundedValue) => boundedValue.Current;
 

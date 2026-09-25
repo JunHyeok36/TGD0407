@@ -18,7 +18,7 @@ MonoBehaviour:
   cardType: 1
   costValue:
     costType: 5
-    value: 3
+    value: 25
   coolTicks:
     _min: 0
     _max: 2

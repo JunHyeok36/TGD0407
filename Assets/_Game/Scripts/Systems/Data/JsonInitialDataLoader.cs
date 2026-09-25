@@ -67,7 +67,7 @@ namespace TDG0407.Systems.Data
                 fearResist = statDefinition.fearResist,
                 knockbackResist = statDefinition.knockbackResist,
                 curseResist = statDefinition.curseResist,
-                knockdownResist = statDefinition.knockdownResist,
+                groggyResist = statDefinition.groggyResist != 0 ? statDefinition.groggyResist : statDefinition.knockdownResist,
                 healthRecoveryAmount = statDefinition.healthRecoveryAmount,
                 staminaRecoveryAmount = statDefinition.staminaRecoveryAmount,
                 dodgeProb = statDefinition.dodgeProb,
@@ -164,6 +164,7 @@ namespace TDG0407.Systems.Data
         public int fearResist = 1;
         public int knockbackResist = 1;
         public int curseResist = 1;
+        public int groggyResist = 0;
         public int knockdownResist = 1;
 
         public float healthRecoveryAmount = 1.0f;

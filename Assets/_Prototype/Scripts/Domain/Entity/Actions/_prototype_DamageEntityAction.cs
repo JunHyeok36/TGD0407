@@ -12,6 +12,7 @@ namespace TDG0407._prototype
     {
 
         public _prototype_DamageType damageType = _prototype_DamageType.Physical;
+        public float spDamageMultiplier = 0.5f;
         public _prototype_CoefficientValue[] damageCoefficients;
 
         public static float GetStatValue(_prototype_EntityData entity, _prototype_Stat stat)
@@ -199,7 +200,8 @@ namespace TDG0407._prototype
                         damageType,
                         finalBaseDamage,
                         currentDamage,
-                        isCritical
+                        isCritical,
+                        spDamageMultiplier
                     );
                     damageTasks.Add(_prototype_InteractionManager.ApplyDamage(damageContext));
                 }

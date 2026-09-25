@@ -1,188 +1,203 @@
-# 04. 프로토타입 현황
+# 04. ?�로?��????�황
 
-> **목적** : 코어 시스템(틱·전투·카드·AI)을 단일 씬에서 빠르게 검증한다.  
-> 프로토타입 코드는 Assets/_Prototype/ 에 위치하며, 모든 파일·클래스에 _prototype_ 접두사를 사용한다.
+> **목적** : 코어 ?�스???�·전??�카?�·AI)???�일 ?�에??빠르�?검증한??  
+> ?�로?��???코드??Assets/_Prototype/ ???�치?�며, 모든 ?�일·?�래?�에 _prototype_ ?�두?��? ?�용?�다.
 
 ---
 
-## 구현 완료 항목
+## 구현 ?�료 ??��
 
-### 코어 시스템
-- [x] **틱 매니저** (_prototype_TickManagerService)
-  - AdvanceTick(playerAction) 으로 틱 전진
-  - 플레이어 타겟 Intent / 기타 Intent 분리 처리
-  - OnPreTick / OnPostTick 이벤트 훅
-  - 플레이어 스턴(Stun) 시 0.8초 주기 자동 틱 진행 (Auto-Tick Progression)
-- [x] **이벤트 버스** (_prototype_EventBus)
-  - Subscribe / Unsubscribe / Fire 패턴
+### 코어 ?�스??- [x] **??매니?�** (_prototype_TickManagerService)
+  - AdvanceTick(playerAction) ?�로 ???�진
+  - ?�레?�어 ?��?Intent / 기�? Intent 분리 처리
+  - OnPreTick / OnPostTick ?�벤????  - ?�레?�어 ?�턴(Stun) �?그로�?Groggy) ??0.8�?주기 ?�동 ??진행 (Auto-Tick Progression)
+- [x] **?�피??Speed) ?�동 ?�어 ?�스??*
+  - 1?�당 ?�동 가???�수 관�?(기본 1)
+  - Speed가 0??경우 ?�당 ???�안 ?�동(?�동, 카드 ?�전 ?? 불�? �????�동 ?�킵
+- [x] **?�벤??버스** (_prototype_EventBus)
+  - Subscribe / Unsubscribe / Fire ?�턴
   - EntityDiedEvent, EntityDamagedEvent, EntityStatusChangedEvent, TickAdvancedEvent, PlayModeChangedEvent 구현
 
-### 플레이 모드
+### ?�레??모드
 - [x] **PlayModeManager** (_prototype_PlayModeManager)
-  - Battle ↔ Exploration 모드 전환
-  - 생존 적 수 기반 자동 전환
-  - 탐색 모드 중 적 공격 시 즉시 전투 모드로 복귀
+  - Battle ??Exploration 모드 ?�환
+  - ?�존 ????기반 ?�동 ?�환
+  - ?�색 모드 �???공격 ??즉시 ?�투 모드�?복�?
 
-### 그리드 & 맵
-- [x] **GridManager** (_prototype_GridManager)
-  - A\* 경로 탐색 (FindPath) — 4방향/8방향 지원
-  - 위험 타일 비용 가중치 적용 (+100)
+### 그리??& �?- [x] **GridManager** (_prototype_GridManager)
+  - A\* 경로 ?�색 (FindPath) ??4방향/8방향 지??  - ?�험 ?�??비용 가중치 ?�용 (+100)
   - IsWithinBounds, GetPointView, GetNeighbors
-- [x] **PointView** — 타일 상태(Normal/Wall/Abyss) 표시
-- [x] **GridVisualManager** — 범위·이동 인디케이터 시각화
-- [x] **MoveIndicator** — 이동 가능 경로 시각화 (1틱 이동 마커, 잔여 경로 회색/저투명도 표시, 사각형 마커 및 이중 사각 링 연출)
+- [x] **PointView** ???�???�태(Normal/Wall/Abyss) ?�시
+- [x] **GridVisualManager** ??범위·?�동 ?�디케?�터 ?�각??- [x] **MoveIndicator** ???�동 가??경로 ?�각??(1???�동 마커, ?�여 경로 ?�색/?�?�명???�시, ?�각??마커 �??�중 ?�각 �??�출)
 
-### Entity / Life & 상호작용
-- [x] **EntityData** / **LifeData** — 체력, 스테미나, 쉴드, 스탯
-- [x] **상태 효과(StatusEffect) 중첩 메커니즘 전면 개편**
-  - CC (Stun, Knockdown, Silence, Fear, Freeze) 및 SuperArmor 단일 인스턴스 + `Mathf.Max` 갱신
-  - Knockdown 최대 체력 30% 즉발 피해 최초 1회 제한
-  - DoT (Bleeding, Burning, Poisoning) 독립 인스턴스 병렬 유지
-  - Burning vs Freeze 상호 전소멸(All-Clear)
-  - Curse 단일 인스턴스 + 지속시간 갱신 및 `value` 누적 합산
-- [x] **죽음의 문턱 (Death's Door) & 죽음 저항 (deathResistProp) 시스템**
-  - 다키스트 던전 스타일 사망 유예 및 사망 굴림(Deathblow Check)
-  - `deathResistProp` (0.0f ~ 1.0f) 기반 생사 판정 (`Random.value < deathResistProp`) 및 0 HP 유지
-  - 직접 타격 및 DoT(출혈, 화상, 중독) 틱 피해 피격 시에도 사망 굴림 적용
-  - 최대 5스택 중첩 디버프 및 하한선(최소 저항 10%, 최대 체력/SP 50%, 공격력 40% 등) 보장
-  - 기본 최대 체력의 50% 이상 회복 시 문턱 극복 및 스탯 전면 원복
-  - 전용 이벤트(`EntityDeathsDoorEnteredEvent`, `EntityDeathResistedEvent`, `EntityDeathsDoorClearedEvent`) 및 상태별 연출/플로팅 텍스트
-- [x] **대기(휴식) 시스템 개선 및 일원화 (방안 A)**
-  - 대기 시 스태미나만 회복(`Rest()`), 체력 자동 회복 분리(`Heal()`)
-  - AI 공통 휴식 루틴(`ExecuteEnemyRest`) 및 최장 쿨타임 카드 버리기(`DiscardHighestCooldownCard`) 캡슐화
-- [x] **LifeView**
-  - 체력바(HUD), 사망 처리 (사망 애니메이션 후 타일 분리 및 Destroy)
-  - DoT 인스턴스별 개별 데미지 처리 및 0.8배 축소 FloatingText 연속 팝업
-  - FloatingText 발생 대상을 오직 `Life` 엔티티로 제한 (Projectile/Obstacle 제외)
-  - 넉백(Knockback) 시 바라보는 방향 유지(밀려나는 연출)
+### Entity / Life & ?�호?�용
+- [x] **EntityData** / **LifeData** ??체력, ?�테미나, ?�드, ?�탯
+- [x] **체간(Posture) & ?�태미나 / 그로�?Groggy) 메커?�즘 ?�면 개편**
+  - **?�태미나 ?�치 ?��??�링**: 기본 ?�한 100 �??��??�복??25(최�?치의 25%)�??�향. ?�체 EntityDataModel(?�레?�어 100, 고블�?50, 궁수 40, ?�라??30 ?? �?CardDataModel(10~40 SP) ?��????�괄 ?�조??  - **체간(SP) ?�격 ?�해 ?�동**: ?�격 ??체력뿐만 ?�니??`finalDamage × spDamageMultiplier`만큼 기본 SP ?��?지가 ?�성?�며(기본 배율 `0.5f`), 강인?�에 ?�해 2�?경감 ?�용
+  - **강인??Poise) 기반 SP ?��?지 경감**: `LifeStat`??`poise` ?�설. 경감�?`poise / (100 + poise)` ?�용. ?�전 경감 ??0 ?�용. ?�티?�별 차등 배분 (Player 10, GiantDummy 25, Goblin 5, SkeletonArcher/Slime 0)
+  - **그로�?Groggy) ?�태?�과 개편**:
+    - ?�태미나 0 ?�하 ?�달 ??1?�간 그로�??�태 부??(기존 30% 체력 즉발 ?�해 ??��)
+    - 받는 ?�해 50% 증폭 �?모든 ?�동 불�? (?�레?�어 ?�동 ??진행, ??AI ?�동 ?�킵 �?공격 ?�고 취소)
+    - **발동 즉시 50% ?�동 ?�복 ??��**: ?�태미나??고갈(0) ?�태�??��??�여 ?�동???�식(Rest) ?�는 ?�전거리 ?�보 ?�도
+    - **중첩 ??지???�간�?갱신(Duration Refresh)**: 그로�??�태 �?추�? ?�격?�로 ?�발?????�로??중첩?�나 ?�탯 ??�� ?�이 지???�간�?갱신 (`Mathf.Max`)
+  - **AI ?�술 ?�식 개선**: SP가 20% ?�하�??�어지�?그로�?방�?�??�해 ?�선?�으�??��??�식) ?�단
+- [x] **?�태 ?�과(StatusEffect) 중첩 메커?�즘 개편**
+  - CC (Stun, Groggy, Silence, Fear, Freeze) �?Unstoppable(?�지 불�?) ?�일 ?�스?�스 + `Mathf.Max` 갱신
+  - DoT (Bleeding, Burning, Poisoning) ?�립 ?�스?�스 병렬 ?��?
+  - Burning vs Freeze ?�호 ?�소�?All-Clear)
+  - Curse ?�일 ?�스?�스 + 지?�시�?갱신 �?`value` ?�적 ?�산
+- [x] **?�규 ?�투 ?�태?�과 �?채널�??�스???�장 ?�료**
+  - Provocation (?�발, 12): ?��?고정 �??�발??방향 최단 경로 강제 추격
+  - Airborne (?�어�? 13): 1???�동 불�?, ?�킬/채널�?즉시 캔슬, DOTween Y�??�우�?착�? 바운???�출
+  - Invincible (무적, 14): 모든 ?�해 0 처리 (?�해 무적), CC/?�백?� ?�상 ?�용
+  - EnhanceStab (찌르�?강화, 15): ???�용 ?�태?�과. 보유 �??�연�? 찌르�?발동 ???�해 50% 증폭 �?1�??�백/�?충돌 기절 ?�발 ???�모
+  - ?�신 집중 (Channeling) ?�퍼?�이???�스?? 기절�?마찬가지�?집중 ?�안 ?�동 ??진행, �???`OnChannelTick`, ?�료 ??`OnChannelComplete`, ?�드 CC ?�격 ??`CancelChanneling` ?�터?�트 취소
+- [x] **??Ren) 기본 ??5�?�??�용 ?�투 ?�션/?�택�?구축 ?�료**
+  - **?�규 범위 ?�택�?2�?*: `AroundCircleCastSelector` (?�클리드 반경 R ?�내 ?�형), `FrontBoxTargetSelector` (공격 방향 기�? ?�방 W x D ?�각??
+  - **?�용 ?�투 ?�션 4�?*: `SlashAttackEntityAction` (베기), `StabAttackEntityAction` (찌르�?, `WindwallEntityAction` (바람 ?�막), `BreatheEntityAction` (기류 ?�흡)
+  - **?�적 ?�치 ?�매???�장**: `_prototype_CardDescriptionFormatter`?????�용 ??5�??�국???�플�?ko/en) �?공격??계수 ?�시�?반영
+  - **기본 ??10??구성 �??�레?�어 바인??*: 바람걸음 2?? 베기 3?? 찌르�?1?? 바람 ?�막 2?? 기류 ?�흡 2?�을 `Player.asset`??기본 바인???�료
+- [x] **Life ?�시�?구성 ?�스??구현 ?�료**
+  - **?�프??*: `_prototype_LifePassiveData` 추상 기반 ?�래?? `_prototype_LifePassiveRegistry` ?�적 ?�토�? `_prototype_LifeData` ??`passiveIds`/`_passives`/`uniquePassive` �???브릿지 메서??구축
+  - **?�이?�라???�동**: `TakeDamage` ?�격/?�해 ??`OnDamageDealt`, `OnDamageReceived`), `Die` ????`OnKillConfirmed`), `_prototype_EntityView.OnPostTick` ????`OnTick`), `_prototype_PlayerController` 카드 ?�전 ??비용 ?�버?�이??`OnBeforeCardUse`) �??�전 ????`OnCardUsed`)
+  - **??고유 ?�시�?(기류 축적 & 칼바??**: 공격 ?�해 ?�중 ???�택 ?�적(3?�택), 칼바??발동 ???�음 Attack 카드 0 SP ?�모 �?반경 1�?광역 `[60 + 공격??75%]` 물리 ?�해 + 1???�어�?  - **?�택 ?�시�?6�?구현**:
+    - 결의 (`passive_resolute`): 처치 ??SP +2, 최�? SP ??방어/?�??+40%
+    - ?�영 (`passive_afterimage`): Dash ?�형 카드 ?�전 ???�드 카드 쿨�???-1??    - ?��? (`passive_blood_demon`): HP 50% 미만 ??처치 ?�복 `[25 + ?��?체력 30%]` (최�? 체력 50% �?
+    - ??�� 축적 (`passive_torrent_gauge`): 기류 5?�택/10??변�? 기류 ?�모 ??3?�간 ?�해 +10%, 칼바???�해 ?�??증�?
+    - 무형??검 (`passive_formless_blade`): 칼바??물리 50% + 마법 50% 분할 �?방어/?�??30% 관??    - 불사 (`passive_immortal`): 죽음??문턱 ?�태 �?치명?� ?�률 +50%, 배율 +100%
+- [x] **죽음??문턱 (Death's Door) & 죽음 ?�??(deathResistProp) ?�스??*
+  - ?�키?�트 ?�전 ?��????�망 ?�예 �??�망 굴림(Deathblow Check)
+  - `deathResistProp` (0.0f ~ 1.0f) 기반 ?�사 ?�정 (`Random.value < deathResistProp`) �?0 HP ?��?
+  - 직접 ?��?�?DoT(출혈, ?�상, 중독) ???�해 ?�격 ?�에???�망 굴림 ?�용
+  - 최�? 5?�택 중첩 ?�버??�??�한??최소 ?�??10%, 최�? 체력/SP 50%, 공격??40% ?? 보장
+  - 기본 최�? 체력??50% ?�상 ?�복 ??문턱 극복 �??�탯 ?�면 ?�복
+  - ?�용 ?�벤??`EntityDeathsDoorEnteredEvent`, `EntityDeathResistedEvent`, `EntityDeathsDoorClearedEvent`) �??�태�??�출/?�로???�스??- [x] **?��??�식) ?�스??개선 �??�원??(방안 A)**
+  - ?��????�태미나�??�복(`Rest()`), 체력 ?�동 ?�복 분리(`Heal()`)
+  - AI 공통 ?�식 루틴(`ExecuteEnemyRest`) �?최장 쿨�???카드 버리�?`DiscardHighestCooldownCard`) 캡슐??- [x] **LifeView**
+  - 체력�?HUD), ?�망 처리 (?�망 ?�니메이?????�??분리 �?Destroy)
+  - DoT ?�스?�스�?개별 ?��?지 처리 �?0.8�?축소 FloatingText ?�속 ?�업
+  - FloatingText 발생 ?�?�을 ?�직 `Life` ?�티?�로 ?�한 (Projectile/Obstacle ?�외)
+  - ?�백(Knockback) ??바라보는 방향 ?��?(밀?�나???�출)
 - [x] **ObstacleData / ObstacleView**
-- [x] **ProjectileData / ProjectileView** — 방향성 투사체, 추적 투사체, 동일 Side 투사체 아군 공격 보호
-- [x] **LaserProjectileData / LaserProjectileView** — 레이저 투사체
-
-### 카드 시스템
-- [x] **CardData 구조 개편 및 다형성 분리**
-  - 추상 기본 클래스 `_prototype_CardData`
-  - 전투 전용 `_prototype_BattleCardData` (쿨타임, 코스트, 범위, 앵커링, 액션 목록)
-  - 탐색 상호작용 전용 `_prototype_InteractionCardData` (상호작용 키, 가시성 조건, 실행 로직)
-- [x] **TargetAnchorType (조준 앵커링)**
-  - `FollowCaster`: 시전자 피격/넉백 이동 시 공격 범위 실시간 재계산 (공격 회피/헛치기 전술 가능)
-  - `FixedGround`: 시전자 이동과 무관하게 바닥 좌표 고정
-- [x] **카드 가시성(Visibility) 및 제공자(CardProvider) 시스템**
-  - 카드 내부에 `visibilityConditions` 직접 캡슐화 및 `IsVisible(context)` 자체 평가
-  - 탐색 모드 시 인접 엔티티의 `_prototype_CardProviderComponentData`를 통한 상호작용 카드 동적 수급
-- [x] **CardDeck 순환 & 쿨타임 메커니즘 고도화**
-  - 드로우 시 쿨타임 초기화 및 틱당 쿨타임 감소 (`1 + drawQuickness`)
-  - 기절(`Stun`) 시 자동 틱 중에도 정상 쿨타임 감소
-  - 넘어짐(`Knockdown`) 시 쿨타임 감소 대신 반대로 쿨타임 증가(지연 페널티)
-  - 침묵(`Silence`) 시 손패 잠금 오버레이 및 사용 차단
-  - 대기(휴식) 시 잔여 쿨타임이 가장 긴 카드를 버리는 `DiscardHighestCooldownCard` 로직
-- [x] **EntityAction 체계 (구 CardAction)**
-  - DamageEntityAction — 물리/마법/고정 피해 및 크리티컬
-  - KnockbackEntityAction — 넉백 (경로 및 벽 충돌 검증)
-  - ApplyStatusEffectEntityAction — 상태효과 부여
-  - MoveToPointEntityAction — 즉시 이동
-  - SpawnDirectionalProjectileEntityAction — 방향성 투사체 생성
-  - SpawnTargetedProjectileEntityAction — 추적 투사체 생성
-  - AreaEffectAction — 지속 장판/지역 효과 생성
+- [x] **ProjectileData / ProjectileView** ??방향???�사�? 추적 ?�사�? ?�일 Side ?�사�??�군 공격 보호
+- [x] **LaserProjectileData / LaserProjectileView** ???�이?� ?�사�?
+### 카드 ?�스??- [x] **CardData 구조 개편 �??�형??분리**
+  - 추상 기본 ?�래??`_prototype_CardData`
+  - ?�투 ?�용 `_prototype_BattleCardData` (쿨�??? 코스?? 범위, ?�커�? ?�션 목록)
+  - ?�색 ?�호?�용 ?�용 `_prototype_InteractionCardData` (?�호?�용 ?? 가?�성 조건, ?�행 로직)
+- [x] **TargetAnchorType (조�? ?�커�?**
+  - `FollowCaster`: ?�전???�격/?�백 ?�동 ??공격 범위 ?�시�??�계??(공격 ?�피/?�치�??�술 가??
+  - `FixedGround`: ?�전???�동�?무�??�게 바닥 좌표 고정
+- [x] **카드 가?�성(Visibility) �??�공??CardProvider) ?�스??*
+  - 카드 ?��???`visibilityConditions` 직접 캡슐??�?`IsVisible(context)` ?�체 ?��?
+  - ?�색 모드 ???�접 ?�티?�의 `_prototype_CardProviderComponentData`�??�한 ?�호?�용 카드 ?�적 ?�급
+- [x] **CardDeck ?�환 & 쿨�???메커?�즘 고도??*
+  - ?�로????쿨�???초기??�??�당 쿨�???감소 (`1 + drawQuickness`)
+  - 기절(`Stun`) �??�어�?`Airborne`) ???�동 ??중에???�상 쿨�???감소
+  - 그로�?`Groggy`) ??쿨�???감소 ?�??반�?�?쿨�???증�?(지???�널??
+  - 침묵(`Silence`) ???�패 ?�금 ?�버?�이 �??�용 차단
+  - ?�신 집중(`Channeling`) ?�동 ??진행 �?쿨�???감소 ?�상 진행
+  - ?��??�식) ???�여 쿨�??�이 가??�?카드�?버리??`DiscardHighestCooldownCard` 로직
+- [x] **EntityAction 체계 (�?CardAction)**
+  - DamageEntityAction ??물리/마법/고정 ?�해 �??�리?�컬
+  - KnockbackEntityAction ???�백 (경로 �?�?충돌 검�?
+  - ApplyStatusEffectEntityAction ???�태?�과 부??  - MoveToPointEntityAction ??즉시 ?�동
+  - SpawnDirectionalProjectileEntityAction ??방향???�사�??�성
+  - SpawnTargetedProjectileEntityAction ??추적 ?�사�??�성
+  - AreaEffectAction ??지???�판/지???�과 ?�성
 - [x] **CastRangeSelector** : Self, AroundRect, Cross
-- [x] **TargetRangeSelector** : Single, Line, PenetratedLine, Arc(호/부채꼴), CrossSplash, RectSplash, Ring
+- [x] **TargetRangeSelector** : Single, Line, PenetratedLine, Arc(??부채꼴), CrossSplash, RectSplash, Ring
 
-### 샘플 카드 (ScriptableObject)
-| 카드 | 설명 |
+### ?�플 카드 (ScriptableObject)
+| 카드 | ?�명 |
 |------|------|
 | BasicAttack | 기본 근접 공격 |
-| BloodStrike | 체력 소모 강공격 |
-| DashAway | 이동 |
-| Earthquake | 범위 물리 피해 |
-| HolyNova | 범위 마법 피해 |
-| PiercingThrust | 관통 공격 |
-| ShootArrow | 화살 발사 |
-| ShootLaserCard | 레이저 발사 |
-| Snipe | 원거리 단일 공격 |
+| BloodStrike | 체력 ?�모 강공�?|
+| DashAway | ?�동 |
+| Earthquake | 범위 물리 ?�해 |
+| HolyNova | 범위 마법 ?�해 |
+| PiercingThrust | 관??공격 |
+| ShootArrow | ?�살 발사 |
+| ShootLaserCard | ?�이?� 발사 |
+| Snipe | ?�거�??�일 공격 |
 | SplashAttack | 광역 공격 |
-| StatusTestCard | 상태효과 테스트용 |
-| ThrowStone | 투석 투사체 |
+| StatusTestCard | ?�태?�과 ?�스?�용 |
+| ThrowStone | ?�석 ?�사�?|
 
 ### AI
-- [x] **MeleeChaseAI** — 근접 추격 AI (A\* 이동 + 근접 공격)
-- [x] **ArcherAI** — 원거리 AI (사거리 유지 + 화살·돌 발사)
-- [x] **StandStillAI** — 정지 AI (더미·테스트용)
-- [x] **EnemyAIController** / **EnemyAILogic** — AI 공통 실행 프레임워크
-  - 스턴 및 침묵 상태 시 공격 의도(Planned Intent) 및 공격 범위 하이라이터 자동 억제
-
+- [x] **MeleeChaseAI** ??근접 추격 AI (A\* ?�동 + 근접 공격)
+- [x] **ArcherAI** ???�거�?AI (?�거�??��? + ?�살·??발사)
+- [x] **StandStillAI** ???��? AI (?��?·?�스?�용)
+- [x] **EnemyAIController** / **EnemyAILogic** ??AI 공통 ?�행 ?�레?�워??  - ?�턴 �?침묵 ?�태 ??공격 ?�도(Planned Intent) �?공격 범위 ?�이?�이???�동 ?�제
+- [x] **???�동 ?�도(Enemy Intent) ?�각??�?배�? ?�스??*
+  - 공격(근접/?�거�??�백/?�화), ?�동, ?�태?�상(기절/?�주) ??머리 ???�도 배�? �??�험 ?�???�고
+  - **?��??�식(Rest) ???�도 배�? ?��?**: ?�이 ?��?중일 ?�는 불필?�한 ?�각???�이�?방�?�??�해 UI 미표??
 ### UI
-- [x] **PlayerUIView** — 핸드 카드, 체력/스테미나, 카드 사용 인터페이스
-  - 침묵 상태 시 손패 카드 보라색 오버레이(`SilenceOverlay`) 표시 및 클릭/드래그 차단
-  - 경고 메시지(`ShowWarning`) 팝업 연출
-  - **카드 설명 동적 수치 및 상세 계수 모드 (Alt/Shift 홀드)**
-    - 기본 모드: 시전자(플레이어)의 스탯(공격력, 주문력 등)을 반영한 최종 계산 수치 표기 (예: `물리 피해를 35만큼 줍니다.`)
-    - 상세 모드(Alt/Shift): 기본 피해량 및 스탯 반영 비율을 분해한 수식 형태 표기 (예: `물리 피해를 [10 + 공격력 100%]만큼 줍니다.`)
-    - 데미지 및 스탯 타입별 Rich Text 색상 강조 (물리/공격력: `#FF6B4A`, 마법/주문력: `#4AA8FF`, 체력: `#4ADE80`)
-    - Alt / Shift 키 실시간 감지하여 손패 카드 설명 동적 리프레시
-  - **다국어 현지화(Localization) 지원 (Unity Localization)**
-    - Unity Localization 패키지 연동 (`Cards_Table`, `Stats_Table`)
-    - 전체 21종 카드(전투 14종, 상호작용 7종)에 대한 한국어(`ko`) / 영어(`en`) 템플릿 및 스탯 용어 등록
-    - `_prototype_CardDescriptionFormatter` 기반 런타임 다국어 자동 전환 및 내장 카탈로그 사전 Fallback
-  - **획득 알림 모달 & 좌측 획득 토스트 UI**
-    - 카드/아이템 획득 시 팝업 모달 (`_prototype_RewardNotification.uxml`) 및 좌측 누적 토스트 UI (TYPE A)
-- [x] **LifeHUD** — 체력/스테미나/쉴드 바 (월드 스페이스)
-  - 상태효과 그룹화 표시 (DoT 중첩 수 `[Bleeding x2 (5t)]`, 저주 누적치 `[Curse -55 (4t)]`, CC 잔여 틱 `[Stun 2]`)
-- [x] **DamageText / FloatingText** — 피해량 및 상태이상 팝업 텍스트 (Life 엔티티 전용)
+- [x] **PlayerUIView** ???�드 카드, 체력/?�테미나, 카드 ?�용 ?�터?�이??  - 침묵 ?�태 ???�패 카드 보라???�버?�이(`SilenceOverlay`) ?�시 �??�릭/?�래�?차단
+  - 경고 메시지(`ShowWarning`) ?�업 ?�출
+  - **카드 ?�명 ?�적 ?�치 �??�세 계수 모드 (Alt/Shift ?�??**
+    - 기본 모드: ?�전???�레?�어)???�탯(공격?? 주문??????반영??최종 계산 ?�치 ?�기 (?? `물리 ?�해�?35만큼 줍니??`)
+    - ?�세 모드(Alt/Shift): 기본 ?�해??�??�탯 반영 비율??분해???�식 ?�태 ?�기 (?? `물리 ?�해�?[10 + 공격??100%]만큼 줍니??`)
+    - ?��?지 �??�탯 ?�?�별 Rich Text ?�상 강조 (물리/공격?? `#FF6B4A`, 마법/주문?? `#4AA8FF`, 체력: `#4ADE80`)
+    - Alt / Shift ???�시�?감�??�여 ?�패 카드 ?�명 ?�적 리프?�시
+  - **?�국???��???Localization) 지??(Unity Localization)**
+    - Unity Localization ?�키지 ?�동 (`Cards_Table`, `Stats_Table`)
+    - ?�체 21�?카드(?�투 14�? ?�호?�용 7�????�???�국??`ko`) / ?�어(`en`) ?�플�?�??�탯 ?�어 ?�록
+    - `_prototype_CardDescriptionFormatter` 기반 ?��????�국???�동 ?�환 �??�장 카탈로그 ?�전 Fallback
+  - **?�득 ?�림 모달 & 좌측 ?�득 ?�스??UI**
+    - 카드/?�이???�득 ???�업 모달 (`_prototype_RewardNotification.uxml`) �?좌측 ?�적 ?�스??UI (TYPE A)
+- [x] **LifeHUD** ??체력/?�테미나/?�드 �?(?�드 ?�페?�스)
+  - ?�태?�과 그룹???�시 (DoT 중첩 ??`[Bleeding x2 (5t)]`, ?��??�적�?`[Curse -55 (4t)]`, CC ?�여 ??`[Stun 2]`)
+- [x] **DamageText / FloatingText** ???�해??�??�태?�상 ?�업 ?�스??(Life ?�티???�용)
 
-### 기타 & 리팩토링
-- [x] **PlayerController** — 입력 처리, 이동, 카드 선택·사용, 스턴 자동 진행 코루틴, 타겟팅 가드
-- [x] **CameraController** — 회전, 줌, 플레이어 추적
-- [x] **InteractionManager** — 상호작용 및 피해/상태효과 처리
-- [x] **PixelPerfectCameraConfig** — 픽셀 퍼펙트 카메라 설정
-- [x] **Floating UI 프리팹 책임 분리** — BootStrapper에서 PlayerController/PlayerUIView로 이관
+### 기�? & 리팩?�링
+- [x] **PlayerController** ???�력 처리, ?�동, 카드 ?�택·?�용, ?�턴 ?�동 진행 코루?? ?�겟팅 가??- [x] **CameraController** ???�전, �? ?�레?�어 추적
+- [x] **InteractionManager** ???�호?�용 �??�해/?�태?�과 처리
+- [x] **PixelPerfectCameraConfig** ???��? ?�펙??카메???�정
+- [x] **Floating UI ?�리??책임 분리** ??BootStrapper?�서 PlayerController/PlayerUIView�??��?
 
 ---
 
-## 미구현 / 진행 중 항목
+## 미구??/ 진행 �???��
 
-> 이 항목들은 _Game/ 레이어에서 본격 구현 예정이다.
+> ????��?��? _Game/ ?�이?�에??본격 구현 ?�정?�다.
 
-### 맵 시스템
-- [ ] Level 간 이동 (워프 포인트 실제 전환)
-- [ ] 맵 절차적 생성 (MapGenerator는 _Game에 구현됨, 프로토타입 미적용)
-- [ ] Room 유형별 이벤트 처리 (Shop, Puzzle, Boss 등)
+### �??�스??- [ ] Level �??�동 (?�프 ?�인???�제 ?�환)
+- [ ] �??�차???�성 (MapGenerator??_Game??구현?? ?�로?��???미적??
+- [ ] Room ?�형�??�벤??처리 (Shop, Puzzle, Boss ??
 
-### 카드 시스템
-- [ ] 유물(Relic) 시스템
-- [ ] 카드 획득·강화·삭제 시스템
-- [ ] 저주 카드 메커니즘
-- [ ] Interaction 카드 (탐색 모드 상호작용)
+### 카드 ?�스??- [ ] ?�물(Relic) ?�스??- [ ] 카드 ?�득·강화·??�� ?�스??- [ ] ?��?카드 메커?�즘
+- [ ] Interaction 카드 (?�색 모드 ?�호?�용)
 
 ### 게임 루프
-- [ ] 로그라이크 런 흐름 (시작 → 레벨 → 보스 → 종료)
-- [ ] 캐릭터 선택 화면
-- [ ] 게임 결과 처리 (경험치 획득, 영구 능력치 강화)
-- [ ] 게임 저장·불러오기 (WorldData 직렬화 — _Game에 일부 구현)
+- [ ] 로그?�이?????�름 (?�작 ???�벨 ??보스 ??종료)
+- [ ] 캐릭???�택 ?�면
+- [ ] 게임 결과 처리 (경험�??�득, ?�구 ?�력�?강화)
+- [ ] 게임 ?�?�·불?�오�?(WorldData 직렬????_Game???��? 구현)
 
-### UI / 연출
-- [ ] 타이틀 화면
-- [ ] 인게임 Pause 화면
-- [ ] 카드 보상 선택 UI
-- [ ] 레벨 전환 연출
+### UI / ?�출
+- [ ] ?�?��? ?�면
+- [ ] ?�게??Pause ?�면
+- [ ] 카드 보상 ?�택 UI
+- [ ] ?�벨 ?�환 ?�출
 
-### 적·보스
-- [ ] 중간 보스 / 최종 보스 설계
-- [ ] 다양한 적 AI 패턴
+### ?�·보??- [ ] 중간 보스 / 최종 보스 ?�계
+- [ ] ?�양????AI ?�턴
 
 ---
 
-## _Game/ 레이어 현황 (실제 빌드 타겟)
+## _Game/ ?�이???�황 (?�제 빌드 ?��?
 
-_Game/에는 프로토타입과 독립적으로 도메인 모델과 시스템이 구현되어 있다.
+_Game/?�는 ?�로?��??�과 ?�립?�으�??�메??모델�??�스?�이 구현?�어 ?�다.
 
-| 영역 | 현황 |
+| ?�역 | ?�황 |
 |------|------|
-| 도메인 모델 (Data 객체) | ✅ 정의 완료 |
-| MapGenerator | ✅ 구현 완료 |
-| ArchiveManager / Archive 문서 | ✅ 구현 완료 |
-| Bootstrapper / GameManager / UserDataManager | ✅ 기본 구현 |
-| TickManager, WorldManager, SignalHub | ✅ 기본 구현 |
-| View Layer (PointView, RoomView, LevelView) | ✅ 기본 구현 |
-| 카드 사용·전투 처리 | ❌ 미구현 |
-| 플레이 모드 전환 | ❌ 미구현 |
-| 실제 게임 루프 통합 | ❌ 미구현 |
+| ?�메??모델 (Data 객체) | ???�의 ?�료 |
+| MapGenerator | ??구현 ?�료 |
+| ArchiveManager / Archive 문서 | ??구현 ?�료 |
+| Bootstrapper / GameManager / UserDataManager | ??기본 구현 |
+| TickManager, WorldManager, SignalHub | ??기본 구현 |
+| View Layer (PointView, RoomView, LevelView) | ??기본 구현 |
+| 카드 ?�용·?�투 처리 | ??미구??|
+| ?�레??모드 ?�환 | ??미구??|
+| ?�제 게임 루프 ?�합 | ??미구??|

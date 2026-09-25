@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Serialization;
 
 namespace TDG0407._prototype
 {
@@ -10,9 +11,13 @@ namespace TDG0407._prototype
         public int redPower = 15;
         public int bluePower = 0;
 
+        // 행동 속도 (1틱당 가능한 행동 횟수)
+        public int speed = 1;
+
         // 방어력
         public int redResist;
         public int blueResist;
+        public int poise = 0; // 강인도 (SP 데미지 경감)
 
         // 덱 관련
         public int handCardSlotCount = 5;
@@ -27,10 +32,16 @@ namespace TDG0407._prototype
         public int freezeResist;
         public int silenceResist;
         public int fearResist;
-        public int knockdownResist;
+        [FormerlySerializedAs("knockdownResist")]
+        public int groggyResist;
+        public int provocationResist;
+        public int airborneResist;
+
+        [Obsolete("Use groggyResist instead.")]
+        public int knockdownResist { get => groggyResist; set => groggyResist = value; }
 
         // 회복 관련
-        public int staminaRecoverAmount = 3;
+        public int staminaRecoverAmount = 25;
 
         // 기타
         public int knockbackResist = 0;
@@ -45,8 +56,10 @@ namespace TDG0407._prototype
         {
             this.redPower = other.redPower;
             this.bluePower = other.bluePower;
+            this.speed = other.speed;
             this.redResist = other.redResist;
             this.blueResist = other.blueResist;
+            this.poise = other.poise;
             this.handCardSlotCount = other.handCardSlotCount;
             this.drawQuickness = other.drawQuickness;
             this.curseResist = other.curseResist;
@@ -57,7 +70,9 @@ namespace TDG0407._prototype
             this.freezeResist = other.freezeResist;
             this.silenceResist = other.silenceResist;
             this.fearResist = other.fearResist;
-            this.knockdownResist = other.knockdownResist;
+            this.groggyResist = other.groggyResist;
+            this.provocationResist = other.provocationResist;
+            this.airborneResist = other.airborneResist;
             this.staminaRecoverAmount = other.staminaRecoverAmount;
             this.knockbackResist = other.knockbackResist;
             this.deathResistProp = other.deathResistProp;

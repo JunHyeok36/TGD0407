@@ -54,7 +54,13 @@ namespace TDG0407._prototype
                 _prototype_PlayModeManager.Instance.Initialize();
             }
 
-            // 7. 적 AI 초기 의도(Intent) 계산 및 위험 타일 시각화
+            // 7. 플레이어 컨트롤러 초기화 (틱 리스너 등록 및 초기 덱 드로우)
+            if (_prototype_PlayerController.Instance != null)
+            {
+                _prototype_PlayerController.Instance.Initialize();
+            }
+
+            // 8. 적 AI 초기 의도(Intent) 계산 및 위험 타일 시각화
             if (_prototype_GridManager.Instance != null)
             {
                 foreach (var life in _prototype_GridManager.Instance.GetAllLifeViews())
@@ -64,12 +70,6 @@ namespace TDG0407._prototype
                         enemyAI.EvaluateInitialIntent();
                     }
                 }
-            }
-
-            // 8. 플레이어 컨트롤러 초기화 (틱 리스너 등록 및 초기 덱 드로우)
-            if (_prototype_PlayerController.Instance != null)
-            {
-                _prototype_PlayerController.Instance.Initialize();
             }
 
             // 9. 플레이어 UI 뷰 초기화 (UI 바인딩, 모드 리스너 등록, UI 갱신)

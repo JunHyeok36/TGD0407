@@ -19,8 +19,8 @@ MonoBehaviour:
     _cur: 100
   stamina:
     _min: 0
-    _max: 8
-    _cur: 8
+    _max: 80
+    _cur: 80
   point:
     x: 0
     y: 0
@@ -33,10 +33,12 @@ MonoBehaviour:
     _max: 1.8
   components: []
   lifeStat:
-    redPower: 7
+    redPower: 17
     bluePower: 0
-    redResist: 14
+    speed: 1
+    redResist: 433
     blueResist: 17
+    poise: 5
     handCardSlotCount: 3
     drawQuickness: 0
     curseResist: 0
@@ -47,8 +49,10 @@ MonoBehaviour:
     freezeResist: 0
     silenceResist: 0
     fearResist: 0
-    knockdownResist: 0
-    staminaRecoverAmount: 3
+    groggyResist: 0
+    provocationResist: 0
+    airborneResist: 0
+    staminaRecoverAmount: 15
     knockbackResist: 8
     deathResistProp: 0.25
     dodgeProb: 0
@@ -68,9 +72,13 @@ MonoBehaviour:
   inventoryModel: {fileID: 0}
   aiLogic:
     rid: 2475498268826272100
+  uniquePassive:
+    rid: -2
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 2475498268826272100
       type: {class: _prototype_MeleeChaseAI, ns: TDG0407._prototype, asm: Assembly-CSharp}
       data:

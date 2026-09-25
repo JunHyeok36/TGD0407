@@ -99,6 +99,26 @@ MonoBehaviour:
     m_Key: Trap_Disarm
     m_Metadata:
       m_Items: []
+  - m_Id: 2301753575043072
+    m_Key: icd_ren_windwalk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118400
+    m_Key: icd_ren_slash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118401
+    m_Key: icd_ren_stab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118402
+    m_Key: icd_ren_windwall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118403
+    m_Key: icd_ren_breathe
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -9,7 +9,7 @@ namespace TDG0407._prototype
     public abstract class _prototype_EnemyAILogic
     {
         [Range(0f, 1f)]
-        [Tooltip("AI의 실수 빈도 (0.0: 완벽한 판단, 1.0: 항상 실수). 실수 발생 시 SP가 0이 되어 녹다운(Knockdown)에 빠지는 위험을 무시하고 무리하게 카드를 발동하거나 휴식을 취하지 않습니다.")]
+        [Tooltip("AI의 실수 빈도 (0.0: 완벽한 판단, 1.0: 항상 실수). 실수 발생 시 SP가 0이 되어 그로기(Groggy)에 빠지는 위험을 무시하고 무리하게 카드를 발동하거나 휴식을 취하지 않습니다.")]
         public float mistakeRate = 0.05f;
 
         [NonSerialized] public _prototype_CardData plannedCard;
@@ -25,6 +25,22 @@ namespace TDG0407._prototype
         public virtual UniTask ExecuteAction(_prototype_EntityView entityView) { return UniTask.CompletedTask; }
         public abstract UniTask<_prototype_TickIntent> PlanAction(_prototype_EntityView entityView);
         public abstract _prototype_EnemyAILogic Clone();
+
+        public virtual _prototype_EntityData GetTargetEntity(_prototype_EntityView entityView)
+        {
+            var lifeData = entityView?.EntityData as _prototype_LifeData;
+            if (lifeData != null && lifeData.HasStatusEffect(_prototype_StatusType.Provocation))
+            {
+                var prov = lifeData.GetStatusEffect(_prototype_StatusType.Provocation);
+                if (prov != null && prov.sourceEntity != null && !prov.sourceEntity.IsDead)
+                {
+                    return prov.sourceEntity;
+                }
+            }
+
+            var playerView = _prototype_PlayerController.Instance != null ? _prototype_PlayerController.Instance.ControlledEntityView : null;
+            return playerView != null && !playerView.EntityData.IsDead ? playerView.EntityData : null;
+        }
 
         public virtual bool RollMistake()
         {
@@ -66,7 +82,7 @@ namespace TDG0407._prototype
             {
                 if (lifeData.stamina.Current < spCost) return false;
 
-                // SP가 0 이하가 되어 녹다운(Knockdown)에 빠지는 것을 방지
+                // SP가 0 이하가 되어 그로기(Groggy)에 빠지는 것을 방지
                 if (lifeData.stamina.Current <= spCost)
                 {
                     bool isMistake = allowMistake && RollMistake();

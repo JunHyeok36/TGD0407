@@ -113,10 +113,35 @@ namespace TDG0407._prototype
                 }
 
                 await InvokeEventAsync(OnPostTick);
+
+                // 틱 종료 후 모든 살아있는 엔티티의 행동 횟수(Action)를 각자의 Speed로 재충전
+                ResetAllEntityActions();
+                if (_prototype_PlayerUIView.Instance != null)
+                {
+                    _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                }
             }
             finally
             {
                 IsTickProcessing = false;
+            }
+        }
+
+        private void ResetAllEntityActions()
+        {
+            if (_prototype_GridManager.Instance != null)
+            {
+                var lifeViews = _prototype_GridManager.Instance.GetAllLifeViews();
+                if (lifeViews != null)
+                {
+                    foreach (var lv in lifeViews)
+                    {
+                        if (lv != null && lv.Data != null && !lv.Data.IsDead)
+                        {
+                            lv.Data.ResetActions();
+                        }
+                    }
+                }
             }
         }
 

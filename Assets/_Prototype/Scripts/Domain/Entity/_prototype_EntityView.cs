@@ -76,6 +76,11 @@ namespace TDG0407._prototype
             {
                 if (comp != null) await comp.OnTick(this);
             }
+            // 패시브 틱 훅 (LifeData 전용)
+            if (_entityData is _prototype_LifeData lifeData)
+            {
+                lifeData.FirePassiveOnTick();
+            }
         }
 
         public virtual async UniTask MoveTo(_prototype_PointView targetPointView, bool rotateTowardsDestination = true)

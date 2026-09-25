@@ -15,22 +15,30 @@ MonoBehaviour:
   ename: Slime
   health:
     _min: 0
-    _max: 30
-    _cur: 30
+    _max: 150
+    _cur: 150
   stamina:
     _min: 0
-    _max: 5
-    _cur: 5
+    _max: 150
+    _cur: 150
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
   components: []
   lifeStat:
     redPower: 1
     bluePower: 1
+    speed: 1
     redResist: 0
     blueResist: 0
+    poise: 0
     handCardSlotCount: 2
     drawQuickness: 0
     curseResist: 0
@@ -41,9 +49,10 @@ MonoBehaviour:
     freezeResist: 0
     silenceResist: 0
     fearResist: 0
-    knockdownResist: 0
-    healthRecoverAmount: 0
-    staminaRecoverAmount: 3
+    groggyResist: 0
+    provocationResist: 0
+    airborneResist: 0
+    staminaRecoverAmount: 10
     knockbackResist: 0
     deathResistProp: 0
     dodgeProb: 0

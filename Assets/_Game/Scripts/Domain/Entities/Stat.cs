@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Serialization;
 
 namespace TDG0407.Domain.Entities
 {
@@ -21,6 +22,7 @@ namespace TDG0407.Domain.Entities
         public int redResist = 0;
         public int blueResist = 0;
         public int yellowResist = 0;
+        public int poise = 0; // 강인도 (SP 데미지 경감)
 
         // Cards related
         public int cardSlotCount = 4;
@@ -39,7 +41,14 @@ namespace TDG0407.Domain.Entities
         public int fearResist = 1;
         public int knockbackResist = 1;
         public int curseResist = 1;
-        public int knockdownResist = 1;
+
+        [FormerlySerializedAs("knockdownResist")]
+        public int groggyResist = 1;
+        public int provocationResist = 1;
+        public int airborneResist = 1;
+
+        [Obsolete("Use groggyResist instead.")]
+        public int knockdownResist { get => groggyResist; set => groggyResist = value; }
 
         // Others
         public float healthRecoveryAmount = 1.0f;
@@ -79,7 +88,9 @@ namespace TDG0407.Domain.Entities
                 fearResist = this.fearResist,
                 knockbackResist = this.knockbackResist,
                 curseResist = this.curseResist,
-                knockdownResist = this.knockdownResist,
+                groggyResist = this.groggyResist,
+                provocationResist = this.provocationResist,
+                airborneResist = this.airborneResist,
 
                 healthRecoveryAmount = this.healthRecoveryAmount,
                 staminaRecoveryAmount = this.staminaRecoveryAmount,

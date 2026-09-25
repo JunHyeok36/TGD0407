@@ -44,8 +44,9 @@ namespace TDG0407._prototype
         }
 
         private System.IDisposable _statusChangeSub;
-        private bool _isStunAutoProgressing = false;
-        public bool IsStunAutoProgressing => _isStunAutoProgressing;
+        private bool _isAutoProgressing = false;
+        public bool IsAutoProgressing => _isAutoProgressing;
+        public bool IsStunAutoProgressing => _isAutoProgressing;
 
         private void Awake()
         {
@@ -66,6 +67,12 @@ namespace TDG0407._prototype
                 _statusChangeSub = _prototype_EventBus.Listen<EntityStatusChangedEvent>(OnEntityStatusChanged);
             }
 
+            if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.ChannelingController != null)
+            {
+                lifeView.ChannelingController.OnChannelStarted -= OnPlayerChannelStarted;
+                lifeView.ChannelingController.OnChannelStarted += OnPlayerChannelStarted;
+            }
+
             if (!_initialDrawDone && _controlledEntityView != null && _controlledEntityView.EntityData != null)
             {
                 _initialDrawDone = true;
@@ -78,20 +85,33 @@ namespace TDG0407._prototype
             _prototype_TickManager.UnregisterPostTick(OnPostTick);
             _statusChangeSub?.Dispose();
             _statusChangeSub = null;
+
+            if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.ChannelingController != null)
+            {
+                lifeView.ChannelingController.OnChannelStarted -= OnPlayerChannelStarted;
+            }
+        }
+
+        private void OnPlayerChannelStarted(_prototype_IChanneledOperation op)
+        {
+            CancelTargeting();
+            _prototype_GridVisualManager.Instance?.HideMovementPath();
+            _prototype_GridVisualManager.Instance?.HighlightPoint(null);
+            StartAutoProgression().Forget();
         }
 
         private void OnEntityStatusChanged(EntityStatusChangedEvent evt)
         {
             if (_controlledEntityView == null || evt.Target != _controlledEntityView.EntityData) return;
 
-            if (evt.Effect.type == _prototype_StatusType.Stun)
+            if (evt.Effect.type == _prototype_StatusType.Stun || evt.Effect.type == _prototype_StatusType.Groggy || evt.Effect.type == _prototype_StatusType.Airborne)
             {
                 if (evt.IsAdded)
                 {
                     CancelTargeting();
                     _prototype_GridVisualManager.Instance?.HideMovementPath();
                     _prototype_GridVisualManager.Instance?.HighlightPoint(null);
-                    StartStunAutoProgression().Forget();
+                    StartAutoProgression().Forget();
                 }
             }
             else if (evt.Effect.type == _prototype_StatusType.Silence)
@@ -104,27 +124,47 @@ namespace TDG0407._prototype
             }
         }
 
-        public async UniTaskVoid StartStunAutoProgression()
+        public bool ShouldAutoProgress(out bool isStunned, out bool isAirborne, out bool isChanneling, out bool isZeroSpeed)
         {
-            if (_isStunAutoProgressing) return;
-            _isStunAutoProgressing = true;
+            isStunned = false;
+            isAirborne = false;
+            isChanneling = false;
+            isZeroSpeed = false;
+
+            if (_controlledEntityView == null || _controlledEntityView.EntityData is not _prototype_LifeData lifeData || lifeData.IsDead)
+                return false;
+
+            isStunned = lifeData.HasStatusEffect(_prototype_StatusType.Stun) || lifeData.HasStatusEffect(_prototype_StatusType.Groggy);
+            isAirborne = lifeData.HasStatusEffect(_prototype_StatusType.Airborne);
+
+            var lifeView = _controlledEntityView as _prototype_LifeView;
+            isChanneling = lifeView != null && lifeView.ChannelingController != null && lifeView.ChannelingController.IsChanneling;
+
+            isZeroSpeed = lifeData.Speed <= 0;
+
+            return isStunned || isAirborne || isChanneling || isZeroSpeed;
+        }
+
+        public bool ShouldAutoProgress(out bool isStunned, out bool isAirborne, out bool isChanneling)
+        {
+            return ShouldAutoProgress(out isStunned, out isAirborne, out isChanneling, out _);
+        }
+
+        public async UniTaskVoid StartAutoProgression()
+        {
+            if (_isAutoProgressing) return;
+            _isAutoProgressing = true;
 
             try
             {
-                while (_controlledEntityView != null &&
-                       _controlledEntityView.EntityData is _prototype_LifeData lifeData &&
-                       !lifeData.IsDead &&
-                       lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+                while (ShouldAutoProgress(out bool isStunned, out bool isAirborne, out bool isChanneling, out bool isZeroSpeed))
                 {
                     if (_prototype_TickManager.IsTickProcessing)
                     {
                         await UniTask.WaitWhile(() => _prototype_TickManager.IsTickProcessing);
                     }
 
-                    if (_controlledEntityView == null ||
-                        !(_controlledEntityView.EntityData is _prototype_LifeData currentLife) ||
-                        currentLife.IsDead ||
-                        !currentLife.HasStatusEffect(_prototype_StatusType.Stun))
+                    if (!ShouldAutoProgress(out isStunned, out isAirborne, out isChanneling, out isZeroSpeed))
                     {
                         break;
                     }
@@ -136,7 +176,23 @@ namespace TDG0407._prototype
                     {
                         if (_controlledEntityView != null)
                         {
-                            _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
+                            if (isStunned)
+                            {
+                                _controlledEntityView.transform.DOShakePosition(0.3f, 0.1f, 10, 90f, false, true);
+                            }
+                            else if (isAirborne)
+                            {
+                                _controlledEntityView.transform.DOShakePosition(0.2f, 0.05f, 5, 90f, false, true);
+                            }
+                            else if (isChanneling)
+                            {
+                                _controlledEntityView.transform.DOPunchScale(new Vector3(0.05f, 0.05f, 0f), 0.25f, 1, 0f);
+                            }
+                            else if (isZeroSpeed)
+                            {
+                                _prototype_PlayerUIView.Instance?.ShowWarning("속도 0 / 턴 스킵!");
+                                _controlledEntityView.transform.DOShakePosition(0.25f, 0.05f, 6, 90f, false, true);
+                            }
                         }
                         await UniTask.Delay(300);
                     });
@@ -151,9 +207,11 @@ namespace TDG0407._prototype
             }
             finally
             {
-                _isStunAutoProgressing = false;
+                _isAutoProgressing = false;
             }
         }
+
+        public void StartStunAutoProgression() => StartAutoProgression().Forget();
 
         private async UniTask OnPostTick()
         {
@@ -176,9 +234,9 @@ namespace TDG0407._prototype
                     _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
             }
 
-            if (playerLife?.Data != null && playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun) && !_isStunAutoProgressing)
+            if (ShouldAutoProgress(out _, out _, out _) && !_isAutoProgressing)
             {
-                StartStunAutoProgression().Forget();
+                StartAutoProgression().Forget();
             }
         }
 
@@ -191,10 +249,9 @@ namespace TDG0407._prototype
                 OnPostTick().Forget();
             }
 
-            var playerLife = _controlledEntityView as _prototype_LifeView;
-            bool isStunned = _isStunAutoProgressing || (playerLife != null && playerLife.Data != null && playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun));
+            bool isAuto = _isAutoProgressing || ShouldAutoProgress(out _, out _, out _);
 
-            if (isStunned)
+            if (isAuto)
             {
                 _prototype_GridVisualManager.Instance?.HideMovementPath();
                 _prototype_GridVisualManager.Instance?.HighlightPoint(null);
@@ -266,7 +323,7 @@ namespace TDG0407._prototype
                 }
 
                 // 평소에는 이동 모드로 동작: 현재 마우스 위치까지의 경로(Path)를 표시
-                if (mousePoint.HasValue)
+                if (mousePoint.HasValue && _controlledEntityView != null && _prototype_GridManager.Instance != null)
                 {
                     List<_prototype_PointView> path = _prototype_GridManager.Instance.FindPath(_controlledEntityView.Point, mousePoint.Value, _controlledEntityView.EntityData);
                     if (path != null && path.Count > 0)
@@ -332,12 +389,11 @@ namespace TDG0407._prototype
 
         private bool CheckAndHandleStun()
         {
-            var lifeData = _controlledEntityView != null ? _controlledEntityView.EntityData as _prototype_LifeData : null;
-            if (lifeData != null && lifeData.HasStatusEffect(_prototype_StatusType.Stun))
+            if (ShouldAutoProgress(out _, out _, out _))
             {
-                if (!_isStunAutoProgressing)
+                if (!_isAutoProgressing)
                 {
-                    StartStunAutoProgression().Forget();
+                    StartAutoProgression().Forget();
                 }
                 return true;
             }
@@ -381,11 +437,36 @@ namespace TDG0407._prototype
                 _prototype_PointView nextStep = path[0];
 
                 _controlledEntityLastPoint = _controlledEntityView.Point;
-                _prototype_TickManager.AdvanceTick(async () =>
+                var playerLife = _controlledEntityView as _prototype_LifeView;
+                if (playerLife?.Data != null)
                 {
-                    await _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
-                    _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
-                }).Forget();
+                    playerLife.Data.ConsumeAction(1);
+                    if (playerLife.Data.remainingActions <= 0)
+                    {
+                        _prototype_TickManager.AdvanceTick(async () =>
+                        {
+                            await _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
+                            _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                        }).Forget();
+                    }
+                    else
+                    {
+                        async UniTaskVoid MoveWithoutTick()
+                        {
+                            _isMovable = false;
+                            try
+                            {
+                                await _prototype_InteractionManager.MoveEntity(_controlledEntityView, _prototype_GridManager.Instance.GetPointView(_controlledEntityView.Point), nextStep);
+                                _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                            }
+                            finally
+                            {
+                                _isMovable = true;
+                            }
+                        }
+                        MoveWithoutTick().Forget();
+                    }
+                }
             }
         }
 
@@ -400,6 +481,7 @@ namespace TDG0407._prototype
 
             if (_controlledEntityView is _prototype_LifeView lifeView && lifeView.Data != null)
             {
+                lifeView.Data.remainingActions = 0;
                 _controlledEntityLastPoint = _controlledEntityView.Point;
                 _prototype_TickManager.AdvanceTick(async () =>
                 {
@@ -424,14 +506,25 @@ namespace TDG0407._prototype
             var playerLife = _controlledEntityView as _prototype_LifeView;
             if (playerLife?.Data?.cardDeck != null)
             {
-                // 일반 버리기 처리 (버린 카드 더미로 이동)
-                playerLife.Data.cardDeck.handedCardDatas.Remove(cardToDiscard);
-                playerLife.Data.cardDeck.discardedCardDatas.Add(cardToDiscard);
+                playerLife.Data.cardDeck.MoveCardOnDiscard(cardToDiscard);
 
                 // 시각적 효과 (아래로 납작해졌다가 돌아옴)
                 playerLife.transform.DOPunchScale(new Vector3(0.2f, -0.4f, 0.2f), 0.3f, 5, 1);
 
+                playerLife.Data.ConsumeAction(1);
                 _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
+                _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+
+                if (playerLife.Data.remainingActions <= 0)
+                {
+                    _controlledEntityLastPoint = _controlledEntityView.Point;
+                    _prototype_TickManager.AdvanceTick(async () =>
+                    {
+                        await UniTask.Delay(300);
+                        _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
+                        _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
+                    }).Forget();
+                }
             }
         }
 
@@ -445,8 +538,15 @@ namespace TDG0407._prototype
             var playerLife = _controlledEntityView as _prototype_LifeView;
             if (playerLife != null && playerLife.Data != null)
             {
-                if (playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun) || _isStunAutoProgressing)
+                if (playerLife.Data.HasStatusEffect(_prototype_StatusType.Stun) ||
+                    playerLife.Data.HasStatusEffect(_prototype_StatusType.Airborne) ||
+                    _isAutoProgressing)
                 {
+                    return;
+                }
+                if (playerLife.ChannelingController != null && playerLife.ChannelingController.IsChanneling)
+                {
+                    _prototype_PlayerUIView.Instance?.ShowWarning("정신 집중 중에는 다른 카드를 사용할 수 없습니다!");
                     return;
                 }
                 if (playerLife.Data.HasStatusEffect(_prototype_StatusType.Silence))
@@ -570,12 +670,37 @@ namespace TDG0407._prototype
             {
                 CancelTargeting();
                 _controlledEntityLastPoint = _controlledEntityView.Point;
-                _prototype_TickManager.AdvanceTick(async () =>
+                if (playerLife?.Data != null)
                 {
-                    await interactionCard.ExecuteInteraction(_controlledEntityView.EntityData);
-                    _prototype_PlayerUIView.Instance?.UpdatePlayerInfo();
-                    _prototype_PlayerUIView.Instance?.UpdatePlayerCardDeck();
-                }).Forget();
+                    playerLife.Data.ConsumeAction(1);
+                    if (playerLife.Data.remainingActions <= 0)
+                    {
+                        _prototype_TickManager.AdvanceTick(async () =>
+                        {
+                            await interactionCard.ExecuteInteraction(_controlledEntityView.EntityData);
+                            _prototype_PlayerUIView.Instance?.UpdatePlayerInfo();
+                            _prototype_PlayerUIView.Instance?.UpdatePlayerCardDeck();
+                        }).Forget();
+                    }
+                    else
+                    {
+                        async UniTaskVoid ExecuteWithoutTick()
+                        {
+                            _isMovable = false;
+                            try
+                            {
+                                await interactionCard.ExecuteInteraction(_controlledEntityView.EntityData);
+                                _prototype_PlayerUIView.Instance?.UpdatePlayerInfo();
+                                _prototype_PlayerUIView.Instance?.UpdatePlayerCardDeck();
+                            }
+                            finally
+                            {
+                                _isMovable = true;
+                            }
+                        }
+                        ExecuteWithoutTick().Forget();
+                    }
+                }
                 return;
             }
 
@@ -586,54 +711,62 @@ namespace TDG0407._prototype
                 return;
             }
 
-            // 1. Move card to discard pile and Deduct Cost
+            // 1. Move card to discard/destroyed pile and Deduct Cost
+            bool isDestroyed = false;
             if (playerLife?.Data?.cardDeck != null)
             {
                 if (battleCard.sourceProvider == null)
                 {
-                    playerLife.Data.cardDeck.handedCardDatas.Remove(battleCard);
-
                     var burning = playerLife.Data.GetStatusEffect(_prototype_StatusType.Burning);
-                    bool destroyed = false;
+                    bool forceDestroy = false;
                     if (burning != null)
                     {
                         float destroyProb = burning.value / (burning.value + 200f);
                         if (UnityEngine.Random.value < destroyProb)
                         {
-                            destroyed = true;
+                            forceDestroy = true;
                         }
                     }
 
-                    if (destroyed)
-                    {
-                        playerLife.Data.cardDeck.destroyedCardDatas.Add(battleCard);
-                    }
-                    else
-                    {
-                        playerLife.Data.cardDeck.discardedCardDatas.Add(battleCard);
-                    }
+                    isDestroyed = playerLife.Data.cardDeck.MoveCardOnCast(battleCard, forceDestroy);
                 }
 
                 var cost = battleCard.costValue;
                 if (cost != null)
                 {
-                    int amount = (int)cost.value;
-                    if (cost.costType == _prototype_CostType.FixedStamina)
+                    // 패시브 OnBeforeCardUse 훅 — 비용 오버라이드 질의
+                    int passiveCostOverride = -1;
+                    if (playerLife?.Data is _prototype_LifeData lifeDataForPassive)
+                        passiveCostOverride = lifeDataForPassive.QueryPassiveCostOverride(battleCard);
+
+                    int amount = passiveCostOverride >= 0 ? passiveCostOverride : (int)cost.value;
+                    if (amount > 0)
                     {
-                        playerLife.Data.stamina.Current -= amount;
-                    }
-                    else if (cost.costType == _prototype_CostType.FixedHealth)
-                    {
-                        playerLife.Data.health.Current -= amount;
+                        if (cost.costType == _prototype_CostType.FixedStamina)
+                        {
+                            playerLife.Data.stamina.Current -= amount;
+                        }
+                        else if (cost.costType == _prototype_CostType.FixedHealth)
+                        {
+                            playerLife.Data.health.Current -= amount;
+                        }
                     }
                 }
             }
 
+            // 시각 효과: 일반 사라짐 vs 파괴 사라짐 애니메이션 트리거
+            _prototype_PlayerUIView.Instance?.PlayCardCastDisappearAnimation(battleCard, isDestroyed);
+
             CancelTargeting();
 
             _controlledEntityLastPoint = _controlledEntityView.Point;
-            // 2. Advance Tick and Apply Action
-            _prototype_TickManager.AdvanceTick(async () =>
+
+            if (playerLife?.Data != null)
+            {
+                playerLife.Data.ConsumeAction(1);
+            }
+
+            async UniTask PerformBattleCardAction()
             {
                 List<_prototype_EntityData> targets = new();
                 foreach (var pt in targetRange)
@@ -668,9 +801,38 @@ namespace TDG0407._prototype
                     }
                 }
 
+                // 패시브 OnCardUsed 훅
+                if (playerLife?.Data is _prototype_LifeData lifeDataForCardUsed)
+                    lifeDataForCardUsed.FirePassiveOnCardUsed(battleCard);
+
                 _prototype_PlayerUIView.Instance.UpdatePlayerInfo();
                 _prototype_PlayerUIView.Instance.UpdatePlayerCardDeck();
-            }).Forget();
+            }
+
+            // 2. Advance Tick or apply action directly based on remainingActions
+            if (playerLife?.Data != null && playerLife.Data.remainingActions <= 0)
+            {
+                _prototype_TickManager.AdvanceTick(async () =>
+                {
+                    await PerformBattleCardAction();
+                }).Forget();
+            }
+            else
+            {
+                async UniTaskVoid CastWithoutTick()
+                {
+                    _isMovable = false;
+                    try
+                    {
+                        await PerformBattleCardAction();
+                    }
+                    finally
+                    {
+                        _isMovable = true;
+                    }
+                }
+                CastWithoutTick().Forget();
+            }
         }
 
         private void HandleHazardInteraction(_prototype_Point? mousePoint, Vector2 mousePos)

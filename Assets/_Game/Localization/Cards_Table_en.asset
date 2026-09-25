@@ -102,6 +102,29 @@ MonoBehaviour:
     m_Localized: Disarms and neutralizes the trap.
     m_Metadata:
       m_Items: []
+  - m_Id: 2301753575043072
+    m_Localized: Teleport to an area within 3 tiles.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118400
+    m_Localized: 'Deals {damage} physical damage to enemies in the front 2 tiles.
+      On hit, grants ''Triple Strike: Stab Empowered'' for 5 ticks.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118401
+    m_Localized: Deals {damage} physical damage in a 3x3 area in front. Deals 500%
+      bonus damage to projectiles and instantly destroys them.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118402
+    m_Localized: Gain a shield of {damage} for 3 ticks, and gain Unstoppable for
+      1 tick.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2301753814118403
+    m_Localized: Draws 1 card.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

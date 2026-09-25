@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5fe3716fa3c7047a013d937acdaaf4, type: 3}
+  m_Name: icd_ren_stab
+  m_EditorClassIdentifier: Assembly-CSharp::TDG0407._prototype._prototype_BattleCardDataModel
+  id: icd_ren_stab
+  descriptionLocalizationKey: icd_ren_stab
+  description: "전방 3×3 영역에 [60 + 공격력 120%]의 물리 피해를 입히고, 투사체에게는 500%의 추가 피해를 입혀 즉시 파괴합니다."
+  cardType: 1
+  costValue:
+    costType: 5
+    value: 15
+  coolTicks:
+    _min: 0
+    _max: 1
+    _cur: 1
+  castRange:
+    rid: 530000000000000001
+  targetRange:
+    rid: 530000000000000002
+  targetAnchorType: 0
+  actionList:
+  - rid: 530000000000000003
+  references:
+    version: 2
+    RefIds:
+    - rid: 530000000000000001
+      type: {class: _prototype_AroundCircleCastSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _radius: 3
+        _includeSelf: 0
+    - rid: 530000000000000002
+      type: {class: _prototype_FrontBoxTargetSelector, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        _width: 3
+        _depth: 3
+        _includeEmptyPoints: 1
+    - rid: 530000000000000003
+      type: {class: _prototype_StabAttackEntityAction, ns: TDG0407._prototype, asm: Assembly-CSharp}
+      data:
+        includeSelf: 0
+        baseDamage: 60
+        redPowerRatio: 1.2
+        wallCollisionBaseDamage: 80
+        wallCollisionRedPowerRatio: 2
+        stunDuration: 2

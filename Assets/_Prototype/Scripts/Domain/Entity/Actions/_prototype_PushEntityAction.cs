@@ -80,8 +80,8 @@ namespace TDG0407._prototype
             // 2. 생명체(LifeData) 면역/저항 검사
             if (target is _prototype_LifeData life)
             {
-                // SuperArmor 상태이상 보유 시 100% 면역
-                if (life.HasStatusEffect(_prototype_StatusType.SuperArmor))
+                // Unstoppable(저지 불가) 상태이상 보유 시 100% 면역
+                if (life.HasStatusEffect(_prototype_StatusType.Unstoppable))
                     return true;
 
                 int resist = life.lifeStat.knockbackResist;

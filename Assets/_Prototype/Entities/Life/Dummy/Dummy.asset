@@ -19,19 +19,26 @@ MonoBehaviour:
     _cur: 10000
   stamina:
     _min: 0
-    _max: 10
-    _cur: 10
+    _max: 10000
+    _cur: 10000
   point:
     x: 0
     y: 0
+  size:
+    x: 1
+    y: 1
   movementType: 0
+  heightBounds:
+    _min: 0
+    _max: 1.8
   components: []
-  side: 2
   lifeStat:
     redPower: 0
     bluePower: 0
+    speed: 1
     redResist: 0
     blueResist: 0
+    poise: 100
     handCardSlotCount: 0
     drawQuickness: 0
     curseResist: 0
@@ -42,9 +49,10 @@ MonoBehaviour:
     freezeResist: 0
     silenceResist: 0
     fearResist: 0
-    knockdownResist: 0
-    healthRecoverAmount: 5
-    staminaRecoverAmount: 3
+    groggyResist: 0
+    provocationResist: 0
+    airborneResist: 0
+    staminaRecoverAmount: 25
     knockbackResist: 0
     deathResistProp: 0
     dodgeProb: 0
@@ -56,6 +64,7 @@ MonoBehaviour:
     handedCardDatas: []
     discardedCardDatas: []
     destroyedCardDatas: []
+  inventoryModel: {fileID: 0}
   aiLogic:
     rid: 8244397786603454558
   references:

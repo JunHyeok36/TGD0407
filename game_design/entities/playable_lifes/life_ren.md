@@ -1,4 +1,4 @@
-# 렌 (Ren)
+﻿# 렌 (Ren)
 - **ID :** `life_ren`
 - **분류 :** 플레이어
 - **외형**
@@ -13,8 +13,8 @@
 | :--- | :--- | :--- | :--- | 
 | **기본** | `health` | 체력 | 170 |
 | | `shield` | 보호막 | 0 |
-| | `stamina` | 스테미나 | 5 |
-| | `staminaRecoverAmount` | 스테미나 회복량 | 3 |
+| | `stamina` | 스테미나 | 100 |
+| | `staminaRecoverAmount` | 스테미나 회복량 | 25 |
 | **힘** | `redPower` | 공격력 | 25 |
 | | `bluePower` | 주문력 | 0 |
 | | `yellowPower` | ??? | 0 |
@@ -32,7 +32,7 @@
 | | `fearResistProb` | 공포 저항률 | 10.0% |
 | | `provocationResistProb` | 도발 저항률 | 1.0% |
 | | `airborneResistProb` | 에어본 저항률 | 1.0% |
-| | `knockdownResistProb` | 넉다운 저항률 | 1.0% |
+| | `groggyResistProb` | 그로기 저항률 | 1.0% |
 | | `deathResistProb` | 죽음 저항률 | 50.0% |
 | **덱/행동** | `cardSlotCount` | 핸드 카드 슬롯 | 4 |
 | | `drawQuickness` | 카드 쿨타임 감소 | 0 |
@@ -53,7 +53,7 @@
   - 적중한 모든 적과 1칸 반경 이내에 `[60 + 공격력 75%]`의 물리 피해(적들의 거리가 가까우면 중첩 적용 가능)를 입히고 1틱만큼 **에어본**시킴
 ### 선택 패시브
 - **결의**
-  - 적을 처치할 때마다 스테미나를 2만큼 회복
+  - 적을 처치할 때마다 스테미나를 20만큼 회복
   - 스테미나가 최대치일 경우, 물리 방어력과 마법 저항력이 +40%
 - **잔영 (Afterimage)**
   - Dash 유형의 카드를 사용할 때마다 핸드에 있는 모든 카드의 쿨타임을 1틱씩 감소시킴
@@ -87,38 +87,54 @@
 ## 3. 기본 덱
 | 등급 | 카드 ID | 카드명 | 종류 | 소모값 | 쿨타임 | Anchor | CastRange | TargetRange | 설명 | 개수 | 비고 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 기본 | `icd_ren_windwalk` | 바람걸음 | Dash | 1 SP | 1 | Fixed | AroundCircle(3) | Single | 3칸 이내의 영역으로 순간이동 | ×2 | |
-| | `icd_ren_slash` | 삼연격: 베기 | Attack | 1 SP | 0 | Caster | AroundLine(2) | FrontLine(2) | 전방 2칸에 `[25 + 공격력 100%]`의 물리 피해를 입히고,<br> 적중시 **'삼연격: 찌르기' 강화** 효과를 5틱 동안 얻음  | ×3 | |
-| | `icd_ren_stab` | 삼연격: 찌르기 | Attack | 1 SP | 1 | Caster | AroundCircle(3) | FrontLine(3,3) | 전방 3×3 영역에 `[60 + 공격력 120%]`의 물리 피해,<br> 투사체에게는 500%의 추가 피해를 입힘  | ×1 | |
-| | `icd_ren_windwall` | 바람 장막 | Skill | 1 SP | 2 | Caster | Self | Single | 3틱간 [10 + 최대 체력 4%]의 보호막 획득, 1틱간 **슈퍼 아머** 효과 획득 | ×2 | |
-| | `icd_ren_breathe` | 기류 호흡 | Skill | 0 SP | 3 | Caster | Self | Single | 카드 1장 드로우, **기류 축적** 1스택 추가 | ×2 | |
+| 기본 | `icd_ren_windwalk` | 바람걸음 | Dash | 15 SP | 1 | Fixed | AroundCircle(3) | Single | 3칸 이내의 영역으로 순간이동 | ×2 | |
+| | `icd_ren_slash` | 삼연격: 베기 | Attack | 15 SP | 0 | Caster | AroundLine(2) | FrontLine(2) | 전방 2칸에 `[25 + 공격력 100%]`의 물리 피해를 입히고,<br> 적중시 **'삼연격: 찌르기' 강화** 효과를 5틱 동안 얻음  | ×3 | |
+| | `icd_ren_stab` | 삼연격: 찌르기 | Attack | 15 SP | 1 | Caster | AroundCircle(3) | FrontLine(3,3) | 전방 3×3 영역에 `[60 + 공격력 120%]`의 물리 피해,<br> 투사체에게는 500%의 추가 피해를 입히고 즉시 파괴 | ×1 | |
+| | `icd_ren_windwall` | 바람 장막 | Skill | 15 SP | 2 | Caster | Self | Single | 3틱간 [10 + 최대 체력 4%]의 보호막 획득, 1틱간 **저지 불가** 효과 획득 | ×2 | |
+| | `icd_ren_breathe` | 기류 호흡 | Skill | 0 SP | 3 | Caster | Self | Single | 카드 1장 드로우 | ×2 | |
 
 - 기류 호흡으로 스택과 패를 확보 -> 바람걸음으로 적의 측면/후면으로 진입(기류 2스택) -> 삼연격: 베기로 공격(기류 3스택 달성 및 칼바람 활성화) -> 다음 틱에 소모값이 0이 된 삼연격: 찌르기로 광역 폭발 및 **에어본** 부여.
 - 적이 강력한 공격을 예고했을 때, 칼바람 버프를 띄운 상태로 범위 공격을 적중시켜 적들을 **에어본**시켜 스킬을 캔슬하거나, 바람 장막으로 버티며 반격각을 봅니다.
 
 ## 4. 추가 덱 
 | 등급 | 카드 ID | 카드명 | 종류 | 소모값 | 쿨타임 | Anchor | CastRange | TargetRange | 설명 | 비고 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 일반 | `icd_ren_sweep` | 하단 휩쓸기 | Attack | 1 SP | 0 | Caster | AroundRect(2) | FrontArc(2) | 전방 2칸 호 영역에 `[20 + 공격력 80%]`의 물리 피해를 입히고, 스테미나를 1만큼 감소시킴 | |
-| | `icd_ren_phantom` | 잔상 스텝 | Dash | 1 SP | 2 | Fixed | AroundRect(3) | Single | 3칸 이내의 영역으로 순간이동, 1틱간 회피율 +50% | |
-| | `icd_ren_headwind` | 역풍 | Attack | 1 SP | 3 | Caster | AroundRect(1) | All | 1칸 이내의 모든 적에게 `[25 + 100% 주문력]`의 마법 피해를 입히고, 1칸 넉백시킴,<br>넉백 충돌 시 `[50 + 공격력 50%]`의 물리 피해를 입힘 | |
-| | `icd_ren_clearmind` | 명경지수 | Skill | 1 SP | 4 | Caster | Self | All | 모든 상태 이상 효과를 해제하고, 3틱간 모든 상태 이상 효과 저항률 + 30% | |
-| | `icd_ren_throwdagger` | 단검 투척 | Skill | 1 SP | 1 | Caster | AroundRect(1) | Single | 해당 방향으로 3pt의 속도로 이동하여 이동한 거리에 비례해 `[40 + 공격력 50%]`~`[150 + 공격력 350%]`(5거리일 때 최대치)의 물리 피해를 입히는 **단검**을 던점 | |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 일반 | `icd_ren_sweep` | 하단 휩쓸기 | Attack | 15 SP | 0 | Caster | AroundRect(2) | FrontArc(2) | 전방 2칸 호 영역에 `[20 + 공격력 80%]`의 물리 피해를 입히고, 스테미나(SP)를 피해량의 100%만큼 추가로 감소시킴 | |
+| | `icd_ren_phantom` | 잔상 스텝 | Dash | 15 SP | 2 | Fixed | AroundRect(3) | Single | 3칸 이내의 영역으로 순간이동, 1틱간 회피율 +50% | |
+| | `icd_ren_headwind` | 역풍 | Attack | 20 SP | 3 | Caster | AroundRect(1) | All | 1칸 이내의 모든 적에게 `[25 + 100% 주문력]`의 마법 피해를 입히고, 1칸 넉백시킴,<br>넉백 충돌 시 `[50 + 공격력 50%]`의 물리 피해를 입힘 | |
+| | `icd_ren_clearmind` | 명경지수 | Skill | 15 SP | 4 | Caster | Self | All | 모든 상태 이상 효과를 해제하고, 3틱간 모든 상태 이상 효과 저항률 + 30% | |
+| | `icd_ren_throwdagger` | 단검 투척 | Skill | 15 SP | 1 | Caster | AroundRect(1) | Single | 해당 방향으로 3pt의 속도로 이동하여 이동한 거리에 비례해 `[40 + 공격력 50%]`~`[150 + 공격력 350%]`(5거리일 때 최대치)의 물리 피해를 입히는 **단검**을 던짐 | |
 | | `icd_ren_deflect` | 흘려내기 | Skill | 0 SP | 2 | Caster | Self | Single | 4틱간 회피율이 +20% 증가, 카드 1장 드로우 | |
-| | `icd_ren_flank` | 측면 돌파 | Dash | 1 SP | 1 | Fixed | AroundRect(2) | Single | 2칸 이내의 영역으로 순간이동, 목표 위치의 가장 체력이 낮은 적 1명에게 `[20 + 공격력 75%]`의 물리 피해를 입힘 | |
-| 희귀 | `icd_ren_stormeye` | 폭풍의 눈 | Skill | 2 SP | 3 | Caster | AroundRect(3) | All | 3칸 이내의 모든 적들을 1칸씩 끌어당기고, `[25 + 주문력 200%]`의 마법 피해를 입힘 | |
-| | `icd_ren_rush` | 돌진 | Dash | 2 SP | 2 | Cast | AroundRect(4) | Line | 4칸 이내의 영역으로 돌진, 경로상 모든 적들에게 `[50 + 주문력 200%]`의 마법 피해를 입히고 스테미나를 1만큼 감소시킴 | |
-| | `ica_ren_flowblade` | 기류 베기 | Attack | 1 SP | 1 | Caster | AroundRect(1) | FrontArc(1) | 전방 1칸 호 영역에 `[40 + 공격력 100% × (1 + 기류 스택)]`의 물리 피해를 입히고(칼바람 상태는 3스택으로 처리), <br>치명타 적중시 5틱간 `[10 + 공격력 50% * (1 + 기류 스택)]`의 출혈 부여 | |
-| | `icd_ren_flowreversal` | 기류 전환 | Skill | 모든 **기류 축적** | 4 | Caster | Self | All | 스테미나를 `[소모한 기류 축적 300%]`만큼 회복하고, 3틱간 `[25 + 체력 6% × 소모한 기류 축적]`  | |
-| 영웅 | `ica_ren_execute` | 최후의 숨결 | Skill | 5 SP | 4 | Fixed | ConditionalMultiple | Single | **기절** 또는 **넉다운** 상태의 적에게만 시전 가능, 대상의 뒤로 이동하여 `[250 + 대상 잃은 체력 25%]`의 물리 피해를 입힘, 적 처치시 소모한 스테미나를 돌려받음 | |
-| | `icd_ren_shadowrush` | 그림자 돌진 | Dash | 2 SP | 3 | Cast | AroundRect(5) | Line | 그림자를 남기고 5칸 이내의 영역으로 돌진, 경로와 주변 1칸 이내의 모든 적들에게 `[60 + 주문력 300%]`의 마법 피해를 입히고 스테미나를 2만큼 시킴,<br>해당 다음 틱에 그림자가 같은 행동을 반복하고 사라짐(투사체로 처리) | |
-| | `icd_ren_parry` | 튕겨내기 | Attack | 1 SP | 0 | Caster | AroundRect(1) | Single | 해당 방향에서 받는 모든 공격이 무효화가 되고, 성공적으로 공격 무효화시 전방 3×5 영역에 `[100 + 공격력 200%]`의 물리 피해를 입힘 | |
-| | `icd_ren_tailwind` | 순풍 | Power | 3 SP | 0 | Caster | Self | Single | 파괴, 적의 공격을 회피할 때마다 스테미나를 1만큼 회복하고 **기류 축적**을 1스택 얻음 | |
-| 전설 | `ica_ren_bladewind` | 검귀의 춤 | Attack | 3 SP | 5 | Fixed | AllLife | All | 모든 적에게 `[80 + 공격력 120%]`의 물리 피해를 입힘 | |
-| | `ica_ren_hurricane` | 무결한 폭풍 | Skill | 4 SP | 8 | Caster | AroundRect(4) | All | 3틱동안 정신 집중하여 정신 집중하는 동안 받는 모든 피해를 40% 감소시키고 4칸 이내의 모든 적들을 틱당 1칸씩 끌어당기며, 틱당 `[200 + 주문력 400%]`의 마법 피해를 입힘. | |  
-| | `ica_ren_wayofwind` | 바람의 길 | Power | 4 SP | 0 | Caster | Self | Single | 파괴, **기류 축적**의 최대 스택이 2로 감소, **칼바람**의 피해가 +50% | |
-| | `icd_ren_secondwind` | 두 번째 바람 | Power | 50% HP | 1 | Caster | Self | Single | 파괴, 이번 전투동안 **두번째 바람** 상태 효과를 얻음 | |
+| | `icd_ren_flank` | 측면 돌파 | Dash | 15 SP | 1 | Fixed | AroundRect(2) | Single | 2칸 이내의 영역으로 순간이동, 목표 위치의 가장 체력이 낮은 적 1명에게 `[20 + 공격력 75%]`의 물리 피해를 입힘 | |
+| 희귀 | `icd_ren_stormeye` | 폭풍의 눈 | Skill | 25 SP | 3 | Caster | AroundRect(3) | All | 3칸 이내의 모든 적들을 1칸씩 끌어당기고, `[25 + 주문력 200%]`의 마법 피해를 입힘 | |
+| | `icd_ren_rush` | 돌진 | Dash | 30 SP | 2 | Cast | AroundRect(4) | Line | 4칸 이내의 영역으로 돌진, 경로상 모든 적들에게 `[50 + 주문력 200%]`의 마법 피해를 입히고 스테미나(SP)를 피해량의 120%만큼 추가로 감소시킴 | |
+| | `ica_ren_flowblade` | 기류 베기 | Attack | 15 SP | 1 | Caster | AroundRect(1) | FrontArc(1) | 전방 1칸 호 영역에 `[40 + 공격력 100% × (1 + 기류 스택)]`의 물리 피해를 입히고(칼바람 상태는 3스택으로 처리), <br>치명타 적중시 5틱간 `[10 + 공격력 50% * (1 + 기류 스택)]`의 출혈 부여 | |
+| | `icd_ren_flowreversal` | 기류 전환 | Skill | 모든 **기류 축적** | 4 | Caster | Self | All | 스테미나를 `[소모한 기류 축적 × 25]`만큼 회복하고, 3틱간 `[25 + 체력 6% × 소모한 기류 축적]`만큼의 보호막 획득 | |
+| 영웅 | `ica_ren_execute` | 최후의 숨결 | Skill | 60 SP | 4 | Fixed | ConditionalMultiple | Single | **기절** 또는 **그로기** 상태의 적에게만 시전 가능, 대상의 뒤로 이동하여 `[250 + 대상 잃은 체력 25%]`의 물리 피해를 입힘, 적 처치시 소모한 스테미나를 돌려받음 | |
+| | `icd_ren_shadowrush` | 그림자 돌진 | Dash | 35 SP | 3 | Cast | AroundRect(5) | Line | 그림자를 남기고 5칸 이내의 영역으로 돌진, 경로와 주변 1칸 이내의 모든 적들에게 `[60 + 주문력 300%]`의 마법 피해를 입히고 스테미나(SP)를 피해량의 150%만큼 추가로 감소시킴,<br>해당 다음 틱에 그림자가 같은 행동을 반복하고 사라짐(투사체로 처리) | |
+| | `icd_ren_parry` | 튕겨내기 | Attack | 15 SP | 0 | Caster | AroundRect(1) | Single | 해당 방향에서 받는 모든 공격이 무효화(무적)가 되고, 성공적으로 공격 무효화시 전방 3×5 영역에 `[100 + 공격력 200%]`의 물리 피해를 입힘 | |
+| | `icd_ren_tailwind` | 순풍 | Power | 40 SP | 0 | Caster | Self | Single | 파괴, 적의 공격을 회피할 때마다 스테미나를 50만큼 회복하고 **기류 축적**을 1스택 얻음 | |
+| 전설 | `ica_ren_bladewind` | 검귀의 춤 | Attack | 40 SP | 5 | Fixed | AllLife | All | 모든 적에게 `[80 + 공격력 120%]`의 물리 피해를 입힘 | |
+| | `ica_ren_hurricane` | 무결한 폭풍 | Skill | 50 SP | 8 | Caster | AroundRect(4) | All | 3틱동안 **정신 집중(채널링)**하여, 집중 중 받는 모든 피해를 40% 감소시키고 4칸 이내의 모든 적들을 틱당 1칸씩 끌어당기며, 틱당 `[200 + 주문력 400%]`의 마법 피해를 입힘. | |  
+| | `ica_ren_wayofwind` | 바람의 길 | Power | 50 SP | 0 | Caster | Self | Single | 파괴, **기류 축적**의 최대 스택이 2로 감소, **칼바람**의 피해가 +50% | |
+s| | `icd_ren_secondwind` | 두 번째 바람 | Power | 50% HP | 1 | Caster | Self | Single | 파괴, 이번 전투동안 **두번째 바람** 상태 효과를 얻음 | |
 
 
 - 폭풍의 눈/무결한 폭풍 + 칼바람(P) : 흩어진 적들을 한가운데로 끌어모은 뒤, 광역 공격으로 한 번에 쓸어버리는 '몰이사냥(Wombo Combo)' 빌드 구축 가능.
-- 하단 휩쓸기  + 최후의 숨결 : 렌의 약점인 단일 개체 폭딜을 보완하기 위해 적을 고의로 넘어뜨리고 암살하는 '단일 처형' 빌드 구축 가능.
+- 하단 휩쓸기  + 최후의 숨결 : 렌의 약점인 단일 개체 폭딜을 보완하기 위해 적을 고의로 넘어뜨리고(그로기) 암살하는 '단일 처형' 빌드 구축 가능.
+
+## 5. 연계 전투 메커니즘 및 상태 효과 규칙
+- **정신 집중 (Channeling)**:
+  - 단순 버프가 아닌 독립 채널링 오퍼레이션(`_prototype_ChannelingController`)으로 구동.
+  - 시전 시 기절(Stun)과 마찬가지로 **자동 틱(Auto-Tick Progression)**이 진행되며 매 틱 효과(`OnChannelTick`)를 발휘.
+  - 채널링 진행 중에는 플레이어 수동 이동 및 카드 사용이 잠김.
+  - 하드 CC(기절, 에어본, 침묵, 그로기)에 피격될 경우 즉시 정신 집중이 강제 캔슬(`CancelChanneling`)됨.
+- **도발 (Provocation)**:
+  - 도발 상태에 걸린 엔티티는 공격/스킬 대상이 도발 시전자(`sourceEntity`)로 강제 고정됨.
+  - 사거리 밖일 경우 도발자를 향해 최단 경로로 강제 추격 이동.
+- **에어본 (Airborne)**:
+  - 1틱 동안 공중에 띄워져 행동 불가(기절 계열 하드 CC).
+  - 시전 중이던 스킬 및 정신 집중(채널링)을 즉시 캔슬시킴.
+- **무적 (Invincible)**:
+  - 지속 시간 동안 받는 모든 데미지를 0으로 무효화(피해 무적).
+  - 단, 기절/넉백/에어본 등 군중 제어 효과(CC)는 정상 적용되어 전술적 카운터 가능.
