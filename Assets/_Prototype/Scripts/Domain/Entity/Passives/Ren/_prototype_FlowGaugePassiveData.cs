@@ -205,6 +205,11 @@ namespace TDG0407._prototype
         }
 
         // ─── 칼바람 효과 실행 ────────────────────────────────────────────────
+        protected virtual UniTask TriggerBitingWindEffect(_prototype_LifeData owner)
+        {
+            return TriggerBitingWindEffect(owner, GetEnemiesAroundPoint(owner, owner.point, 1));
+        }
+
         protected virtual async UniTask TriggerBitingWindEffect(_prototype_LifeData owner, List<_prototype_LifeData> hitTargets)
         {
             if (_prototype_GridManager.Instance == null) return;
