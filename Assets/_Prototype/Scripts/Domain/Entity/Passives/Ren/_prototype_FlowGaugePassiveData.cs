@@ -43,6 +43,21 @@ namespace TDG0407._prototype
         public int FlowStack => _flowStack;
         public bool BitingWindActive => _bitingWindActive;
 
+        [NonSerialized] private static Sprite s_flowIcon;
+        [NonSerialized] private static Sprite s_windIcon;
+
+        private static Sprite GetFlowIcon()
+        {
+            if (s_flowIcon == null) s_flowIcon = Resources.Load<Sprite>("HUD/Icon_Buff");
+            return s_flowIcon;
+        }
+
+        private static Sprite GetWindIcon()
+        {
+            if (s_windIcon == null) s_windIcon = Resources.Load<Sprite>("HUD/Icon_Sword");
+            return s_windIcon;
+        }
+
         public override System.Collections.Generic.IEnumerable<StatusDisplayData> GetDisplayStatuses(_prototype_StatusVisualDatabase db)
         {
             if (_flowStack > 0 && !_bitingWindActive)
@@ -52,7 +67,7 @@ namespace TDG0407._prototype
                     id = "FlowGauge",
                     displayName = "기류 축적",
                     symbolChar = "기",
-                    icon = null,
+                    icon = GetFlowIcon(),
                     themeColor = new Color(0.6f, 0.9f, 1f),
                     description = "적중 시 기류 스택을 쌓습니다. (최대 3스택)",
                     stackCount = _flowStack,
@@ -67,7 +82,7 @@ namespace TDG0407._prototype
                     id = "BitingWind",
                     displayName = "칼바람",
                     symbolChar = "칼",
-                    icon = null,
+                    icon = GetWindIcon(),
                     themeColor = new Color(0.4f, 0.7f, 1f),
                     description = "다음 Attack 카드 사용 시 칼바람이 발동합니다.",
                     stackCount = 1,

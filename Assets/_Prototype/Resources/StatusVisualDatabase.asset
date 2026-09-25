@@ -16,84 +16,90 @@ MonoBehaviour:
   - type: 1
     displayName: "스턴"
     symbolChar: "기"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: b80ab5f1500167b4e8cd45231ee68328, type: 3}
     themeColor: {r: 1, g: 0.9, b: 0, a: 1}
     description: "행동 불능 상태입니다. 모든 행동 및 카드 시전이 차단됩니다."
   - type: 2
     displayName: "그로기"
     symbolChar: "그"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: dc7f1cebbdbf3a74eab600569099e9cf, type: 3}
     themeColor: {r: 0.8, g: 0.5, b: 1, a: 1}
     description: "스태미나가 고갈되어 그로기 상태에 빠졌습니다. 행동이 불가하며 받는 피해가 50% 증가합니다."
   - type: 3
     displayName: "침묵"
     symbolChar: "침"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 35874ccedef3048469d90175a69c54db, type: 3}
     themeColor: {r: 0.5, g: 0.5, b: 0.8, a: 1}
     description: "카드를 사용할 수 없습니다. 이동 및 기본 대기만 가능합니다."
   - type: 4
     displayName: "공포"
     symbolChar: "공"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 249b371a8540cbd4f9597a7259fba9e5, type: 3}
     themeColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
     description: "두려움에 사로잡혀 반대 방향으로 강제 도주합니다."
   - type: 5
     displayName: "저주"
     symbolChar: "저"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 8012a044d45b36b488bff8e01e2b697b, type: 3}
     themeColor: {r: 0.4, g: 0, b: 0.6, a: 1}
     description: "어두운 기운에 잠식되어 최대 체력 및 주요 스탯이 감소합니다."
   - type: 6
     displayName: "출혈"
     symbolChar: "출"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 6256bc89fa0614743835f1b222d6e7a2, type: 3}
     themeColor: {r: 0.9, g: 0.1, b: 0.1, a: 1}
     description: "상처가 벌어져 턴 종료 시 지속 물리 피해를 입습니다."
   - type: 7
     displayName: "화상"
     symbolChar: "화"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 481775b97a20a2543a3a0ca628f33849, type: 3}
     themeColor: {r: 1, g: 0.4, b: 0, a: 1}
     description: "화염에 휩싸여 지속 화염 피해를 입으며 카드 파괴 위험에 노출됩니다."
   - type: 8
     displayName: "빙결"
     symbolChar: "빙"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 9e2d3f9ea0134564b9709d02cf6b0d44, type: 3}
     themeColor: {r: 0.4, g: 0.7, b: 1, a: 1}
     description: "몸이 꽁꽁 얼어붙어 이동할 수 없습니다."
   - type: 9
     displayName: "중독"
     symbolChar: "독"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 7211a421a3a2a6d4f93cc462ba7c39f4, type: 3}
     themeColor: {r: 0.3, g: 0.7, b: 0.2, a: 1}
     description: "맹독에 중독되어 방어력을 무시하는 지속 피해를 입습니다."
   - type: 10
     displayName: "저지 불가"
     symbolChar: "불"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 9163a29ad8688b146aa1de359542f650, type: 3}
     themeColor: {r: 0.9, g: 0.7, b: 0.1, a: 1}
     description: "모든 군중 제어(CC) 및 넉백 효과를 완전히 무시합니다."
   - type: 11
     displayName: "죽음의 문턱"
     symbolChar: "사"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 8bfbc7b2a0fee27489ae7d5830479433, type: 3}
     themeColor: {r: 0.8, g: 0.05, b: 0.05, a: 1}
     description: "체력이 0에 도달하여 치명적인 위험에 처했습니다. 한 번 더 피격되면 사망합니다."
   - type: 12
     displayName: "도발"
     symbolChar: "도"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: f47058f81a512614d859dd4a7642a81e, type: 3}
     themeColor: {r: 1, g: 0.3, b: 0.1, a: 1}
     description: "도발 시전자에게 시선이 고정되어 도발자만을 공격하거나 추격합니다."
   - type: 13
     displayName: "에어본"
     symbolChar: "에"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 31ead7730d2266949b0fe68f9bb1a1aa, type: 3}
     themeColor: {r: 0.4, g: 0.85, b: 1, a: 1}
     description: "공중에 띄워져 행동이 불가하며, 진행 중인 스킬과 정신 집중이 강제 캔슬됩니다."
   - type: 14
     displayName: "무적"
     symbolChar: "무"
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: c9c8aafee1a556848b59d3ea67c72b08, type: 3}
     themeColor: {r: 1, g: 0.95, b: 0.4, a: 1}
     description: "모든 피해를 0으로 무효화합니다. (군중 제어 효과는 적용됩니다.)"
+  - type: 15
+    displayName: "찌르기 강화"
+    symbolChar: "찌"
+    icon: {fileID: 21300000, guid: 319a46a70f8aba148ac3baa12e3d4da3, type: 3}
+    themeColor: {r: 1, g: 0.5, b: 0.1, a: 1}
+    description: "'심연검: 찌르기'의 피해량이 50% 증가하고 1칸 넉백 및 벽 충돌 피해를 추가합니다."
