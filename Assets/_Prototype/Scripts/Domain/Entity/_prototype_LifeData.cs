@@ -60,8 +60,76 @@ namespace TDG0407._prototype
             return true;
         }
 
-        /// <summary>해당 ID의 패시브를 보유하고 있는지 확인합니다.</summary>
         public bool HasPassive(string id) => passiveIds != null && passiveIds.Contains(id);
+
+        public IEnumerable<StatusDisplayData> GetDisplayStatuses(_prototype_StatusVisualDatabase db)
+        {
+            // 1. 일반 상태 이상 
+            var groups = statusEffects.GroupBy(s => s.type);
+            foreach (var group in groups)
+            {
+                var type = group.Key;
+                int count = group.Count();
+                var tickBased = group.Where(s => s.duration.TickDurationType == TickDurationType.TickBased && s.duration.Value != null).ToList();
+                int maxTicks = tickBased.Count > 0 ? tickBased.Max(s => s.duration.Value.Current) : 0;
+                bool isForever = group.Any(s => s.duration.TickDurationType == TickDurationType.Forever);
+
+                string sym = "?";
+                Color color = Color.white;
+                Sprite icon = null;
+                string dName = type.ToString();
+                string dDesc = "";
+
+                if (db != null)
+                {
+                    var entry = db.GetEntry(type);
+                    if (entry != null)
+                    {
+                        sym = entry.symbolChar;
+                        color = entry.themeColor;
+                        icon = entry.icon;
+                        dName = !string.IsNullOrEmpty(entry.displayName) ? entry.displayName : type.ToString();
+                        dDesc = entry.description;
+                    }
+                    else
+                    {
+                        var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
+                        sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
+                    }
+                }
+                else
+                {
+                    var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
+                    sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
+                }
+
+                yield return new StatusDisplayData
+                {
+                    id = type.ToString(),
+                    displayName = dName,
+                    symbolChar = sym,
+                    icon = icon,
+                    themeColor = color,
+                    description = dDesc,
+                    stackCount = count,
+                    durationTicks = maxTicks,
+                    isForever = isForever
+                };
+            }
+
+            // 2. 패시브
+            if (uniquePassive != null)
+            {
+                foreach (var d in uniquePassive.GetDisplayStatuses(db)) yield return d;
+            }
+            if (_passives != null)
+            {
+                foreach (var p in _passives)
+                {
+                    foreach (var d in p.GetDisplayStatuses(db)) yield return d;
+                }
+            }
+        }
 
         // ─── 패시브 훅 내부 호출 헬퍼 ──────────────────────────────────────────
         internal void FirePassiveOnTick() => _ = FirePassiveOnTickAsync();

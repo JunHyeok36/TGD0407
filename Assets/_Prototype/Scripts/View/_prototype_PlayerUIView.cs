@@ -1173,60 +1173,37 @@ namespace TDG0407._prototype
         {
             if (_playerStatusTray == null) return;
             _playerStatusTray.Clear();
-            if (playerLife == null || playerLife.statusEffects == null || playerLife.statusEffects.Count == 0) return;
+            if (playerLife == null) return;
+            var displayData = playerLife.GetDisplayStatuses(_prototype_StatusVisualDatabase.Instance).ToList();
+            if (displayData.Count == 0) return;
 
-            var groups = playerLife.statusEffects.GroupBy(s => s.type);
-            var db = _prototype_StatusVisualDatabase.Instance;
-
-            foreach (var group in groups)
+            foreach (var data in displayData)
             {
-                var type = group.Key;
-                int count = group.Count();
-                // Forever 타입은 배지에 지속 틱을 표시하지 않음 (TickBased 효과의 남은 틱만 계산)
-                var tickBased = group.Where(s => s.duration.TickDurationType == TickDurationType.TickBased && s.duration.Value != null).ToList();
-                int maxTicks = tickBased.Count > 0 ? tickBased.Max(s => s.duration.Value.Current) : 0;
-                bool isForever = group.Any(s => s.duration.TickDurationType == TickDurationType.Forever);
+                var badge = new VisualElement();
+                badge.AddToClassList("status-badge");
+                badge.style.borderTopColor = new StyleColor(data.themeColor);
+                badge.style.borderBottomColor = new StyleColor(data.themeColor);
+                badge.style.borderLeftColor = new StyleColor(data.themeColor);
+                badge.style.borderRightColor = new StyleColor(data.themeColor);
 
-                string sym = "?";
-                Color color = Color.white;
-                string dName = type.ToString();
-                string dDesc = "";
-
-                if (db != null)
+                if (data.icon != null)
                 {
-                    var entry = db.GetEntry(type);
-                    if (entry != null)
-                    {
-                        sym = entry.symbolChar;
-                        color = entry.themeColor;
-                        dName = !string.IsNullOrEmpty(entry.displayName) ? entry.displayName : type.ToString();
-                        dDesc = entry.description;
-                    }
-                    else
-                    {
-                        var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
-                        sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
-                    }
+                    var iconEl = new VisualElement();
+                    iconEl.AddToClassList("status-badge-icon");
+                    iconEl.style.backgroundImage = new StyleBackground(data.icon);
+                    iconEl.style.unityBackgroundImageTintColor = new StyleColor(Color.white);
+                    badge.Add(iconEl);
                 }
                 else
                 {
-                    var def = _prototype_StatusVisualDatabase.GetDefaultEntry(type);
-                    sym = def.symbol; color = def.color; dName = def.name; dDesc = def.desc;
+                    var symbol = new Label(data.symbolChar);
+                    symbol.AddToClassList("status-badge-symbol");
+                    symbol.style.color = new StyleColor(data.themeColor);
+                    badge.Add(symbol);
                 }
 
-                var badge = new VisualElement();
-                badge.AddToClassList("status-badge");
-                badge.style.borderTopColor = new StyleColor(color);
-                badge.style.borderBottomColor = new StyleColor(color);
-                badge.style.borderLeftColor = new StyleColor(color);
-                badge.style.borderRightColor = new StyleColor(color);
-
-                var symLabel = new Label(sym);
-                symLabel.AddToClassList("status-badge-symbol");
-                badge.Add(symLabel);
-
-                string countText = count > 1 ? $"x{count} " : "";
-                string tickText = maxTicks > 0 ? $"{maxTicks}t" : "";
+                string countText = data.stackCount > 1 ? $"x{data.stackCount} " : "";
+                string tickText = (data.durationTicks > 0 && !data.isForever) ? $"{data.durationTicks}t" : "";
                 string fullBadgeText = $"{countText}{tickText}".Trim();
                 if (!string.IsNullOrEmpty(fullBadgeText))
                 {
@@ -1235,16 +1212,14 @@ namespace TDG0407._prototype
                     badge.Add(textLabel);
                 }
 
-                // 툴팁 호버 연동
-                string tooltipTitle = count > 1 ? $"{dName} x{count}" : dName;
-                string tooltipBody = string.IsNullOrEmpty(dDesc) ? $"{type}" : dDesc;
-                if (maxTicks > 0) tooltipBody += $"\n지속시간: {maxTicks}턴 남음";
-                else if (isForever) tooltipBody += "\n지속시간: 영구";
-
+                string tooltipTitle = data.stackCount > 1 ? $"{data.displayName} x{data.stackCount}" : data.displayName;
+                string tooltipBody = string.IsNullOrEmpty(data.description) ? $"{data.id}" : data.description;
+                if (data.durationTicks > 0 && !data.isForever) tooltipBody += $"\n지속시간: {data.durationTicks}틱 남음";
+                else if (data.isForever) tooltipBody += "\n지속시간: 영구";
 
                 badge.RegisterCallback<PointerEnterEvent>(evt =>
                 {
-                    ShowStatusTooltip(tooltipTitle, tooltipBody, color, evt.position);
+                    ShowStatusTooltip(tooltipTitle, tooltipBody, data.themeColor, evt.position);
                 });
                 badge.RegisterCallback<PointerMoveEvent>(evt =>
                 {

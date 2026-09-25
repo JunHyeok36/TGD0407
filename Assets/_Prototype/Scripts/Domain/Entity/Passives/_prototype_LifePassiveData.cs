@@ -50,6 +50,11 @@ namespace TDG0407._prototype
         /// </summary>
         public virtual bool IsCardEmpowered(_prototype_LifeData owner, _prototype_CardData card) => false;
 
+        public virtual System.Collections.Generic.IEnumerable<StatusDisplayData> GetDisplayStatuses(_prototype_StatusVisualDatabase db)
+        {
+            yield break;
+        }
+
         /// <summary>런타임 복제. LifeData 초기화 시 Clone() 을 통해 인스턴스를 생성합니다.</summary>
         public abstract _prototype_LifePassiveData Clone();
     }
