@@ -21,6 +21,7 @@ namespace TDG0407._prototype
 
         public int? finalDamage; // if finalDamage is null, damage has not been applied yet. 
         public int spDamage = 0; 
+        public bool isBitingWindDamage = false; 
 
         public _prototype_DamageContext(_prototype_EntityData source, _prototype_EntityData target, _prototype_DamageType damageType, int baseDamage, int modifiedDamage, bool isCritical = false, float spDamageMultiplier = 0.5f)
         {
